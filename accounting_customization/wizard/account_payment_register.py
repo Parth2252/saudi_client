@@ -22,18 +22,18 @@ class AccountPaymentRegister(models.TransientModel):
     def action_create_payments(self):
         # call original method to generate payments
         res = super().action_create_payments()
+        print(":::::::::::::resss", res)
         if not self.is_already_attach:
             raise ValidationError(_("Please add necessary attachment!"))
-        for wizard in self:
-            account_env = self.env["account.move"]
-            vendor_bill_id = account_env.browse(self._context.get("active_id"))
-            for attachment in self.attachment_ids:
-                attachment.copy(
-                    {
-                        "res_model": "account.move",
-                        "res_id": vendor_bill_id.id,
-                    }
-                )
+        account_env = self.env["account.move"]
+        vendor_bill_id = account_env.browse(self._context.get("active_id"))
+        for attachment in self.attachment_ids:
+            attachment.copy(
+                {
+                    "res_model": "account.move",
+                    "res_id": vendor_bill_id.id,
+                }
+            )
         return res
 
     @api.onchange("attachment_ids")

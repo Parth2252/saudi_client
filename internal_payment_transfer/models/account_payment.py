@@ -24,6 +24,18 @@ class AccountPayment(models.Model):
         ('inbound', 'Receive'),
     ], string='Payment Type', default='outbound', required=True, tracking=True)
 
+    def create(self, vals_list):
+        # Normalize vals into a list of dicts
+        if isinstance(vals_list, dict):
+            vals_list = [vals_list]
+
+        for vals in vals_list:
+            if not vals.get("journal_id") and vals.get("destination_journal_id"):
+                vals["journal_id"] = vals["destination_journal_id"]
+
+        # Proceed with normal creation
+        return super().create(vals_list)
+
     @api.depends('payment_type', 'journal_id', 'currency_id','is_internal_transfer')
     def _compute_payment_method_line_fields(self):
         super()._compute_payment_method_line_fields()
