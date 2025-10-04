@@ -1,0 +1,38 @@
+<odoo>
+    <record id="view_move_form_inherit_po_ref" model="ir.ui.view">
+        <field name="name">account.move.form.inherit.po.ref</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <!--            <xpath expr="//field[@name='invoice_date_due']" position="after">-->
+            <!--                <field name="po_ref"/>-->
+            <!--            </xpath>-->
+            <xpath expr="//group[@id='header_right_group']" position="after">
+                <group>
+                    <field name="po_ref" invisible="0"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_invoice_tree_inherit" model="ir.ui.view">
+        <field name="name">account.move.form.inherit.po.ref</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='ref']" position="after">
+                <field name="po_ref" invisible="0"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_account_bill_filter_inherit_po_ref" model="ir.ui.view">
+        <field name="name">account.move.search.inherit.po_ref</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_account_bill_filter"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="po_ref"/>
+            </field>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,17 @@
+<odoo>
+    <record id="quick_create_opportunity_form" model="ir.ui.view">
+        <field name="name">crm.lead.form.quick_create</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.quick_create_opportunity_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <!--                <field name="contact_id" widget="res_partner_many2one"/>-->
+                <field name="contact_id"
+                       domain="['&amp;', ('parent_id', '=', partner_id), ('is_company', '!=', True), '|', ('company_id', '=', False), ('company_id', '=', company_id)]"
+                       widget="res_partner_many2one"
+                       context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}"
+                       placeholder="Type to find a customer contact..."/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,5 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_add_mass_product_sale_user,add.mass.product.sale.user,model_add_mass_product_sale,base.group_user,1,0,0,0
+access_add_mass_product_sale_manager,add.mass.product.sale.manager,model_add_mass_product_sale,base.group_system,1,1,1,1
+access_import_from_file_sale_user,import.from.file.sale.user,model_import_from_file_sale,base.group_user,1,0,0,0
+access_import_from_file_sale_manager,import.from.file.sale.manager,model_import_from_file_sale,base.group_system,1,1,1,1

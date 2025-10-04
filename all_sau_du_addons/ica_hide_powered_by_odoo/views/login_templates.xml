@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="login_page_layout" inherit_id="web.login_layout" name="Login Page Layout">
+        <a href="https://www.odoo.com?utm_source=db&amp;utm_medium=auth" position="replace"/>
+    </template>
+
+</odoo>

@@ -1,0 +1,138 @@
+<odoo>
+
+
+    <record id="view_stock_picking_form_qr" model="ir.ui.view">
+        <field name="name">stock.picking.form.qr.code</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <group>
+                    <field name="qr_code" widget="image" class="oe_avatar" options="{'preview_image': 'qr_code'}"
+                           invisible="1"/>
+                </group>
+            </xpath>
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="client_order_ref" invisible="1"/>
+                <field name="porder_ref"/>
+                <field name="acknowledgement"/>
+                <!-- Added field. -->
+                <field name="sale_user_id" />                
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="replace">
+                <!-- <field name="sale_user_id" invisible="picking_type_code != 'outgoing'"
+                       required="picking_type_code == 'outgoing'"/> -->
+                <field name="user_id" invisible="picking_type_code != 'incoming'"
+                       required="picking_type_code == 'incoming'"/>
+                <field name="validated_by_id"/>
+            </xpath>
+
+            <xpath expr="//field[@name='move_ids_without_package']/list" position="inside">
+                <field name="ts_code" string="TS Code"/>
+                <!--                <field name="display_item_code" string="Item Code" column_invisible="True"/>-->
+                <field name="description" string="SO Description"/>
+                <field name="remark"/>
+            </xpath>
+            <xpath expr="//div[@class='o_td_label']" position="replace">
+                <div class="o_td_label">
+                    <label for="partner_id" string="Customer" style="font-weight:bold;"
+                           invisible="picking_type_code != 'outgoing'"/>
+                    <label for="partner_id" string="Vendor" style="font-weight:bold;"
+                           invisible="picking_type_code != 'incoming'"/>
+                    <label for="partner_id" string="Contact" style="font-weight:bold;"
+                           invisible="picking_type_code in ['incoming', 'outgoing']"/>
+                </div>
+            </xpath>
+
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="partner_shipping_id" placeholder="Auto-set from customer"/>
+            </xpath>
+            <!--            <xpath expr="//field[@name='partner_invoice_id']" position="attributes">-->
+            <!--                <attribute name="invisible">1</attribute>-->
+
+            <!--            </xpath>-->
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="domain">[('is_company', '=', True)]</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="contact_id" string="Delivery Address"
+                       domain="['&amp;', ('parent_id', '=', partner_id), ('is_company', '!=', True), '|', ('company_id', '=', False), ('company_id', '=', company_id)]"
+                       widget="res_partner_many2one"
+                       context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}"
+                       placeholder="Type to find a customer contact..." readonly="state in ['cancel', 'sale']"/>
+            </xpath>
+            <xpath expr="//field[@name='contact_id']" position="before">
+                <field name="partner_invoice_id"
+                       domain="['&amp;', ('parent_id', '=', partner_id), ('is_company', '!=', True), '|', ('company_id', '=', False), ('company_id', '=', company_id)]"
+                />
+                <!--                    <field name="partner_shipping_id"/>-->
+            </xpath>
+            <xpath expr="//page[@name='extra']" position="after">
+                <page name="detail_product_info" string="Detail Product Info">
+                    <field name="product_detail_ids" mode="list,form">
+                        <list editable="bottom">
+                            <field name="product_id"/>
+                            <field name="part_no"/>
+                            <field name="manuanl_qty"/>
+                            <field name="offered_description_id"/>
+                            <field name="ts_code"/>
+                            <field name="item_code"/>
+                            <field name="manuanl_remark"/>
+                        </list>
+                        <form>
+                            <group>
+                                <field name="product_id"/>
+                                <field name="part_no"/>
+                                <field name="manuanl_qty"/>
+                                <field name="offered_description_id"/>
+                                <field name="ts_code"/>
+                                <field name="item_code"/>
+                                <field name="manuanl_remark"/>
+                            </group>
+                        </form>
+                    </field>
+                </page>
+            </xpath>
+
+
+        </field>
+    </record>
+    <record id="vpicktree_qr" model="ir.ui.view">
+        <field name="name">stock.picking.tree</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='origin']" position="after">
+<!--                <field name="client_order_ref" invisible="1"/>-->
+                <field name="porder_ref"/>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="view_picking_internal_search" model="ir.ui.view">
+        <field name="name">stock.picking.internal.search.inherit.client.order.ref</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='origin']" position="after">
+<!--                <field name="client_order_ref" string="PO Reference"/>-->
+                <field name="porder_ref" string="PO Reference"/>
+            </xpath>
+            <xpath expr="//filter[@name='starred']" position="after">
+                <filter name="client_ref_filter" string="PO Reference"
+                        domain="[('client_order_ref', '!=', False)]"
+                        help="Transfers that have a client order reference"/>
+            </xpath>
+            <xpath expr="//filter[@name='starred']" position="after">
+                <separator/>
+                <filter string="PO Reference"
+                        name="group_by_client_ref"
+                        context="{'group_by': 'client_order_ref'}"/>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>
+

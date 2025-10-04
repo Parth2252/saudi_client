@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="titans_cmp_ir_mail_server_form">
+        <field name="name">titans.ir.mail_server.form</field>
+        <field name="model">ir.mail_server</field>
+        <field name="inherit_id" ref="base.ir_mail_server_form"/>
+        <field name="arch" type="xml">
+            <field name="smtp_debug" position="after">
+                <field name="smtp_config"/>
+                <field name="user_id"  invisible="smtp_config == 'by_company'"/>
+                <field name="company_id" invisible="smtp_config == 'by_user'"/>
+            </field>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="titans_cmp_ir_mail_server_list">
+        <field name="name">titans.ir.mail_server.list</field>
+        <field name="model">ir.mail_server</field>
+        <field name="inherit_id" ref="base.ir_mail_server_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="smtp_config"/>
+            </xpath>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="titans_cmp_ir_mail_server_search">
+        <field name="name">titans.ir.mail_server.search</field>
+        <field name="model">ir.mail_server</field>
+        <field name="inherit_id" ref="base.view_ir_mail_server_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name='user_id'/>
+                <field name='company_id'/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

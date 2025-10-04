@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="remove_powered_by_odoo" inherit_id="portal.portal_record_sidebar" priority="10">
+        <xpath expr="//div[child::a[@href='http://www.odoo.com?utm_source=db&amp;utm_medium=portal']]" position="replace">
+            <!-- Removed the Powered by Odoo link and its div -->
+        </xpath>
+    </template>
+</odoo>

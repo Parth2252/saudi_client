@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="l4l_group_vendor_product_code" model="res.groups">
+        <field name="name">Product Vendor Code</field>
+    </record>
+</odoo>

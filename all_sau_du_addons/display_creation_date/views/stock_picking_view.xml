@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit stock picking view to add the field. -->
+    <record id="display_creation_date_stock_picking_inherited_tree_view" model="ir.ui.view">
+        <field name="name">display.creation.date.stock.picking.inherited.tree.view</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="before">
+                <field name="create_date" optional='show'/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

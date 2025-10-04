@@ -1,0 +1,224 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* sh_product_customer_code
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-07-09 06:58+0000\n"
+"PO-Revision-Date: 2024-07-09 06:58+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_product_product__code_id
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_product_template__code_id
+msgid "Code"
+msgstr "程式碼"
+
+#. module: sh_product_customer_code
+#: model:ir.model,name:sh_product_customer_code.model_res_company
+msgid "Companies"
+msgstr "公司"
+
+#. module: sh_product_customer_code
+#: model:ir.model,name:sh_product_customer_code.model_res_config_settings
+msgid "Config Settings"
+msgstr "配置設定"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__create_uid
+msgid "Created by"
+msgstr "由...製作"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__create_date
+msgid "Created on"
+msgstr "創建於"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__name
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_separate_search_view
+msgid "Customer"
+msgstr "顧客"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_product_product__sh_product_customer_ids
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_product_template__sh_product_customer_ids
+msgid "Customer Code"
+msgstr "客戶程式碼"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_account_move_line__sh_line_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sale_order_line__sh_line_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__product_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.inherit_sale_order_portal_content_for_cutomer_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.inherit_sale_order_report_view
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.invoice_report_product_code_inherit
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.product_template_search_view_inherit_costomer_code11
+msgid "Customer Product Code"
+msgstr "客戶產品代碼"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_account_move_line__sh_line_customer_product_name
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_product_product__product_code_name
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_product_template__product_code_name
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sale_order_line__sh_line_customer_product_name
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__product_name
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.inherit_sale_order_portal_content_for_cutomer_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.inherit_sale_order_report_view
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.invoice_report_product_code_inherit
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.product_template_search_view_inherit_costomer_code11
+msgid "Customer Product Name"
+msgstr "客戶產品名稱"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,help:sh_product_customer_code.field_sh_product_customer_info__name
+msgid "Customer of this product"
+msgstr "該產品的客戶"
+
+#. module: sh_product_customer_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_form_view_inherit
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_product_product_form_view_inherit
+msgid "Customers"
+msgstr "顧客"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__display_name
+msgid "Display Name"
+msgstr "顯示名稱"
+
+#. module: sh_product_customer_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_separate_search_view
+msgid "Group By"
+msgstr "透過...分組"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__id
+msgid "ID"
+msgstr "ID"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,help:sh_product_customer_code.field_sh_product_customer_info__product_id
+msgid ""
+"If not set, the vendor price will apply to all variants of this product."
+msgstr ""
+“如果未设置，供应商价格将适用于该产品的所有变体。”
+
+#. module: sh_product_customer_code
+#: model:ir.model,name:sh_product_customer_code.model_account_move
+msgid "Journal Entry"
+msgstr "日記條目"
+
+#. module: sh_product_customer_code
+#: model:ir.model,name:sh_product_customer_code.model_account_move_line
+msgid "Journal Item"
+msgstr "期刊項目"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__write_uid
+msgid "Last Updated by"
+msgstr "最後更新者"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__write_date
+msgid "Last Updated on"
+msgstr "最後更新時間"
+
+#. module: sh_product_customer_code
+#: model:ir.model,name:sh_product_customer_code.model_product_template
+msgid "Product"
+msgstr "產品"
+
+#. module: sh_product_customer_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_separate_search_view
+msgid "Product Code"
+msgstr "產品代碼"
+
+#. module: sh_product_customer_code
+#: model:ir.actions.act_window,name:sh_product_customer_code.sh_product_customer_code_separate_view_action
+#: model:ir.ui.menu,name:sh_product_customer_code.sh_product_customer_code_menu
+#: model:ir.ui.menu,name:sh_product_customer_code.sh_product_customer_code_product_menu
+#: model:res.groups,name:sh_product_customer_code.group_product_customer_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_form_view_inherit
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_product_product_form_view_inherit
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_separate_form_view
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_separate_search_view
+msgid "Product Customer Code"
+msgstr "產品客戶代碼"
+
+#. module: sh_product_customer_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_add_pro_code_from_sales_res_config_settings
+msgid "Product Customer Code Configuration"
+msgstr "產品客戶代碼配置"
+
+#. module: sh_product_customer_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_separate_search_view
+msgid "Product Name"
+msgstr "產品名稱"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__product_tmpl_id
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_separate_search_view
+msgid "Product Template"
+msgstr "產品模板"
+
+#. module: sh_product_customer_code
+#: model:ir.model,name:sh_product_customer_code.model_product_product
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__product_id
+msgid "Product Variant"
+msgstr "產品變型"
+
+#. module: sh_product_customer_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_separate_search_view
+msgid "Product Varient"
+msgstr "產品種類"
+
+#. module: sh_product_customer_code
+#: model:ir.model,name:sh_product_customer_code.model_sale_order
+msgid "Sales Order"
+msgstr "銷售訂單"
+
+#. module: sh_product_customer_code
+#: model:ir.model,name:sh_product_customer_code.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "銷售訂單行"
+
+#. module: sh_product_customer_code
+#: model:ir.model,name:sh_product_customer_code.model_sh_product_customer_info
+msgid "Sh Product Customer Code"
+msgstr "Sh 產品客戶代碼"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,help:sh_product_customer_code.field_product_product__code_id
+#: model:ir.model.fields,help:sh_product_customer_code.field_product_template__code_id
+#: model:ir.model.fields,help:sh_product_customer_code.field_sh_product_customer_info__product_code
+msgid ""
+"This vendor's product code will be used when printing a request for "
+"quotation. Keep empty to use the internal one."
+msgstr ""
+“打印请求时将使用该供应商的产品代码”
+“引用。留空以使用内部引用。”
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,help:sh_product_customer_code.field_product_product__product_code_name
+#: model:ir.model.fields,help:sh_product_customer_code.field_product_template__product_code_name
+#: model:ir.model.fields,help:sh_product_customer_code.field_sh_product_customer_info__product_name
+msgid ""
+"This vendor's product name will be used when printing a request for "
+"quotation. Keep empty to use the internal one."
+msgstr ""
+“打印请求时将使用该供应商的产品名称”
+“引用。留空以使用内部引用。”
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_res_company__enable_pro_code_from_so
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_res_config_settings__enable_pro_code_from_so
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_add_pro_code_from_sales_res_config_settings
+msgid "Want to add Product Code from Sale Order"
+msgstr "想要從銷售訂單中新增產品代碼"

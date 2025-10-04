@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="report_sticker_and_label_document">
+        <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang)"/>
+        <t t-set="company" t-value="res_company"/>
+        <t t-foreach="doc.move_ids_without_package" t-as="line">
+            <div class="page" style="font-family: Arial;font-size:12px;">
+                <!-- Outer wrapper with fixed size but NO border -->
+                <div style="width: 96mm; height: 150mm; box-sizing: border-box; padding: 3mm;page-break-inside:avoid;">
+                    <!-- Table fills the container and has border -->
+                    <table style="width: 100%; height: 100%; border-collapse: collapse;" border="1">
+                        <tr>
+                            <td>
+                                <strong style="padding-left:5px;">Customer/Location</strong>
+                            </td>
+                            <td style="padding-left:5px;">
+                                <t t-esc="doc.partner_id.display_name"/>
+                                <div>
+                                    <span t-esc="'%s%s%s%s%s%s' % (
+                    doc.partner_id.street or '',
+                    doc.partner_id.street2 and ', ' + doc.partner_id.street2 or '',
+                    doc.partner_id.city and ', ' + doc.partner_id.city or '',
+                    doc.partner_id.state_id and ', ' + doc.partner_id.state_id.name or '',
+                    doc.partner_id.zip and ', ' + doc.partner_id.zip or '',
+                    doc.partner_id.country_id and ', ' + doc.partner_id.country_id.name or ''
+                )"/>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong style="padding-left:5px;">PO Number</strong>
+                            </td>
+                            <td style="padding-left:5px;">
+                                <span t-esc="doc.origin"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding-left:5px;">
+                                <strong>PO Line Item Number</strong>
+                            </td>
+                            <td style="padding-left:5px;">
+                                <span t-esc="line_index + 1"/>  <!-- This shows the line number -->
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong style="padding-left:5px;">Item Code</strong>
+                            </td>
+                            <td style="padding-left:5px;">
+                                <t t-esc="line.product_id.default_code or ''"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong style="padding-left:5px;">Description</strong>
+                            </td>
+                            <td style="padding-left:5px;">
+                                <t t-esc="line.description_picking"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong style="padding-left:5px;">Total Qty</strong>
+                            </td>
+                            <td style="padding-left:5px;">
+                                <t t-esc="line.product_uom_qty"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong style="padding-left:5px;">Box Total</strong>
+                            </td>
+                            <td style="padding-left:5px;">0</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong style="padding-left:5px;">Pallet Total</strong>
+                            </td>
+                            <td style="padding-left:5px;">
+                                <t t-esc="line.product_uom_qty"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding-left:5px;">
+                                <strong>Supplier:</strong>
+                            </td>
+                            <td style="padding-left:5px;">
+                                <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)"
+                                     alt="Logo" style="width: 110px; height:70px;"/>
+
+                                <div>
+                                    <span t-esc="'%s%s%s%s%s%s' % (
+                                    doc.company_id.street or '',
+                                    doc.company_id.street2 and ', ' + doc.company_id.street2 or '',
+                                    doc.company_id.city and ', ' + doc.partner_id.city or '',
+                                    doc.company_id.state_id and ', ' + doc.company_id.state_id.name or '',
+                                    doc.company_id.zip and ', ' + doc.company_id.zip or '',
+                                    doc.company_id.country_id and ', ' + doc.company_id.country_id.name or ''
+                                    )"/>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="report_sticker">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="sticker_report.report_sticker_and_label_document"/>
+            </t>
+        </t>
+    </template>
+
+    <record id="paperformat_sticker_x" model="report.paperformat">
+        <field name="name">Sticker</field>
+        <field name="default" eval="False"/>
+        <field name="format">custom</field> <!-- FIXED -->
+        <field name="page_height">165</field>
+        <field name="page_width">107</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">20</field>
+        <field name="margin_bottom">15</field>
+        <field name="margin_left">10</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+        <field name="css_margins" eval="True"/>
+    </record>
+
+
+    <record id="action_report_sticker_type" model="ir.actions.report">
+        <field name="name">Sticker Print</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sticker_report.report_sticker</field>
+        <field name="report_file">sticker_report.report_sticker</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="sale_extension.paperformat_sticker_x"/>
+        <field name="print_report_name">'Sticker - %s' % (object.name)</field>
+    </record>
+
+</odoo>

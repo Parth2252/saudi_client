@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="add_mass_product_wizard_view_knk" model="ir.ui.view">
+        <field name="name">add.mass.product.wizard.view.knk</field>
+        <field name="model">add.mass.product.purchase</field>
+        <field name="arch" type="xml">
+            <form string="Add products">
+                <sheet>
+                    <field name="product_ids" nolabel="1" />
+                    <footer>
+                        <button name="add_product_wizard" type="object" class="oe_highlight" string="Confirm" />
+                        <button string="Cancel" class="btn-secondary" special="cancel" />
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_add_mass_product">
+        <field name="name">action_add_mass_product</field>
+        <field name="res_model">add.mass.product.purchase</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

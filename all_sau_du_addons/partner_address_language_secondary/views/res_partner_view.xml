@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <data noupdate="0">
+
+        <record id="view_form_res_partner_inherit" model="ir.ui.view">
+            <field name="name">res.partner.view.form.language.secondary</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="vat" position="before">
+                </field>
+            </field>
+        </record>
+
+        <record id="partner_address_res_partner_form_inherit" model="ir.ui.view">
+            <field name="name">partner.address.res.partner.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='vat']" position="before">
+                    <field name="cr_number" />
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+
+</odoo>

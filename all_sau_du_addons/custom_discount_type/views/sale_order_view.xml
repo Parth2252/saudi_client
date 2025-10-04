@@ -1,0 +1,16 @@
+<odoo>
+    <record id="view_order_form_inherit_discount_type" model="ir.ui.view">
+        <field name="name">sale.order.discount.type.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/list//field[@name='discount']" position="before">
+                <field name="discount_type" optional="show"/>
+                <field name="fixed_discount_value" string="Disc." groups="sale.group_discount_per_so_line" width="50px" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list//field[@name='discount']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="sale_order_line_form_attachment_inherit" model="ir.ui.view">
+            <field name="name">sale.order.line.attachment.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page//field[@name='order_line']//list//field[@name='ts_code']" position="after">
+                    <field name="datasheet_attach"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="stock_picking_attachment_inherit" model="ir.ui.view">
+            <field name="name">stock.picking.attachment.form</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page//field[@name='move_ids_without_package']//list//field[@name='product_id']"
+                       position="after">
+                    <field name="datasheet_attach"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

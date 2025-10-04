@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+    <template id="report_delivery_document_inherit_qr" inherit_id="stock.report_delivery_document">
+        <xpath expr="//t[@t-set='address']" position="replace">
+
+        </xpath>
+
+        <xpath expr="//t[@t-set='information_block']" position="replace">
+            <div class="row" style="margin-bottom: 15px; align-items: center;">
+                <!-- Title Section -->
+                <div class="col-4" style="text-align: center; padding: 20px 0;">
+                    <h2 style="color: #0066FF; margin: 0;">
+                        <span t-field="o.name"/>
+                    </h2>
+
+                </div>
+
+                <!-- Document Number -->
+                <div class="col-5" style="text-align: center;">
+                    <h2 style="color: #0066FF; font-weight: bold; margin: 0;">
+                        <t t-if="o.picking_type_id.code == 'incoming'">مذكرة استلام البضائع</t>
+                        <t t-elif="o.picking_type_id.code == 'outgoing'">إيصال التسليم</t>
+                    </h2>
+
+                    <h2 style="color: #0066FF; font-weight: bold; margin: 0;">
+                        <t t-if="o.picking_type_id.code == 'incoming'">Goods Receipt Note</t>
+                        <t t-elif="o.picking_type_id.code == 'outgoing'">Delivery Note</t>
+                    </h2>
+
+                </div>
+
+                <!-- QR Code -->
+                <!--                <div class="col-3" style="position: absolute; middle: 20px; right: 90px; height:100px; width:100px;">-->
+                <!--                    <div style="height:100px; width:100px;">-->
+                <!--                        <img t-if="o.qr_code" t-att-src="image_data_uri(o.qr_code)"-->
+                <!--                             style="width: 100%; height: 100%; object-fit: contain;"/>-->
+                <!--                        <span t-if="not o.qr_code">QR</span>-->
+                <!--                    </div>-->
+                <!--                </div>-->
+                <div class="col-3" style="text-align: right; padding-right: 20px; padding-bottom: 12px;">
+                    <div style="height: 100px; width: 100px; display: inline-block;">
+                        <img t-if="o.qr_code" t-att-src="image_data_uri(o.qr_code)"
+                             style="width: 100%; height: 100%; object-fit: contain;"/>
+                        <span t-if="not o.qr_code">QR</span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-12">
+                <table style="
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+        font-size: 12px;
+        border: 1px solid #f8f8ff;
+        border-radius: 10px;
+        background-color: #f8f8ff;
+        line-height: 18px;">
+                    <tr>
+                        <th style="width: 33.33%; padding: 6px 10px; font-weight: bold; text-align: left; color: #0066FF; border-top-left-radius: 10px;">
+                            عنوان التسليم<br/>Delivery Address
+                        </th>
+                        <th style="width: 33.33%; padding: 6px 10px; font-weight: bold; text-align: left; color: #0066FF;">
+                            عنوان العميل<br/>Customer Address
+                        </th>
+                        <th style="width: 33.33%; padding: 6px 10px; font-weight: bold; text-align: left; color: #0066FF; border-top-right-radius: 10px;">
+                            عنوان الفاتورة<br/>Invoice Address
+                        </th>
+                    </tr>
+                    <tr>
+                        <td style="width: 33.33%; padding: 6px 10px; text-align: left; border: 1px solid #f8f8ff; border-bottom-left-radius: 10px;">
+                            <span t-field="o.contact_id"
+                                  t-options='{"widget": "contact", "fields": ["address", "name", "phone", "email"], "no_marker": True, "phone_icons": True}'/>
+                        </td>
+                        <td style="width: 33.33%; padding: 6px 10px; text-align: left; border: 1px solid #f8f8ff;">
+                            <span t-field="o.partner_id"
+                                  t-options='{"widget": "contact", "fields": ["address", "name", "phone", "vat"], "no_marker": True, "phone_icons": True}'/>
+                        </td>
+                        <td style="width: 33.33%; padding: 6px 10px; text-align: left; border: 1px solid #f8f8ff; border-bottom-right-radius: 10px;">
+                            <span t-field="o.partner_invoice_id"
+                                  t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </xpath>
+
+        <xpath expr="//div[@class='page']" position="replace">
+            <div class="page" style="font-family: Arial; font-size:12px; line-height:14px;">
+
+                <div class="row" style="margin-bottom: 15px;">
+                    <div class="col-12">
+                        <table style="
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            font-size: 12px;
+            border: 1px solid #f8f8ff;
+            border-radius: 10px;
+            background-color: #f8f8ff;
+            line-height: 18px;">
+                            <tr>
+                                <th style="width: 33.33%; padding: 6px 10px; font-weight: bold; text-align: left; color: #0066FF; border-top-left-radius: 10px;">
+                                    رقم امر الشراء<br/>PO Number
+                                </th>
+                                <th style="width: 33.33%; padding: 6px 10px; font-weight: bold; text-align: left; color: #0066FF;">
+                                    تاريخ التسلیم<br/>Delivery Date
+                                </th>
+                                <th style="width: 33.33%; padding: 6px 10px; font-weight: bold; text-align: left; color: #0066FF; border-top-right-radius: 10px;">
+                                    البائع<br/>Salesman
+                                </th>
+                            </tr>
+                            <tr>
+                                <td style="width: 33.33%; padding: 6px 10px; text-align: left; border: 1px solid #f8f8ff; border-bottom-left-radius: 10px;">
+                                    <t t-if="o.picking_type_id.code == 'incoming'">
+                                        <span t-esc="o.purchase_order_names or '-'"/>
+                                    </t>
+                                    <t t-elif="o.picking_type_id.code == 'outgoing'">
+                                        <span t-esc="o.client_order_ref or o.porder_ref or '-'"/>
+                                    </t>
+                                    <!--                                    <t t-if="o.client_order_ref">-->
+                                    <!--                                        <span t-esc="o.client_order_ref"/>-->
+                                    <!--                                    </t>-->
+                                    <!--                                    <t t-else="">-->
+                                    <!--                                        <span t-esc="o.porder_ref"/>-->
+                                    <!--                                    </t>-->
+                                </td>
+
+                                <td style="width: 33.33%; padding: 6px 10px; text-align: left; border: 1px solid #f8f8ff;">
+                                    <span t-field="o.scheduled_date"/>
+                                </td>
+
+                                <t t-if="o.picking_type_id.code == 'incoming' and o.user_id">
+                                    <td style="width: 33.33%; padding: 6px 10px; text-align: left; border: 1px solid #f8f8ff; border-bottom-right-radius: 10px;">
+                                        <span t-field="o.user_id.name"/>
+                                    </td>
+                                </t>
+                                <t t-elif="o.picking_type_id.code == 'outgoing' and o.sale_user_id">
+                                    <td style="width: 33.33%; padding: 6px 10px; text-align: left; border: 1px solid #f8f8ff; border-bottom-right-radius: 10px;">
+                                        <span t-field="o.sale_user_id.name"/>
+                                    </td>
+                                </t>
+                                <!-- commented the code to remove the salesman_dn field. -->
+                                <!-- <t t-else="">
+                                    <td style="width: 33.33%; padding: 6px 10px; text-align: left; border: 1px solid #ccc; border-bottom-right-radius: 10px;">
+                                        <span t-field="o.salesman_dn.name"/>
+                                    </td>
+                                </t> -->
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <t t-set="show_po_ref" t-value="any(line.po_ref_do for line in o.move_ids_without_package)"/>
+
+                <table style="width:100%; border-collapse: collapse; font-size:12px;border:1px solid white;margin-top:10px;">
+                    <thead style="background-color: #0066FF; color: #fff;">
+                        <tr>
+                            <th style="padding: 6px; font-size:12px; font-weight:bold;">
+                                رقم سطر أمر الشراء
+                                <br/>
+                                <span style="margin-top:5px;display:inline-block;">PO Line No.</span>
+                            </th>
+                            <t t-if="show_po_ref">
+                                <th style="padding: 6px; font-size:12px; font-weight:bold;">
+                                    مرجع أمر الشراء
+                                    <br/>
+                                    <span style="margin-top:5px;display:inline-block;">PO Ref</span>
+                                </th>
+                            </t>
+
+                            <th style="padding: 6px; font-size:12px; font-weight:bold;">رقم الصنف
+                                <br/>
+                                <span style="margin-top:5px;display:inline-block;">TS CODE</span>
+                            </th>
+                            <th style="padding: 6px; font-size:12px; font-weight:bold;">رقم المنتج
+                                <br/>
+                                <span style="margin-top:5px;display:inline-block;">Item Code</span>
+                            </th>
+                            <th style="padding: 6px; font-size:12px; font-weight:bold;">الوصف
+                                <br/>
+                                <span style="margin-top:5px;display:inline-block;">Description</span>
+                            </th>
+                            <th style="padding: 6px; font-size:12px; font-weight:bold;">رقم المنتج
+                                <br/>
+                                <span style="margin-top:5px;display:inline-block;">Offered Description</span>
+                            </th>
+                            <th style="padding: 6px; font-size:12px; font-weight:bold;">وحدة القیاس
+                                <br/>
+                                <span style="margin-top:5px;display:inline-block;">UOM</span>
+                            </th>
+                            <th style="padding: 6px; font-size:12px; font-weight:bold;">الكمیة
+                                <br/>
+                                <span style="margin-top:5px;display:inline-block;">Qty</span>
+                            </th>
+                            <th style="padding: 6px; font-size:12px; font-weight:bold;">ملاحظات
+                                <br/>
+                                <span style="margin-top:5px;display:inline-block;">Remarks</span>
+                            </th>
+                        </tr>
+                        <!--                        <tr style="border-top:2px solid #0066FF">-->
+                        <!--                            <th style="padding: 6px; font-size:12px; font-weight:bold;">Line Item</th>-->
+                        <!--                            <th style="padding: 6px; font-size:12px; font-weight:bold;">TS CODE</th>-->
+                        <!--                            <th style="padding: 6px; font-size:12px; font-weight:bold;">Item Code</th>-->
+                        <!--                            <th style="padding: 6px; font-size:12px; font-weight:bold;">Description</th>-->
+                        <!--                            <th style="padding: 6px; font-size:12px; font-weight:bold;">UOM</th>-->
+                        <!--                            <th style="padding: 6px; font-size:12px; font-weight:bold;">Qty.</th>-->
+                        <!--                            <th style="padding: 6px; font-size:12px; font-weight:bold;">Remarks</th>-->
+                        <!--                        </tr>-->
+                    </thead>
+                    <tbody>
+                        <t t-set="line_num" t-value="1"/>
+                        <t t-foreach="o.move_ids_without_package" t-as="line">
+                            <tr t-att-style="'background-color: #ededed; height: 70px;' if line_num % 2 == 0 else 'height: 70px;'">
+                                <td style="padding: 7px; text-align: center;">
+                                    <t t-esc="line.sr_no_do"/>
+                                </td>
+                                <t t-if="show_po_ref">
+                                    <td style="padding: 7px; text-align: center;">
+                                        <t t-esc="line.po_ref_do or ''"/>
+                                    </td>
+                                </t>
+
+                                <td style="padding: 7px; text-align: center;">
+                                    <t t-esc="line.ts_code or ''"/>
+                                </td>
+                                <td style="padding: 7px; text-align: center;">
+                                    <t t-esc="line.sh_line_customer_code or ''"/>
+                                </td>
+
+
+                                <!--                                <td style="padding: 7px; text-align: center;">-->
+                                <!--    <t t-esc="line.sh_line_customer_code or line.product_id.default_code or ''"/>-->
+                                <!--</td>-->
+
+
+                                <td style="padding: 7px; text-align: center;">
+                                    <t t-esc="line.description or ''"/>
+                                </td>
+                                <td style="padding: 7px; text-align: center;">
+                                    <t t-if="line.offered_description_id">
+                                        <t t-esc="line.offered_description_id.name"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span style="color:green; font-weight:bold;">AS SPECIFIED</span>
+                                    </t>
+                                </td>
+
+
+                                <!--                                <td style="padding: 7px;">-->
+                                <!--    <t t-esc="line.description or line.product_id.name or ''"/>-->
+                                <!--</td>-->
+
+
+                                <td style="padding: 7px; text-align: center;">
+                                    <t t-esc="line.product_uom.name or ''"/>
+                                </td>
+                                <td style="padding: 7px; text-align: center;">
+                                    <t t-esc="line.quantity or 0"/>
+                                </td>
+                                <td style="padding: 7px;">
+                                    <t t-esc="line.remark or ''"/>
+                                </td>
+                            </tr>
+
+                            <t t-set="line_num" t-value="line_num + 1"/>
+                        </t>
+                        <!--                        <tr>-->
+                        <!--                            <td colspan="7">&#160;</td>-->
+                        <!--                        </tr>-->
+                        <!--                        <tr>-->
+                        <!--                            <td colspan="7">&#160;</td>-->
+                        <!--                        </tr>-->
+                        <!--                        <tr>-->
+                        <!--                            <td colspan="7">&#160;</td>-->
+                        <!--                        </tr>-->
+                    </tbody>
+                </table>
+
+                <div style="margin-top: 10px; border-radius: 14px; overflow: hidden; border: 1px solid black;">
+                    <div style="background: #0066FF; color: white; font-weight: bold; padding: 6px; border-top-left-radius: 14px; border-top-right-radius: 14px;">
+                        إقرار الاستلام / Acknowledgement
+                    </div>
+                    <div style="padding: 10px; background: white; border-top: 1px solid #0066FF; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px;">
+                        <p t-field="o.acknowledgement"/>
+                    </div>
+                </div>
+
+                <div class="row"
+                     style="margin-top: 10px; border:1px solid black;border-radius:14px;margin-top:5px; padding-top: 10px; font-weight:bold;">
+                    <div class="col-6">
+                        <span style="padding:8px;">
+                            Issued By:
+                            <t t-esc="o.validated_by_id.name"/>
+                        </span>
+                        <br/>
+                        <br/>
+                        <span style="padding:8px;">Signature:</span>
+                        <br/>
+                        <br/>
+                        <span style="padding:8px;">Date:</span>
+                        <br/>
+                        <br/>
+                    </div>
+                    <div class="col-6">
+                        <span style="padding:8px;">Received By:
+                            <!--                            <t t-if="o.validated_by_id">-->
+                            <!--                                <t t-esc="o.validated_by_id.name"/>-->
+                            <!--                            </t>-->
+                        </span>
+                        <br/>
+                        <br/>
+                        <span style="padding:8px;">Receiver's ID #:
+                            <!--                            <t t-if="o.validated_employee_id and o.validated_employee_id.identification_id">-->
+                            <!--                                <t t-esc="o.validated_employee_id.identification_id"/>-->
+                            <!--                            </t>-->
+                        </span>
+                        <br/>
+                        <br/>
+                        <span style="padding:8px;">Signature:</span>
+                        <br/>
+                        <br/>
+                        <span style="padding:8px;">Date:
+                            <t t-if="o.validated_datetime">
+                                <!--                                <span style="padding:8px;">-->
+                                <!--                                    Date:-->
+                                <!--                                    <t t-esc="o.validated_datetime.strftime('%d-%m-%Y %H:%M')"/>-->
+                                <!--                                </span>-->
+                            </t>
+                        </span>
+                        <br/>
+                        <br/>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

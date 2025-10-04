@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_invoice_with_payments_inherit" inherit_id="account.report_invoice_document">
+        <xpath expr="//table/thead/tr/th[@name='th_quantity']" position="before">
+            <th class="text-start" groups="l4l_product_vendor_code.l4l_group_vendor_product_code"
+                t-if="o.move_type in ('in_invoice', 'in_refund')">
+                <strong>Vendor Product Name</strong>
+            </th>
+            <th class="text-start" groups="l4l_product_vendor_code.l4l_group_vendor_product_code"
+                t-if="o.move_type in ('in_invoice', 'in_refund')">
+                <strong>Vendor Product Code</strong>
+            </th>
+        </xpath>
+
+        <xpath expr="//tbody/t/tr/t/td[position()='2']" position="before">
+            <td class="text-start" groups="l4l_product_vendor_code.l4l_group_vendor_product_code"
+                t-if="o.move_type in ('in_invoice', 'in_refund')">
+                <span t-field="line.vendor_product_name"/>
+            </td>
+            <td class="text-start" groups="l4l_product_vendor_code.l4l_group_vendor_product_code"
+                t-if="o.move_type in ('in_invoice', 'in_refund')">
+                <span t-field="line.vendor_product_code"/>
+            </td>
+        </xpath>
+    </template>
+</odoo>
+
+
+
+
+
+
+
+
+
+
+
+

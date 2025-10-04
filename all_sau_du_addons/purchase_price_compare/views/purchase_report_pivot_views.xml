@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="view_purchase_order_comparison_pivot">
+        <field name="name">product.comparison.pivot</field>
+        <field name="model">purchase.report</field>
+        <field name="arch" type="xml">
+            <pivot sample="1" disable_linking="1">
+                <field name="product_id" type="row"/>
+                <field name="qty_ordered" type="measure"/>
+                <field name="untaxed_total" type="measure"/>
+                <field name="partner_id" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_purchase_price_comparison_report" model="ir.actions.server">
+        <field name="name">Purchase Price Comparison</field>
+        <field name="model_id" ref="purchase.model_purchase_report"/>
+        <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+        <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = model.compare_purchase_price()
+        </field>
+    </record>
+
+
+</odoo>

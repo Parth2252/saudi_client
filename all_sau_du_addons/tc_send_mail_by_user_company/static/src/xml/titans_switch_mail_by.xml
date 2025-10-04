@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="tc_send_mail_by_user_company.titans_mail_server_template">
+        <div class="o_switch_language_menu d-none d-md-block">
+            <Dropdown menuClass="'o_switch_company_menu_dropdown'" position="'bottom-end'">
+                <button t-att-title="selected_server">
+                    <i class="fa fa-envelope" style="margin-right: 6px;"/>
+                    <span class="oe_topbar_name d-none d-lg-block" t-esc="selected_server"/>
+                </button>
+                <t t-set-slot="content">
+                    <t t-call="tc_send_mail_by_user_company.SwitchTypeItem"/>
+                </t>
+            </Dropdown>
+        </div>
+    </t>
+    <t t-name="tc_send_mail_by_user_company.SwitchTypeItem" owl="1">
+        <DropdownItem class="'p-0 bg-white'">
+            <div class="d-flex" data-menu="by_user" t-att-data-lang-id="by_user">
+                <div
+                        role="button"
+                        t-att-aria-pressed="isCurrent ? 'true' : 'false'"
+                        t-att-aria-label="'Switch to ' + 'by_user' "
+                        t-att-title="'Switch to ' + 'by_user' "
+                        tabindex="0"
+                        class="d-flex flex-grow-1 align-items-center py-2 ps-2"
+                        t-att-class="isCurrent ? 'alert-primary ms-1 me-2' : 'btn btn-light fw-normal border-0'"
+                        t-on-click="() => this._titansToggleMailClick(false)"
+                >
+                    <span
+                            class='lang_label pe-3'
+                            t-att-class="isCurrent ? 'text-900 fw-bold' : 'ms-1'">
+                        By User
+                    </span>
+                </div>
+            </div>
+            <div class="d-flex" data-menu="by_company" t-att-data-lang-id="'by_company'">
+                <div
+                        role="button"
+                        t-att-aria-pressed="isCurrent ? 'true' : 'false'"
+                        t-att-aria-label="'Switch to ' + 'by_company' "
+                        t-att-title="'Switch to ' + 'by_company' "
+                        tabindex="0"
+                        class="d-flex flex-grow-1 align-items-center py-2 ps-2"
+                        t-att-class="isCurrent ? 'alert-primary ms-1 me-2' : 'btn btn-light fw-normal border-0'"
+                        t-on-click="() => this._titansToggleMailClick(true)"
+                >
+                    <span
+                            class='lang_label pe-3'
+                            t-att-class="isCurrent ? 'text-900 fw-bold' : 'ms-1'">
+                        By Comapny
+                    </span>
+                </div>
+            </div>
+        </DropdownItem>
+    </t>
+</templates>

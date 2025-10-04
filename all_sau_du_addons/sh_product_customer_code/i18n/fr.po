@@ -1,0 +1,224 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* sh_product_customer_code
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-07-09 06:58+0000\n"
+"PO-Revision-Date: 2024-07-09 06:58+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_product_product__code_id
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_product_template__code_id
+msgid "Code"
+msgstr "Code"
+
+#. module: sh_product_customer_code
+#: model:ir.model,name:sh_product_customer_code.model_res_company
+msgid "Companies"
+msgstr "Entreprises"
+
+#. module: sh_product_customer_code
+#: model:ir.model,name:sh_product_customer_code.model_res_config_settings
+msgid "Config Settings"
+msgstr "Paramètres de configuration"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__create_uid
+msgid "Created by"
+msgstr "Créé par"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__create_date
+msgid "Created on"
+msgstr "Créé sur"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__name
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_separate_search_view
+msgid "Customer"
+msgstr "Client"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_product_product__sh_product_customer_ids
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_product_template__sh_product_customer_ids
+msgid "Customer Code"
+msgstr "Code client"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_account_move_line__sh_line_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sale_order_line__sh_line_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__product_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.inherit_sale_order_portal_content_for_cutomer_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.inherit_sale_order_report_view
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.invoice_report_product_code_inherit
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.product_template_search_view_inherit_costomer_code11
+msgid "Customer Product Code"
+msgstr "Code produit client"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_account_move_line__sh_line_customer_product_name
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_product_product__product_code_name
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_product_template__product_code_name
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sale_order_line__sh_line_customer_product_name
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__product_name
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.inherit_sale_order_portal_content_for_cutomer_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.inherit_sale_order_report_view
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.invoice_report_product_code_inherit
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.product_template_search_view_inherit_costomer_code11
+msgid "Customer Product Name"
+msgstr "Nom du produit client"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,help:sh_product_customer_code.field_sh_product_customer_info__name
+msgid "Customer of this product"
+msgstr "Client de ce produit"
+
+#. module: sh_product_customer_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_form_view_inherit
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_product_product_form_view_inherit
+msgid "Customers"
+msgstr "Clients"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__display_name
+msgid "Display Name"
+msgstr "Afficher un nom"
+
+#. module: sh_product_customer_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_separate_search_view
+msgid "Group By"
+msgstr "Par groupe"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__id
+msgid "ID"
+msgstr "IDENTIFIANT"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,help:sh_product_customer_code.field_sh_product_customer_info__product_id
+msgid ""
+"If not set, the vendor price will apply to all variants of this product."
+msgstr ""
+"S'il n'est pas défini, le prix du fournisseur s'appliquera à toutes les variantes de ce produit."
+
+#. module: sh_product_customer_code
+#: model:ir.model,name:sh_product_customer_code.model_account_move
+msgid "Journal Entry"
+msgstr "Entrée de journal"
+
+#. module: sh_product_customer_code
+#: model:ir.model,name:sh_product_customer_code.model_account_move_line
+msgid "Journal Item"
+msgstr "Article de journal"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__write_uid
+msgid "Last Updated by"
+msgstr "Dernière mise à jour par"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__write_date
+msgid "Last Updated on"
+msgstr "Dernière mise à jour le"
+
+#. module: sh_product_customer_code
+#: model:ir.model,name:sh_product_customer_code.model_product_template
+msgid "Product"
+msgstr "Produit"
+
+#. module: sh_product_customer_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_separate_search_view
+msgid "Product Code"
+msgstr "Code produit"
+
+#. module: sh_product_customer_code
+#: model:ir.actions.act_window,name:sh_product_customer_code.sh_product_customer_code_separate_view_action
+#: model:ir.ui.menu,name:sh_product_customer_code.sh_product_customer_code_menu
+#: model:ir.ui.menu,name:sh_product_customer_code.sh_product_customer_code_product_menu
+#: model:res.groups,name:sh_product_customer_code.group_product_customer_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_form_view_inherit
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_product_product_form_view_inherit
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_separate_form_view
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_separate_search_view
+msgid "Product Customer Code"
+msgstr "Code client du produit"
+
+#. module: sh_product_customer_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_add_pro_code_from_sales_res_config_settings
+msgid "Product Customer Code Configuration"
+msgstr "Configuration du code client du produit"
+
+#. module: sh_product_customer_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_separate_search_view
+msgid "Product Name"
+msgstr "Nom du produit"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__product_tmpl_id
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_separate_search_view
+msgid "Product Template"
+msgstr "Modèle de produit"
+
+#. module: sh_product_customer_code
+#: model:ir.model,name:sh_product_customer_code.model_product_product
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_sh_product_customer_info__product_id
+msgid "Product Variant"
+msgstr "Variante de produit"
+
+#. module: sh_product_customer_code
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_product_customer_code_separate_search_view
+msgid "Product Varient"
+msgstr "Variante de produit"
+
+#. module: sh_product_customer_code
+#: model:ir.model,name:sh_product_customer_code.model_sale_order
+msgid "Sales Order"
+msgstr "Commande client"
+
+#. module: sh_product_customer_code
+#: model:ir.model,name:sh_product_customer_code.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Ligne de commande client"
+
+#. module: sh_product_customer_code
+#: model:ir.model,name:sh_product_customer_code.model_sh_product_customer_info
+msgid "Sh Product Customer Code"
+msgstr "Code client du produit Sh"
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,help:sh_product_customer_code.field_product_product__code_id
+#: model:ir.model.fields,help:sh_product_customer_code.field_product_template__code_id
+#: model:ir.model.fields,help:sh_product_customer_code.field_sh_product_customer_info__product_code
+msgid ""
+"This vendor's product code will be used when printing a request for "
+"quotation. Keep empty to use the internal one."
+msgstr ""
+"Le code produit de ce fournisseur sera utilisé lors de l'impression d'une demande de "
+"devis. Gardez vide pour utiliser le devis interne."
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,help:sh_product_customer_code.field_product_product__product_code_name
+#: model:ir.model.fields,help:sh_product_customer_code.field_product_template__product_code_name
+#: model:ir.model.fields,help:sh_product_customer_code.field_sh_product_customer_info__product_name
+msgid ""
+"This vendor's product name will be used when printing a request for "
+"quotation. Keep empty to use the internal one."
+msgstr ""
+"Le nom de produit de ce fournisseur sera utilisé lors de l'impression d'une demande de "
+"devis. Gardez vide pour utiliser le devis interne."
+
+#. module: sh_product_customer_code
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_res_company__enable_pro_code_from_so
+#: model:ir.model.fields,field_description:sh_product_customer_code.field_res_config_settings__enable_pro_code_from_so
+#: model_terms:ir.ui.view,arch_db:sh_product_customer_code.sh_add_pro_code_from_sales_res_config_settings
+msgid "Want to add Product Code from Sale Order"
+msgstr "Vous souhaitez ajouter le code produit de la commande de vente"

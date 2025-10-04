@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form_inherit_knk" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.knk</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//notebook/page/field[@name='order_line']" position="before">
+                <button name="add_mass_product" type="object" class="oe_highlight" string="Add Mass Product" invisible="state not in ['draft', 'sent', 'sale']" />
+                <button name="import_from_file" type="object" class="oe_highlight ms-1" string="Import From File" invisible="state not in ['draft', 'sent', 'sale']" />
+            </xpath>
+        </field>
+    </record>
+</odoo>

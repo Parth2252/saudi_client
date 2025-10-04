@@ -1,0 +1,35 @@
+<odoo>
+    <record id="delivery_restriction_sale_order_form_inherit" model="ir.ui.view">
+        <field name="name">delivery.restriction.sale.order.form.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list/field[@name='invoice_status']" position="before">
+                <field name="delivery_status"
+                        decoration-success="delivery_status == 'full'"
+                        decoration-warning="delivery_status == 'partial'"
+                        decoration-primary="delivery_status == 'delivered'"
+                        decoration-info="delivery_status in ['pending', 'started']"
+                        widget="badge"
+                        optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="delivery_restriction_sale_order_search_inherit" model="ir.ui.view">
+        <field name="name">delivery.restriction.sale.order.search.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search/filter[@name='my_sale_orders_filter']" position="after">
+                <separator/>
+                    <filter name="pending" string="Not Delivered" domain="[('delivery_status', '=', 'pending')]" />
+                    <filter name="started" string="Started" domain="[('delivery_status', '=', 'started')]" />
+                    <filter name="partial" string="Partially Delivered" domain="[('delivery_status', '=', 'partial')]" />
+                    <filter name="delivered" string="Delivered" domain="[('delivery_status', '=', 'delivered')]"/>
+                    <filter name="full" string="Full Delivered" domain="[('delivery_status', '=', 'full')]"/>
+                <separator/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

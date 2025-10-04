@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit invoice view to add field. -->
+    <record id="display_creation_date_account_move_inherited_tree_view" model="ir.ui.view">
+        <field name="name">display.creation.date.account.move.inherited.tree.view</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="create_date" optional='show'/>
+                <field name="payment_creation_date" optional='show' />
+            </xpath>
+        </field>
+    </record>
+</odoo>

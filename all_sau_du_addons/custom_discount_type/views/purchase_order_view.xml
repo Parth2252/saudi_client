@@ -1,0 +1,16 @@
+<odoo>
+    <record id="view_purchase_order_form_inherit_discount_type" model="ir.ui.view">
+        <field name="name">purchase.order.discount.type.form</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/list//field[@name='discount']" position="before">
+                <field name="discount_type" optional="hide"/>
+                <field name="fixed_discount_value" readonly="qty_invoiced != 0" string="Disc." width="50px" optional="hide"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list//field[@name='discount']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

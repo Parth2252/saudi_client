@@ -1,0 +1,16 @@
+<odoo>
+    <record id="seq_rfq" model="ir.sequence">
+        <field name="name">RFQ Sequence</field>
+        <field name="code">purchase.order.rfq</field>
+        <field name="prefix">TS-RFQ-%(y)s-</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="seq_po" model="ir.sequence">
+        <field name="name">PO Sequence</field>
+        <field name="code">purchase.order.po</field>
+        <field name="prefix">TS-PO-%(y)s-</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

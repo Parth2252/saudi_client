@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="brand_promotion_message" inherit_id="web.brand_promotion_message" name="Brand Promotion Message">
+        <t t-set="odoo_logo" position="replace"/>
+        <t t-set="final_message" position="replace"/>
+        <t t-out="final_message % (odoo_logo, _message and ('- ' + _message) or '')" position="replace"/>
+    </template>
+</odoo>

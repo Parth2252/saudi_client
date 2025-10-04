@@ -1,0 +1,37 @@
+<odoo>
+    <record id="delivery_restriction_stock_picking_form_inherit" model="ir.ui.view">
+        <field name="name">delivery.restriction.stock.picking.form.inherit</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group/group[2]/field[@name='origin']" position="after">
+                <field name="gr_number"/>
+            </xpath>
+            <xpath expr="//header" position="inside">
+              <button name="confirm_gr_number" type="object" string="Confirm" invisible="state in ('delivered','done')"/>
+            </xpath>
+            <xpath expr="//header/button[3]" position="attributes">
+              <attribute name="invisible">state != ('delivered')</attribute>
+            </xpath>
+            <xpath expr="//header/button[4]" position="replace">
+            </xpath>
+        </field>
+    </record>
+
+    <record id="delivery_restriction_stock_picking_search_inherit" model="ir.ui.view">
+        <field name="name">delivery.restriction.stock.picking.search.inherit</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search/field[@name='origin']" position="after">
+                <field name="gr_number"/>
+            </xpath>
+            <xpath expr="//search/filter[@name='available']" position="after">
+                <filter name="done" string="Done" domain="[('state', '=', 'done')]"/>
+            </xpath>
+            <xpath expr="//search/filter[@name='available']" position="after">
+                <filter name="delivered" string="Delivered" domain="[('state', '=', 'delivered')]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

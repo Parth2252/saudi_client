@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- RFQ Email Template -->
+        <record id="email_template_custom_purchase_rfq" model="mail.template">
+            <field name="name">Purchase: RFQ Table</field>
+            <field name="model_id" ref="purchase.model_purchase_order"/>
+            <field name="subject">{{ object.company_id.name }} Order (Ref {{ object.name or 'n/a' }})</field>
+            <field name="partner_to">{{ object.partner_id.id }}</field>
+            <field name="description">Dynamic commercial offer-style email table based on RFQ</field>
+            <field name="lang">{{ object.partner_id.lang }}</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="font-size: 13px;">
+                        Dear <t t-out="object.partner_id.name or ''"/>,
+                        <t t-if="object.partner_id.parent_id">
+                            (<t t-out="object.partner_id.parent_id.name or ''"/>)
+                        </t>
+                        <br/>
+                        <br/>
+                        Please find the commercial details of our request below:
+                        <br/>
+                        <br/>
+
+                        <table style="border-collapse: collapse; width: 100%; font-size: 13px; border: 1px solid black;"
+                               cellpadding="4">
+                            <thead style="background-color: #0047BA; color: #FFFFFF;">
+                                <tr>
+                                    <th style="border: 1px solid black;">Sr. No.</th>
+                                    <th style="border: 1px solid black;">Item Code</th>
+                                    <th style="border: 1px solid black;">Product Description</th>
+                                    <th style="border: 1px solid black;">Quantity</th>
+                                    <th style="border: 1px solid black;">UOM</th>
+                                    <th style="border: 1px solid black;">Unit Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="serial" t-value="1"/>
+                                <t t-foreach="object.order_line" t-as="line">
+                                    <tr>
+                                        <td style="border: 1px solid black;">
+                                            <t t-out="serial"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-out="line.product_id.default_code or ''"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-out="line.name"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-out="line.product_qty"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-out="line.product_uom.name"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-out="line.u_pr_char or ''"/>
+                                        </td>
+                                    </tr>
+                                    <t t-set="serial" t-value="serial + 1"/>
+                                </t>
+                            </tbody>
+                        </table>
+
+
+                        <br/>
+                        <br/>
+                        Best regards,
+                        <t t-if="not is_html_empty(object.user_id.signature)">
+                            <br/>
+                            <br/>
+                            <t t-out="object.user_id.signature or ''"/>
+                        </t>
+                    </p>
+                </div>
+            </field>
+        </record>
+
+
+        <!-- PO Email Template -->
+        <record id="email_template_custom_purchase_po" model="mail.template">
+            <field name="name">Purchase: PO Table</field>
+            <field name="model_id" ref="purchase.model_purchase_order"/>
+            <field name="subject">{{ object.company_id.name }} Order (Ref {{ object.name or 'n/a' }})</field>
+            <field name="partner_to">{{ object.partner_id.id }}</field>
+            <field name="description">Dynamic commercial offer-style email table based on PO</field>
+            <field name="lang">{{ object.partner_id.lang }}</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="font-size: 13px;">
+                        Dear<t t-out="object.partner_id.name or ''"/>,
+                        <t t-if="object.partner_id.parent_id">
+                            (<t t-out="object.partner_id.parent_id.name or ''"/>)
+                        </t>
+                        <br/>
+                        <br/>
+                        Please find the commercial details of our request below:
+                        <br/>
+                        <br/>
+
+                        <table style="border-collapse: collapse; width: 100%; font-size: 13px; border: 1px solid black;"
+                               cellpadding="4">
+                            <thead style="background-color: #0047BA; color: #FFFFFF;">
+                                <tr>
+                                    <th style="border: 1px solid black;">Sr. No.</th>
+                                    <th style="border: 1px solid black;">Item Code</th>
+                                    <th style="border: 1px solid black;">Product Description</th>
+                                    <th style="border: 1px solid black;">Quantity</th>
+                                    <th style="border: 1px solid black;">UOM</th>
+                                    <th style="border: 1px solid black;">Unit Price</th>
+                                    <th style="border: 1px solid black;">Tax</th>
+                                    <th style="border: 1px solid black;">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="sr_no" t-value="0"/>
+                                <t t-foreach="object.order_line" t-as="line">
+                                    <t t-set="sr_no" t-value="sr_no + 1"/>
+                                    <tr>
+                                        <td style="border: 1px solid black;">
+                                            <t t-out="sr_no"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-out="line.product_id.default_code or ''"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-out="line.name"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-out="line.product_qty"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-out="line.product_uom.name"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-out="format_amount(line.price_unit, object.currency_id)"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-out="', '.join([tax.name for tax in line.taxes_id])"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-out="format_amount(line.price_subtotal, object.currency_id)"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <div style="width: 100%; margin-top: 20px;">
+                            <div style="float: right; width: 300px; font-size: 13px;">
+                                <table style="width: 100%; border-collapse: collapse; border: 1px solid #000;">
+                                    <tr style="background-color: #0047BA; color: white;">
+                                        <td style="padding: 6px; border: 1px solid #000;">Subtotal</td>
+                                        <td style="padding: 6px; border: 1px solid #000; text-align: right;"
+                                            t-out="format_amount(object.amount_untaxed, object.currency_id)"/>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 6px; border: 1px solid #000;">TAX</td>
+                                        <td style="padding: 6px; border: 1px solid #000; text-align: right;"
+                                            t-out="format_amount(object.amount_tax, object.currency_id)"/>
+                                    </tr>
+                                    <tr style="background-color: #0047BA; color: white; font-weight: bold;">
+                                        <td style="padding: 6px; border: 1px solid #000;">Total</td>
+                                        <td style="padding: 6px; border: 1px solid #000; text-align: right;"
+                                            t-out="format_amount(object.amount_total, object.currency_id)"/>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+
+                        <br/>
+                        <br/>
+                        Best regards,
+                        <t t-if="not is_html_empty(object.user_id.signature)">
+                            <br/>
+                            <br/>
+                            <t t-out="object.user_id.signature or ''"/>
+                        </t>
+                    </p>
+                </div>
+            </field>
+        </record>
+
+    </data>
+</odoo>

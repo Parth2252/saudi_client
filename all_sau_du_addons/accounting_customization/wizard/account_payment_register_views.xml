@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record
+        id="accounting_customization_account_payment_register_inherit_wizard_view"
+        model="ir.ui.view"
+    >
+        <field
+            name="name"
+        >accounting.customization.account.payment.register.inherit.wizard.view</field>
+        <field name="model">account.payment.register</field>
+        <field name="inherit_id" ref="account.view_account_payment_register_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_bank_id']" position="after">
+                <field name="bank_transaction_number" />
+                <field name="is_already_attach" />
+                <field name="attachment_ids" widget="many2many_binary" options="{'no_create': True}" />
+            </xpath>
+        </field>
+    </record>
+</odoo>

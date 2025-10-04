@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_base_setup" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//setting[@id='inter_company']" position="after">
+                <setting id="generate_code" string="Generate Code" company_dependent="1"
+                    help="Automatically generate code of vendor and customer"
+                    title="Generate automatically code of vendor and customers">
+                    <group>
+                        <field name="customer_code_prefix" />
+                        <field name="vendor_code_prefix" />
+                    </group>
+                    <button string="Generate Code" name="action_generate_code" type="object" class="oe_highlight" />
+                </setting>
+            </xpath>
+        </field>
+    </record>
+</odoo>

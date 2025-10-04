@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Server action for update or set the payment date at account move level. -->
+        <record id="accounting_customization_model_account_move_action_update_purchase_buyer" model="ir.actions.server">
+            <field name="name">Update Purchase Buyer</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="binding_model_id" ref="account.model_account_move"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">action = records._update_purchase_buyer()</field>
+        </record>
+
+        <!-- Server action for update or set the payment date at account move level. -->
+        <record id="accounting_customization_model_account_move_action_update_sale_partner" model="ir.actions.server">
+            <field name="name">Update Sale Customer</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="binding_model_id" ref="account.model_account_move"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">action = records.update_sale_customer_from_purchase()</field>
+        </record>
+    </data>
+</odoo>

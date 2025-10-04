@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit purchase order view to add the field. -->
+    <record id="display_creation_date_purchase_order_inherited_tree_view" model="ir.ui.view">
+        <field name="name">display.creation.date.purchase.order.inherited.tree.view</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="create_date" optional='show'/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherit RFQ view to add the field. -->
+    <record id="display_creation_date_rfq_inherited_tree_view" model="ir.ui.view">
+        <field name="name">display.creation.date.rfq.inherited.tree.view</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="before">
+                <field name="create_date" optional='show'/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

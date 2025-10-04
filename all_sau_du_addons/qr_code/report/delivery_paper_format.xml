@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="paperformat_delivery_report" model="report.paperformat">
+        <field name="name">Delivery Paper Format</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">10</field>
+        <field name="margin_bottom">32</field>
+        <field name="margin_left">0</field>
+        <field name="margin_right">0</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">35</field>
+        <field name="dpi">90</field>
+        <field name="css_margins" eval="True"/>
+    </record>
+    <!--    <record id="action_report_delivery_custom" model="ir.actions.report">-->
+    <!--        <field name="name">Delivery Slip (Custom Format)</field>-->
+    <!--        <field name="model">stock.picking</field>-->
+    <!--        <field name="report_type">qweb-pdf</field>-->
+    <!--        <field name="report_name">stock.report_deliveryslip</field>-->
+    <!--        <field name="report_file">stock.report_deliveryslip</field>-->
+    <!--        <field name="print_report_name">'Delivery Slip - %s - %s' % (object.partner_id.name or '', object.name)</field>-->
+    <!--        <field name="binding_model_id" ref="stock.model_stock_picking"/>-->
+    <!--        <field name="binding_type">report</field>-->
+    <!--        <field name="paperformat_id" ref="qr_code.paperformat_delivery_report"/>-->
+    <!--    </record>-->
+
+</odoo>

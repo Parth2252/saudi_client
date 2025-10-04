@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="l4l_report_purchase_order_quotation_document_inherit"
+              inherit_id="purchase.report_purchasequotation_document">
+        <xpath expr="//thead//tr/th[@name='th_description']" position="after">
+            <th name="th_vendor_name" class="text-center"
+                groups="l4l_product_vendor_code.l4l_group_vendor_product_code">
+                <strong>Vendor Product Name</strong>
+            </th>
+            <th name="th_vendor_code" class="text-center"
+                groups="l4l_product_vendor_code.l4l_group_vendor_product_code">
+                <strong>Vendor Product Code</strong>
+            </th>
+        </xpath>
+
+        <xpath expr="//tbody/t/tr/t/td[position()='1']" position="after">
+            <td class="text-center" groups="l4l_product_vendor_code.l4l_group_vendor_product_code">
+                <span t-field="order_line.vendor_product_name"/>
+            </td>
+            <td class="text-center" groups="l4l_product_vendor_code.l4l_group_vendor_product_code">
+                <span t-field="order_line.vendor_product_code"/>
+            </td>
+        </xpath>
+    </template>
+
+    <template id="l4l_report_purchase_order_document_inherit"
+              inherit_id="purchase.report_purchaseorder_document">
+        <xpath expr="//tr/th[@name='th_description']" position="after">
+            <th name="th_vendor_name" class="text-center"
+                groups="l4l_product_vendor_code.l4l_group_vendor_product_code">
+                <strong>Vendor Product Name</strong>
+            </th>
+            <th name="th_vendor_code" class="text-center"
+                groups="l4l_product_vendor_code.l4l_group_vendor_product_code">
+                <strong>Vendor Product Code</strong>
+            </th>
+        </xpath>
+
+        <xpath expr="//tbody/t/tr/t/td[position()='1']" position="after">
+            <td class="text-center" groups="l4l_product_vendor_code.l4l_group_vendor_product_code">
+                <span t-field="line.vendor_product_name"/>
+            </td>
+            <td class="text-center" groups="l4l_product_vendor_code.l4l_group_vendor_product_code">
+                <span t-field="line.vendor_product_code"/>
+            </td>
+        </xpath>
+    </template>
+</odoo>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="web_remove_powered_by_odoo" inherit_id="web.login_layout" priority="10">
+        <xpath expr="//div[child::a[@href='https://www.odoo.com?utm_source=db&amp;utm_medium=auth']]/a" position="replace">
+            <!-- Removed the Powered by Odoo link and its div -->
+
+        </xpath>
+    </template>
+</odoo>

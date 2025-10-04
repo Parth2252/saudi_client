@@ -1,0 +1,24 @@
+<odoo>
+  <data>
+    <record id="crm_customization_crm_stage_inherited_form_view" model="ir.ui.view">
+        <field name="name">crm.customization.crm.stage.inherited.form.view</field>
+        <field name="model">crm.stage</field>
+        <field name="inherit_id" ref="crm.crm_stage_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/group/group" position="after">
+                <group name="crm_stage_worflow_state" string="Workflow States">
+                    <field name="is_confirm_sale_order_created_state" />
+                    <field name="is_po_confirm_state" />
+                    <field name="is_vendor_bill_created_state" />
+                    <field name="is_vendor_bill_paid_state" />
+                    <field name="is_goods_received_state" />
+                    <field name="is_customer_delivered_state" />
+                    <field name="is_grn_entered_state" />
+                    <field name="is_customer_invoiced_state" />
+                    <field name="is_customer_invoice_paid_state" />
+                </group>
+            </xpath>           
+        </field>
+    </record>
+  </data>
+</odoo>

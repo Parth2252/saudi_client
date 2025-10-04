@@ -1,0 +1,56 @@
+<odoo>
+    <template id="inherit_invoice_line_table_columns" inherit_id="l10n_gcc_invoice.arabic_english_invoice">
+
+        <xpath expr="//table[@name='invoice_line_table']/thead/tr" position="inside">
+            <!--            <th style="text-align: center; font-weight: bold;">-->
+            <!--                <span>رقم الفاتورة<br/>INVOICE NO-->
+            <!--                </span>-->
+            <!--            </th>-->
+            <th style="text-align: center; font-weight: bold;">
+                <span>رقم مذكرة التسليم<br/>GR NUMBER
+                </span>
+            </th>
+            <th style="text-align: center; font-weight: bold;">
+                <span>مدة الدفع<br/>PAYMENT TERM
+                </span>
+            </th>
+        </xpath>
+
+
+        <xpath expr="//table[@name='invoice_line_table']//t[@t-foreach='lines']/tr/t[1]" position="after">
+            <td style="text-align: center;" t-if="line.display_type not in ('line_note', 'line_section')">
+                <t t-esc="o.delivery_note_number or ''"/>
+            </td>
+            <td style="text-align: center;" t-if="line.display_type not in ('line_note', 'line_section')">
+                <t t-esc="line.sale_line_ids and line.sale_line_ids[0].order_id.payment_term_id.name or ''"/>
+            </td>
+        </xpath>
+
+
+        <!--        <xpath expr="//table[@name='invoice_line_table']/tbody" position="inside">-->
+        <!--            &lt;!&ndash;            <t t-set="invoice_no" t-value="o.name"/>&ndash;&gt;-->
+        <!--            <t t-set="gr_no" t-value="o.delivery_note_number or ''"/>-->
+        <!--            &lt;!&ndash;            <t t-set="payment_term" t-value="o.invoice_payment_term_id.name if o.invoice_payment_term_id else ''"/>&ndash;&gt;-->
+        <!--            <t t-set="payment_term"-->
+        <!--               t-value="o.invoice_line_ids and o.invoice_line_ids[0].sale_line_ids and o.invoice_line_ids[0].sale_line_ids[0].order_id.payment_term_id.name or ''"/>-->
+
+
+        <!--            <t t-foreach="lines" t-as="line" t-skip="True">-->
+        <!--                <tr t-att-class="'fw-bold o_line_section' if line.display_type == 'line_section' else 'fst-italic o_line_note' if line.display_type == 'line_note' else ''">-->
+        <!--                    <t t-if="line.display_type not in ('line_note', 'line_section')">-->
+        <!--                        &lt;!&ndash;                        <td style="text-align: center;">&ndash;&gt;-->
+        <!--                        &lt;!&ndash;                            <t t-esc="invoice_no"/>&ndash;&gt;-->
+        <!--                        &lt;!&ndash;                        </td>&ndash;&gt;-->
+        <!--                        <td style="text-align: center;">-->
+        <!--                            <t t-esc="gr_no"/>-->
+        <!--                        </td>-->
+        <!--                        <td style="text-align: center;">-->
+        <!--                            <t t-esc="payment_term"/>-->
+        <!--                        </td>-->
+        <!--                    </t>-->
+        <!--                </tr>-->
+        <!--            </t>-->
+        <!--        </xpath>-->
+
+    </template>
+</odoo>

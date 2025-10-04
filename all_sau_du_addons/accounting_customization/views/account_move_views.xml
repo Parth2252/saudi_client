@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit invoice view to add field. -->
+    <record id="accounting_customization_account_move_inherited_tree_view" model="ir.ui.view">
+        <field name="name">accounting_customization.account.move.inherited.tree.view</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="payment_journal_id" optional='show'/>
+                <field name="sale_partner_id" optional="show" invisible="move_type != 'in_invoice'"/>
+                <field name="buyer_id" optional="show" invisible="move_type != 'in_invoice'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherit invoice view to add field. -->
+    <record id="accounting_customization_account_move_inherited_form_view" model="ir.ui.view">
+        <field name="name">accounting_customization.account.move.inherited.form.view</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='ref']" position="after">
+                <field name="payment_journal_id" />
+                <field name="buyer_id" invisible="move_type != 'in_invoice'" />
+                <field name="sale_partner_id" invisible="move_type != 'in_invoice'"/>
+                <field name="purchase_id" />
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherit search view. -->
+    <record id="accounting_customization_account_move_search_invoice_inherit" model="ir.ui.view">
+        <field name="name">accounting_customization.account.move.search.invoice.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search/group/filter[@name='groupy_by_journal']" position="after">
+                <filter string="Payment Journal" name="groupy_by_payment_journal" domain="[]" context="{'group_by': 'payment_journal_id'}"/>
+                <filter string="Buyer" name="groupy_by_buyer" domain="[]" context="{'group_by': 'buyer_id'}"/>
+            </xpath>
+            <xpath expr="//search/field[@name='ref']" position="before">
+                <field name="buyer_id" />
+            </xpath>
+            <xpath expr="//search/separator[3]" position="before">
+                <separator/>
+                    <filter name="not_paid" string="Not paid" domain="[('status_in_payment', '=', 'not_paid')]" />
+                    <filter name="in_payment" string="In Payment" domain="[('status_in_payment', '=', 'in_payment')]" />
+                    <filter name="paid" string="Paid" domain="[('status_in_payment', '=', 'paid')]" />
+                    <filter name="partial" string="Partially paid" domain="[('status_in_payment', '=', 'partial')]"/>
+                    <filter name="reversed" string="Reversed" domain="[('status_in_payment', '=', 'reversed')]"/>
+                    <filter name="blocked" string="Blocked" domain="[('status_in_payment', '=', 'blocked')]" />
+                    <filter name="draft" string="Draft" domain="[('status_in_payment', '=', 'draft')]"/>
+                    <filter name="cancell" string="Cancelled" domain="[('status_in_payment', '=', 'cancel')]"/>
+                <separator/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

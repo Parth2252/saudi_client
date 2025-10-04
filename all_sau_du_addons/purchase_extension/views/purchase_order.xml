@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="purchase_order_kpis_tree" model="ir.ui.view">
+        <field name="name">purchase.order.tree.overdue</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="default_order">date_order</attribute>
+                <attribute name="decoration-danger">is_overdue</attribute>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="sale_partner_id"/>
+            </xpath>
+            <xpath expr="//field[@name='date_order']" position="after">
+                <field name="date_order_display"/>
+            </xpath>
+            <xpath expr="//field[@name='date_order']" position="attributes">
+                <attribute name="string">Delivery Date</attribute>
+            </xpath>
+
+        </field>
+    </record>
+    <record id="view_purchase_order_filter" model="ir.ui.view">
+        <field name="name">request.quotation.select</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.view_purchase_order_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="partner_ref"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="purchase_order_form" model="ir.ui.view">
+        <field name="name">purchase.order.tree.overdue</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page/field[@name='order_line']/list/field[@name='product_qty']" position="after">
+                <field name="ts_code"/>
+                <field name="product_code"/>
+            </xpath>
+            <xpath expr="//page/field[@name='order_line']/list/field[@name='product_id']" position="before">
+                <field name="sr_no_po"/>
+            </xpath>
+
+            <!--            NEW-->
+            <xpath expr="//field[@name='date_order']" position="after">
+                <field name="date_order_display"/>
+            </xpath>
+            <!-- Added fields. -->
+            <xpath expr="//field[@name='currency_id']" position="after">
+                <field name="print_vendor_item_code_and_name" invisible="state not in '(purchase, done)'" />
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="domain">[('is_company', '=', True)]</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="contact_id"
+                       domain="['&amp;', ('parent_id', '=', partner_id), ('is_company', '!=', True), '|', ('company_id', '=', False), ('company_id', '=', company_id)]"
+                       widget="res_partner_many2one"
+                       context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}"
+                       placeholder="Type to find a customer contact..." readonly="state in ['cancel', 'sale']"/>
+            </xpath>
+            <xpath expr="//field[@name='currency_id']" position="after">
+                <field name="po_expire_date" />
+                <field name="sale_partner_id" />
+            </xpath>
+            <!--            NEW-->
+
+        </field>
+    </record>
+
+</odoo>

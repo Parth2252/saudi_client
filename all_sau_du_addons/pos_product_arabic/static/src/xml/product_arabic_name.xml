@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="pos_product_arabic.template" inherit_id="point_of_sale.template">
+    <t t-extend="Product">
+        <t t-jquery=".product-name" t-operation="append">
+            <t t-if="product.arabic_name">
+                /
+                <t t-esc="product.arabic_name"/>
+            </t>
+        </t>
+    </t>
+
+
+    <t t-extend="PosTicket">
+        <t t-jquery="t[t-esc='orderline.get_product().display_name']" t-operation="replace">
+            <t t-esc="orderline.get_product().display_name"/>
+            <t t-if="orderline.get_product().arabic_name">
+                <t t-esc="' / ' + orderline.get_product().arabic_name"/>
+            </t>
+
+        </t>
+    </t>
+
+</templates>

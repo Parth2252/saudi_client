@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <template id="sale_order_to_invoice_journal_dashboard_account_journal_dashboard_inherit_kanban_view" inherit_id="account.account_journal_dashboard_kanban_view">
+    <xpath expr="//kanban/templates/t[@t-name='JournalBodySalePurchase']/div[2]/div[@t-if='dashboard.number_draft>" position="before">
+        <div class="alert alert-info" t-if="journal_type == 'sale'">
+          <strong>Ready To Invoice: </strong>
+          <a type="object" name="action_open_sale_orders_to_invoice" context="{'search_default_to_check': True}"><span><t t-esc="dashboard.sale_orders_to_invoice_count"/> Orders</span></a><br/>
+          <span><strong>Total Amount: </strong><t t-esc="dashboard.sale_orders_to_invoice_total"/></span>
+        </div>
+    </xpath>
+  </template>
+</odoo>

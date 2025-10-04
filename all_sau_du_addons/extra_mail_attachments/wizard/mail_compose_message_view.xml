@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <!-- Inherit wizard view to add new m2m field of object ir.attachment and create its kanban view -->
+        <record model="ir.ui.view" id="email_compose_message_wizard_form_inherit">
+            <field name="name">mail.compose.message.form.inherit</field>
+            <field name="model">mail.compose.message</field>
+            <field name="inherit_id" ref="mail.email_compose_message_wizard_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//footer" position="before">
+                    <group invisible="not has_extra_attachments">
+                        <div style="text-align:justify">
+                            <strong>
+                                <br/>
+                                Below attachments are not included by default.
+                                <br />
+                                Please click on "Attach to mail" for an individual
+                                records, which you want to be included in the mail.
+                            </strong>
+                            <br />
+                            <hr />
+                        </div>
+                    </group>
+                    <group>
+                        <field name="extra_attachment_ids" readonly="True" nolabel="1">
+                            <kanban create="false" edit="false">
+                                <templates>
+                                    <t t-name="kanban-box">
+                                        <div t-attf-class="oe_kanban_global_click">
+                                            <div class="button-add-top-right">
+                                                <button
+                                                    class="btn btn-primary"
+                                                    name="action_add_attchment"
+                                                    type="object"
+                                                    context="{'mail_compose_wizard_id': parent.id, 'mail_compose_wizard_model': 'mail.compose.message'}"
+                                                >
+                                                    Attach to mail
+                                                </button>
+                                            </div>
+                                            <div class="oe_kanban_details">
+                                                <strong class="o_kanban_record_title">
+                                                    <field name="name" />
+                                                    <br />
+                                                    <field name="res_model" />
+                                                    <br />
+                                                    <field name="res_name" />
+                                                </strong>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </templates>
+                            </kanban>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

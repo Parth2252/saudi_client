@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_order_form_inherit_custom_fields" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.custom.fields</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Added field. -->
+            <xpath expr="/form/sheet/notebook/page/field[@name='order_line']/list/field[@name='name']" position="after">
+                <field name="pr_number" optional='hide'/>
+                <field name="ts_code"/>
+                <field name="offered_description_id"
+                       string="Offered Description"
+                       placeholder="AS SPECIFIED"
+                       class="offered-placeholder-red"
+                       options="{'no_create': True}"
+                       readonly="is_not_available"
+                       context="{'partner_id':parent.partner_id}"/>
+
+
+                <field name="is_not_available" />
+                <field name="offered_image" widget="image" options="{'size': [64, 64]}" readonly="1"/>
+                <field name="delivery_time" string="Delivery Time"/>
+                <field name="delivery_date" />
+            </xpath>
+            <xpath expr="/form/sheet/notebook/page/field[@name='order_line']/list/field[@name='product_template_id']"
+                   position="before">
+                <field name="sr_no_so"/>
+
+            </xpath>
+
+            <!--            NEW-->
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="domain">[('is_company', '=', True)]</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="contact_id"
+                       domain="['&amp;', '&amp;', ('parent_id', '=', partner_id), ('type', '=', 'contact'), ('is_company', '!=', True), '|', ('company_id', '=', False), ('company_id', '=', company_id)]"
+                       widget="res_partner_many2one"
+                       context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}"
+                       placeholder="Type to find a customer contact..." readonly="state in ['cancel', 'sale']"/>
+            </xpath>
+            <field name="partner_invoice_id" position="attributes">
+                <attribute name="domain">[('type', '=', 'invoice'), ('parent_id', '=', partner_id)]</attribute>
+                <attribute name="context">{'default_type': 'invoice'}</attribute>
+            </field>
+
+            <!-- Delivery address filter -->
+            <field name="partner_shipping_id" position="attributes">
+                <attribute name="domain">[('type', '=', 'delivery'), ('parent_id', '=', partner_id)]</attribute>
+                <attribute name="context">{'default_type': 'delivery'}</attribute>
+            </field>
+
+            <!--            NEW-->
+
+
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+
+                <field name="client_order_ref"
+                       placeholder="PO Reference" string="PO Reference" readonly="state in ['cancel', 'sale']"/>
+                <field name="quote_desc" string="RFQ / Description"/>
+                <field name="po_expire_date" />
+                <field name="commitment_date"/>
+                <field name="validity_duration_days" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="sale_order_view_search_inherit" model="ir.ui.view">
+        <field name="name">sale.order.view.search.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="/search" position="inside">
+                <field name="client_order_ref"/>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="view_order_form_move_incoterm_sale_stock" model="ir.ui.view">
+        <field name="name">sale.order.form.move.incoterm.sale.stock</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_stock.view_order_form_inherit_sale_stock"/>
+        <field name="arch" type="xml">
+            <!-- Move existing incoterm field -->
+            <xpath expr="//field[@name='payment_term_id']" position="before">
+            <xpath expr="//field[@name='incoterm']" position="move"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

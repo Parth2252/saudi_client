@@ -1,0 +1,57 @@
+<odoo>
+    <record id="view_partner_form_inherit_bank_details" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.bank.details</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Bank Details">
+                    <group>
+                        <field name="beneficiary_country"/>
+                        <field name="beneficiary_currency_id"/>
+                        <field name="iban_number" />
+                        <field name="account_number"/>
+                        <field name="beneficiary_bank_name"/>
+                        <field name="bank_city"/>
+                        <field name="swift_code"/>
+                        <field name="beneficiary_full_name"/>
+                        <field name="beneficiary_short_name"/>
+                        <field name="beneficiary_address"/>
+                        <field name="beneficiary_city"/>
+                        <field name="postal_code"/>
+                    </group>
+                </page>
+
+                <page string="Legal Documents" name="legal_documents">
+                    <group>
+                        <!-- CR Section -->
+                        <group string="CR Document">
+                            <field name="cr_document"/>
+                            <button name="action_preview_cr_document" type="object" string="Preview CR Document" class="btn-secondary"/>
+                            <field name="cr_expire_date"/>
+                        </group>
+
+                        <!-- National Section -->
+                        <group string="National Address Document">
+                            <field name="national_address_document"/>
+                            <button name="action_preview_national_address_document" type="object" string="Preview National Address" class="btn-secondary"/>
+                            <field name="national_certificate_expire_date"/>
+                        </group>
+
+                        <!-- VAT Section -->
+                        <group string="VAT Certificate">
+                            <field name="vat_certificate_document"/>
+                            <button name="action_preview_vat_certificate_document" type="object" string="Preview VAT Certificate" class="btn-secondary"/>
+                        </group>
+
+                        <!-- Bank Section -->
+                        <group string="Bank Latter">
+                            <field name="bank_latter_document"/>
+                            <button name="action_preview_bank_latter_document" type="object" string="Preview Bank Latter" class="btn-secondary"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

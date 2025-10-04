@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="custom_res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">custom.res.config.settings.view.form</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="purchase.res_config_settings_view_form_purchase"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@name='purchase_setting_container']" position="before">
+                <block title="Vendor Code and Name" name="vendor_code_setting_container"
+                       groups="l4l_product_vendor_code.l4l_group_vendor_product_code">
+                    <setting id="enable_vendor_code_and_name_setting"
+                             string="Add/Update Product Code From Purchase Order"
+                             help="Add or Update vendor product code and vendor product name from the purchase order">
+                        <field name="enable_vendor_code_and_name"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

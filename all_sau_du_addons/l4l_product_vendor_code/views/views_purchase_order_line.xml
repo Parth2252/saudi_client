@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_purchase_order_form_inherit" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="vendor_product_name" groups="l4l_product_vendor_code.l4l_group_vendor_product_code"
+                       optional="hide" force_save="1" readonly="enable_vendor_code_and_name == False"/>
+                <field name="vendor_product_code" groups="l4l_product_vendor_code.l4l_group_vendor_product_code"
+                       optional="hide" force_save="1" readonly="enable_vendor_code_and_name == False"/>
+                <field name="enable_vendor_code_and_name" column_invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template inherit_id="portal.portal_record_sidebar" id="portal_record_sidebar">
+        <xpath expr="//div[@id='sidebar_content']//div[last()]" position="replace"/>
+    </template>
+</odoo>

@@ -1,0 +1,30 @@
+<odoo>
+
+
+    <record id="view_picking_form_inherit_packing_fields" model="ir.ui.view">
+        <field name="name">stock.picking.form.qr.code</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+
+
+            <xpath expr="//field[@name='move_ids_without_package']/list" position="inside">
+                <field name="delivery_date"/>
+                <field name="po_ref"/>
+                <field name="boxes_qty"/>
+                <field name="gross_weight"/>
+                <field name="pallet_qty"/>
+                <field name="offered_description_id"/>
+            </xpath>
+            <xpath expr="//page/field[@name='move_ids_without_package']/list/field[@name='product_id']"
+                   position="before">
+                <field name="sr_no_do" string="Order No"/>
+                <field name="po_ref_do"/>
+            </xpath>
+
+        </field>
+    </record>
+
+
+
+</odoo>

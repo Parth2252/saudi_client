@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="report_purchasequotation_document" inherit_id="purchase.report_purchasequotation_document">
+
+        <!-- Added address details. -->
+        <xpath expr="//t[@t-set='address']" position="replace" />
+        <xpath expr="//t[@t-if='o.dest_address_id']" position="replace">
+            <div style="border: 2px solid #000; border-radius: 8px; padding: 10px;">
+                <div class="row">
+                    <!-- Shipping Address -->
+                    <div class="col-4">
+                        <t t-if="o.dest_address_id">
+                            <strong class="d-block" style="font-weight: bold; color: #0066ff;">Shipping address</strong>
+                            <div t-field="o.dest_address_id"
+                                 t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                        </t>
+                        <t t-else="">
+                            <strong class="d-block" style="font-weight: bold; color: #0066ff;">Shipping address</strong>
+                            <span t-field="o.picking_type_id.warehouse_id.name"/>
+                            <div t-field="o.picking_type_id.warehouse_id.partner_id"
+                                 t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
+                        </t>
+                    </div>
+
+                    <!-- Supplier Information -->
+                    <div class="col-4">
+                        <strong style="font-weight: bold; color: #0066ff; margin-bottom: 6px;">Supplier Information</strong>
+                        <div>
+                            <span t-esc="o.partner_id.name"/><br/>
+                            <t t-if="o.partner_id.street"><span t-esc="o.partner_id.street"/><br/></t>
+                            <t t-if="o.partner_id.street2"><span t-esc="o.partner_id.street2"/><br/></t>
+                            <div>
+                                <span t-if="o.partner_id.city" t-esc="o.partner_id.city"/>
+                                <t t-if="o.partner_id.state_id">
+                                    <span>, <t t-esc="o.partner_id.state_id.name"/></span>
+                                </t>
+                                <t t-if="o.partner_id.zip">
+                                    <span> - <t t-esc="o.partner_id.zip"/></span>
+                                </t>
+                            </div>
+                            <t t-if="o.partner_id.country_id">
+                                <span t-esc="o.partner_id.country_id.name"/>
+                            </t>
+                            <br/>
+                            <span t-esc="o.partner_id.email"/><br/>
+                            <span t-esc="o.partner_id.phone"/><br/>
+                            <span t-esc="o.partner_id.mobile"/>
+                        </div>
+                    </div>
+
+                    <!-- Contact Person Information -->
+                    <div class="col-4">
+                        <t t-set="contact_person" t-value="o.partner_id.child_ids.filtered(lambda c: c.type == 'contact')[:1]"/>
+                        <t t-if="contact_person">
+                            <strong style="font-weight: bold; color: #0066ff; margin-bottom: 6px;">Contact Person Information</strong>
+                            <div t-esc="contact_person.name"/>
+                            <div t-esc="contact_person.phone"/>
+                            <div t-esc="contact_person.mobile"/>
+                            <div t-esc="contact_person.email"/>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+
+        <!-- Update the main table header and data -->
+        <xpath expr="//thead/tr" position="replace">
+            <tr>
+                <th class="text-center">
+                    <strong>#<br/>SN
+                    </strong>
+                </th>
+                <th class="text-center">
+                    <strong>رقم الصنف<br/>TS CODE
+                    </strong>
+                </th>
+                <th class="text-center">
+                    <strong>الوصف<br/>DESCRIPTION
+                    </strong>
+                </th>
+                <th class="text-center">
+                    <strong>
+                        المنتج<br/>وحدة
+                      <br/>
+                        UOM
+                    </strong>
+                </th>
+                <th class="text-center">
+                    <strong>الكمية<br/>QTY
+                    </strong>
+                </th>
+                <th name="th_expected_date" class="text-center">
+                    <strong>Expected Date</strong>
+                </th>
+            </tr>
+        </xpath>
+
+        <xpath expr="//t[@t-foreach='o.order_line']" position="replace">
+            <t t-set="line_index" t-value="0"/>
+            <t t-foreach="o.order_line" t-as="line">
+                <tr>
+                    <td class="text-center align-middle">
+                        <t t-out="line_index + 1"/>
+                    </td>
+                    <td class="text-center align-middle">
+                        <span t-field="line.product_id.default_code"/>
+                    </td>
+                    <td class="text-center align-middle">
+                        <span t-field="line.name"/>
+                    </td>
+                    <td class="text-center align-middle">
+                        <span t-field="line.product_id.uom_id.name"/>
+                    </td>
+                    <td class="text-center align-middle">
+                        <span t-field="line.product_qty"/>
+                    </td>
+                    <td class="text-center">
+                        <span t-field="line.date_planned"/>
+                    </td>
+                </tr>
+                <t t-set="line_index" t-value="line_index + 1"/>
+            </t>
+        </xpath>
+
+    </template>
+
+    <!--    <template id="report_purchasequotation_inherit_force_arabic" inherit_id="purchase.report_purchasequotation">-->
+    <!--        <xpath expr="//t[@t-call='purchase.report_purchasequotation_document']" position="replace">-->
+    <!--            <t t-call="purchase.report_purchasequotation_document" t-lang="'ar_001'"/>-->
+
+    <!--        </xpath>-->
+    <!--    </template>-->
+
+    <!-- Remove the shipping address block from purchase stock. -->
+    <template id="remove_shipping_address_stock_from_rfq" inherit_id="purchase_stock.report_purchasequotation_document">
+        <xpath expr="//t[@t-else='']" position="replace"/>
+    </template>
+
+</odoo>
+
+
+
+

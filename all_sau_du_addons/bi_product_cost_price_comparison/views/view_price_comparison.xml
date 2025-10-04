@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="export_products_with_images_menu" model="ir.actions.server">
+            <field name="name">Purchase Price Comparison</field>
+            <field name="model_id" ref="purchase.model_purchase_order"/>
+            <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+            <field name="state">code</field>
+            <field name="code">action = model.view_purchase_order_pivot()</field>
+            <field name="binding_view_types">list</field>
+        </record>
+
+        <record model="ir.ui.view" id="view_purchase_order_pivot_1">
+            <field name="name">Purchase Order Pivot</field>
+            <field name="model">purchase.order.line</field>
+            <field name="arch" type="xml">
+                <pivot string="Purchase Order Pivot Table">
+                    <field name="product_id" type="row"/>
+                    <field name="partner_id" type="col"/>
+                    <field name="product_qty" type="measure" />
+                    <field name="price_subtotal" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+    </data>
+</odoo>

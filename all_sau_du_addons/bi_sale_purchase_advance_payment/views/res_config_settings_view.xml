@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="bi_sales_config_inherit_view" model="ir.ui.view">
+			<field name="name">bi.sales.config.inherit.view</field>
+			<field name="model">res.config.settings</field>
+			<field name="inherit_id" ref="sale.res_config_settings_view_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//block[@name='invoicing_setting_container']" position="before">
+					<h2>Advance Payment</h2>
+					<div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+	                        <div class="o_setting_left_pane">
+	                            <field name="allow_auto_reconcile_sale" widget="boolean"/>
+	                        </div>
+	                        <div class="o_setting_right_pane">
+	                            <label for="allow_auto_reconcile_sale" class="o_light_label"/>
+                        	</div>
+                        </div>
+                    </div>
+				</xpath>
+			</field>
+		</record>
+
+		<record id="bi_purchase_config_inherit_view" model="ir.ui.view">
+			<field name="name">bi.purchase.config.inherit.view</field>
+			<field name="model">res.config.settings</field>
+			<field name="inherit_id" ref="purchase.res_config_settings_view_form_purchase" />
+			<field name="arch" type="xml">
+				<xpath expr="//block[@name='invoicing_settings_container']" position="before">
+					<h2>Advance Payment</h2>
+					<div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+	                        <div class="o_setting_left_pane">
+	                            <field name="allow_auto_reconcile_purchase" widget="boolean"/>
+	                        </div>
+	                        <div class="o_setting_right_pane">
+	                            <label for="allow_auto_reconcile_purchase" class="o_light_label"/>
+                        	</div>
+                        </div>
+                    </div>
+				</xpath>
+			</field>
+		</record>
+	</data>
+</odoo>

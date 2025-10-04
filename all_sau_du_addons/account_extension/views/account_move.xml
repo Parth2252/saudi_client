@@ -1,0 +1,72 @@
+<odoo>
+    <record id="view_move_form_inherit_po_ref" model="ir.ui.view">
+        <field name="name">account.move.form.inherit.po.ref</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='amount_residual']" position="before">
+                <field name="amount_due_from_terms" invisible="not amount_due_from_terms"/>
+            </xpath>
+
+            <!--            <xpath expr="//field[@name='invoice_payment_term_id']" position="after">-->
+            <!--                <field name="purchase_ids" widget="many2many_tags" options="{'no_create': True}" readonly="1"/>-->
+            <!--            </xpath>-->
+
+            <xpath expr="//group[@id='header_right_group']" position="after">
+                <group>
+                    <field name="purchase_ids" widget="many2many_tags" options="{'no_create': True}" readonly="1"/>
+                </group>
+            </xpath>
+
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="Beneficiary Info" name="beneficiary_info_tab"
+                      invisible="move_type != 'in_invoice'">
+                    <group>
+                        <field name="beneficiary_full_name" required="0"/>
+                        <field name="beneficiary_short_name" required="0"/>
+                        <field name="beneficiary_address" required="0"/>
+                        <field name="beneficiary_city" required="0"/>
+                        <field name="postal_code" required="0"/>
+                    </group>
+                    <group>
+                        <field name="beneficiary_country" required="0"/>
+                        <field name="beneficiary_currency_id" required="0"/>
+                        <field name="beneficiary_bank_name" required="0"/>
+                        <field name="bank_city" required="0"/>
+                        <field name="swift_code" required="0"/>
+                        <field name="account_number" required="0"/>
+                        <field name="iban_number" required="0"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="account_invoice_view_tree" model="ir.ui.view">
+        <field name="name">account.move.list.inherit.sale</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
+        <field name="arch" type="xml">
+            <field name="status_in_payment" position="replace">
+                <field name="status_in_payment"
+                       string="Status"
+                       widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-danger="(payment_state == 'not_paid') or (payment_state == 'partial' and invoice_date_due &lt; context_today().strftime('%Y-%m-%d'))"
+                       decoration-warning="payment_state in ('partial', 'in_payment') and not (invoice_date_due and invoice_date_due &lt; context_today().strftime('%Y-%m-%d'))"
+                       decoration-success="payment_state in ('paid', 'reversed')"
+                       invisible="payment_state == 'invoicing_legacy' or move_type == 'entry'"
+                       optional="show"
+                />
+            </field>
+            <xpath expr="//field[@name='ref']" position="after">
+                <field name="purchase_ids" widget="many2many_tags"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>
+
+
+

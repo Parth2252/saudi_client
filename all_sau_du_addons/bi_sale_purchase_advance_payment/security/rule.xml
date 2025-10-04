@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="group_allow_sale_advance_payment" model="res.groups">
+            <field name="name">Allow Sale Order Advance Payment</field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
+        </record>
+        <record id="group_allow_purchase_advance_payment" model="res.groups">
+            <field name="name">Allow Purchase Order Advance Payment</field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,5 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_add_mass_product_purchase_user,add.mass.product.purchase.user,model_add_mass_product_purchase,base.group_user,1,0,0,0
+access_add_mass_product_purchase_manager,add.mass.product.purchase.manager,model_add_mass_product_purchase,base.group_system,1,1,1,1
+access_import_from_file_purchase_user,import.from.file.purchase.user,model_import_from_file_purchase,base.group_user,1,0,0,0
+access_import_from_file_purchase_manager,import.from.file.purchase.manager,model_import_from_file_purchase,base.group_system,1,1,1,1

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="report_sticker_and_label_document">
+        <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang)"/>
+        <t t-set="company" t-value="res_company"/>
+
+
+        <t t-set="total_lines" t-value="len(doc.move_ids_without_package)"/>
+        <t t-foreach="doc.move_ids_without_package" t-as="line" t-foreach-index="line_index">
+            <div t-attf-style="             box-sizing: border-box;             font-family: Arial;             font-size: 11px;             #{'page-break-after: always;' if line_index + 1 != total_lines else ''}         ">
+
+
+                <table style="width: 90%; border-collapse: collapse; margin-left: 22px;" border="1">
+                    <tr>
+                        <td style="padding: 2px 5px; line-height: 1.0; height:150px; width: 30%; text-align: center; vertical-align: middle;">
+                            <strong style="font-size: 15px;">Customer /</strong>
+                            <br/>
+                            <strong style="font-size: 15px;">Location</strong>
+                        </td>
+                        <td style="padding: 2px 5px; line-height: 1.0; height:125px; width: 70%;">
+                            <strong style="font-size: 15px;">
+                                <t t-esc="doc.partner_id.display_name"/>
+                            </strong>
+                            <div>
+                                <strong style="font-size: 15px;">
+                                    <span t-esc="('%s%s%s%s%s%s' % (
+                                        doc.partner_id.street or '',
+                                        doc.partner_id.street2 and ', ' + doc.partner_id.street2 or '',
+                                        doc.partner_id.city and ', ' + doc.partner_id.city or '',
+                                        doc.partner_id.state_id and ', ' + doc.partner_id.state_id.name or '',
+                                        doc.partner_id.zip and ', ' + doc.partner_id.zip or '',
+                                        doc.partner_id.country_id and ', ' + doc.partner_id.country_id.name or ''
+                                    ))[:160] + ('...' if len('%s%s%s%s%s%s' % (
+                                        doc.partner_id.street or '',
+                                        doc.partner_id.street2 and ', ' + doc.partner_id.street2 or '',
+                                        doc.partner_id.city and ', ' + doc.partner_id.city or '',
+                                        doc.partner_id.state_id and ', ' + doc.partner_id.state_id.name or '',
+                                        doc.partner_id.zip and ', ' + doc.partner_id.zip or '',
+                                        doc.partner_id.country_id and ', ' + doc.partner_id.country_id.name or ''
+                                    )) > 160 else '')"/>
+                                </strong>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0px 5px; line-height: 0.5; height:30px; text-align: center; vertical-align: middle;">
+                            <strong style="font-size: 15px;">PO Number</strong>
+                        </td>
+                        <td style="padding: 0px 5px; line-height: 0.5; height:30px;">
+                            <strong style="font-size: 15px;">
+                                <t t-esc="doc.porder_ref"/>
+                            </strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0px 5px; line-height: 0.5; height:30px; text-align: center; vertical-align: middle;">
+                            <strong style="font-size: 15px;">PO Line No</strong>
+                        </td>
+                        <td style="padding: 0px 5px; line-height: 0.5; height:30px;">
+                            <strong style="font-size: 15px;">
+                                <t t-esc="line.sr_no_do"/>
+                            </strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0px 5px; line-height: 0.5; height:30px; text-align: center; vertical-align: middle;">
+                            <strong style="font-size: 15px;">Item Code</strong>
+                        </td>
+                        <td style="padding: 0px 5px; line-height: 0.5; height:30px;">
+                            <strong style="font-size: 15px;">
+                                <t t-set="customer_info" t-value="env['sh.product.customer.info'].search([('product_id', '=', line.product_id.id)], limit=1)"/>
+                                <t t-esc="customer_info.product_code or ''"/>
+                            </strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0px 5px; line-height: 0.5; height:220px; text-align: center; vertical-align: middle; width: 30%; line-height: normal;">
+                            <strong style="font-size: 15px;">Product Description</strong>
+                        </td>
+                        <td style="padding: 0px 5px; line-height: 0.5; height:222px; width: 70%; word-wrap: break-word; word-break: break-word; white-space: normal; line-height: normal;">
+                            <strong style="font-size: 15px;">
+                                <t t-esc="line.description_picking[:130] + ('...' if len(line.description_picking) > 130 else '')"/>
+                            </strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0px 5px; line-height: 0.5; height:30px; text-align: center; vertical-align: middle;">
+                            <strong style="font-size: 15px;">Total Qty</strong>
+                        </td>
+                        <td style="padding: 0px 5px; line-height: 0.5; height:30px;">
+                            <strong style="font-size: 15px;">
+                                <t t-esc="line.product_uom_qty"/>
+                            </strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0px 5px; line-height: 0.5; height:30px; text-align: center; vertical-align: middle;">
+                            <strong style="font-size: 15px;">Box Total</strong>
+                        </td>
+                        <td style="padding: 0px 5px; line-height: 0.5; height:30px;">
+                            <strong style="font-size: 15px;">
+                                <t t-esc="line.boxes_qty or 0"/>
+                            </strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0px 5px; line-height: 0.5; height:30px; text-align: center; vertical-align: middle;">
+                            <strong style="font-size: 15px;">Pallet Total</strong>
+                        </td>
+                        <td style="padding: 0px 5px; line-height: 0.5; height:30px;">
+                            <strong style="font-size: 15px;">
+                                <t t-esc="line.pallet_qty or 0"/>
+                            </strong>
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- Logo & Company Name BELOW table -->
+                <div style="text-align: center; margin-top: 5px; padding: 10px; padding-top: 5px; ">
+                    <div style="font-size: 20px; font-weight: bold; margin-bottom: 6px;">
+                        <t t-esc="doc.company_id.name"/>
+                    </div>
+                    <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" alt="Logo" style="width: 80%; height: 90px;"/>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_sticker">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="sticker_report.report_sticker_and_label_document"/>
+            </t>
+        </t>
+    </template>
+
+    <record id="paperformat_sticker" model="report.paperformat">
+        <field name="name">Sticker</field>
+        <field name="default" eval="False"/>
+        <field name="format">custom</field>
+        <field name="page_height">165</field>
+        <field name="page_width">107</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">3</field>
+        <field name="margin_bottom">3</field>
+        <field name="margin_left">3</field>
+        <field name="margin_right">3</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+        <field name="css_margins" eval="True"/>
+    </record>
+
+    <record id="action_report_sticker_type" model="ir.actions.report">
+        <field name="name">Sticker Print</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sticker_report.report_sticker</field>
+        <field name="report_file">sticker_report.report_sticker</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="sticker_report.paperformat_sticker"/>
+        <field name="print_report_name">'Sticker - %s' % (object.name)</field>
+    </record>
+</odoo>

@@ -1,0 +1,4 @@
+
+.offered-placeholder-red input::placeholder {
+    color: red !important;
+}

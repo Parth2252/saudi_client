@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="partner_address_inherit_product_template_view" model="ir.ui.view">
+        <field name="name">partner.address.product.template.inherit.form.view</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position='after'>
+                <label for="arabic_name" string="Arabic Name"/>
+                <field name='arabic_name' />
+            </xpath>
+        </field>
+    </record>
+</odoo>

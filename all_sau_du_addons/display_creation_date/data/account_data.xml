@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Server action for update or set the payment date at account move level. -->
+        <record id="display_creation_date_model_account_move_action_" model="ir.actions.server">
+            <field name="name">Update Payment Create Date</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="binding_model_id" ref="account.model_account_move"/>
+            <field name="binding_view_types">form</field>
+            <field name="state">code</field>
+            <field name="code">action = records._compute_payment_date()</field>
+        </record>
+    </data>
+</odoo>

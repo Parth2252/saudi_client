@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_inherit" model="ir.ui.view">
+        <field name="name">res.partner .view.form.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('mb24')]" position="after">
+                <div>
+                    <group>
+                        <field name="customer_code" readonly="customer_code" invisible="not customer_code"/>
+                    </group>
+                    <group>
+                        <field name="vendor_code" readonly="vendor_code" invisible="not vendor_code"/>
+                    </group>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_partner_tree_inherit" model="ir.ui.view">
+        <field name="name">view.partner.tree.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='email']" position="after">
+                <field name="customer_code" widget="badge" decoration-warning="customer_code" optional="show"/>
+                <field name="vendor_code" widget="badge" decoration-info="vendor_code" optional="show"/>
+            </xpath>
+        </field>
+    </record>    
+
+    <record id="res_partner_kanban_view_inherit" model="ir.ui.view">
+        <field name="name">res.partner.kanban.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.res_partner_kanban_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('mb-1')]" position="inside">
+                <div t-if="record.customer_code.raw_value" class="o_text_overflow" style="margin-bottom: 5px;">
+                    <span class="badge rounded-pill text-warning border border-warning fw-medium" style="display: flex; align-items: center; padding: 4px 8px; font-size:11px;">
+                        <strong>Customer Code - <span style="margin-left: 5px;"><field name="customer_code"/></span></strong>
+                    </span>
+                </div>
+                <div t-if="record.vendor_code.raw_value" class="o_text_overflow" style="margin-bottom: 5px;">
+                    <span class="badge rounded-pill text-info border border-info fw-medium" style="display: flex; align-items: center; padding: 4px 8px; font-size:11px;">
+                    <strong>Vendor Code - <span style="margin-left: 5px;"><field name="vendor_code"/></span></strong>
+                    </span>
+                </div>
+            </xpath>
+        </field>
+    </record>   
+    
+    <record id="view_res_partner_filter_inherit" model="ir.ui.view">
+        <field name="name">view.res.partner.filter.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="customer_code" filter_domain="[('customer_code', 'ilike', self)]"/>
+                <field name="vendor_code" filter_domain="[('vendor_code', 'ilike', self)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
