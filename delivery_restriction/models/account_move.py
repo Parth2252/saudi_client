@@ -16,9 +16,11 @@ class SaleOrder(models.Model):
     def action_post(self):
         invalid_moves = self.filtered(lambda m: m.move_type == 'out_invoice' and not m.gr_number)
         if invalid_moves:
+            names = [m.name or "(Draft Invoice)" for m in invalid_moves]
             raise ValidationError(
-                "Please set the GR number for: %s" % ", ".join(invalid_moves.mapped("name"))
+                "Please set the GR number for: %s" % ", ".join(names)
             )
         return super().action_post()
+
 
 

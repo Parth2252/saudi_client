@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="inherit_view_move_form" model="ir.ui.view">
+        <field name="name">account.view.move.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='invoice_tab']/field[@name='invoice_line_ids']" position="after">
+                <group>
+                    <div class="float-end d-flex gap-1 mb-2 ms-1" name="so_button_below_order_lines">
+                        <button string="Discount" name="action_open_discount_wizard" type="object" class="btn btn-secondary"/>
+                    </div>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
