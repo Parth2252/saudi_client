@@ -5,7 +5,7 @@ from odoo import api, fields, models
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    name_lang2 = fields.Char(copy=False)
+    name_lang2 = fields.Char(copy=False, string="Arabic Name")
     street1_lang2 = fields.Char(copy=False)
     street2_lang2 = fields.Char(copy=False)
     city_lang2 = fields.Char(copy=False)

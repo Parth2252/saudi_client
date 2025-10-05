@@ -3,23 +3,36 @@
 
     <data noupdate="0">
 
-        <record id="view_form_res_partner_inherit" model="ir.ui.view">
+        <!-- <record id="view_form_res_partner_inherit" model="ir.ui.view">
             <field name="name">res.partner.view.form.language.secondary</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-                <field name="vat" position="before">
-                </field>
+                <xpath expr="//field[@name='vat']" position="before">
+                    <field name="cr_number" />
+                </xpath>
             </field>
-        </record>
+        </record> -->
 
         <record id="partner_address_res_partner_form_inherit" model="ir.ui.view">
             <field name="name">partner.address.res.partner.form.inherit</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='vat']" position="before">
+                <xpath expr="//field[@name='name']" position="after">
+                    <label for="name_lang2" />
+                    <field name="name_lang2" />   
+                </xpath>
+                <xpath expr="//field[@name='category_id']" position="after">
                     <field name="cr_number" />
+                    <div>
+                        <group string="Arabic Address">
+                            <field name="street1_lang2" placeholder="Arabic Street" class="o_address_street"/>
+                            <field name="street2_lang2" placeholder="Arabic Neighborhood" class="o_address_street" />
+                            <field name="city_lang2" placeholder="Arabic City" class="o_address_city" />
+                            <field name="country_lang2" class="o_address_state" placeholder="Arabic Country"/>
+                        </group>
+                    </div>                               
                 </xpath>
             </field>
         </record>
