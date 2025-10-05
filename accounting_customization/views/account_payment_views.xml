@@ -12,6 +12,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='memo']" position="after">
                 <field name="bank_transaction_number" />
+                <field name="is_already_attach" />
             </xpath>
         </field>
     </record>

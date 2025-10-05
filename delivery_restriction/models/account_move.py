@@ -14,8 +14,11 @@ class SaleOrder(models.Model):
                 raise ValidationError(_("The GR Number must contain only digits."))
 
     def action_post(self):
-        if not self.gr_number and self.move_type == 'out_invoice':
-            raise ValidationError("Please set the GR number!")
+        invalid_moves = self.filtered(lambda m: m.move_type == 'out_invoice' and not m.gr_number)
+        if invalid_moves:
+            raise ValidationError(
+                "Please set the GR number for: %s" % ", ".join(invalid_moves.mapped("name"))
+            )
         return super().action_post()
 
 
