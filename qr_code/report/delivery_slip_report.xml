@@ -225,18 +225,17 @@
                                 </t>
 
                                 <td style="padding: 7px; text-align: center;">
-                                    <t t-esc="line.ts_code or ''"/>
+                                    <t t-esc="line.sale_line_id.ts_code or ''"/>
                                 </td>
+
                                 <td style="padding: 7px; text-align: center;">
-                                    <t t-esc="line.sh_line_customer_code or ''"/>
+                                    <t t-if="line.offered_description_id">
+                                        <t t-esc="line.offered_description_id.default_code"/>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-esc="line.product_id.default_code"/>
+                                    </t>
                                 </td>
-
-
-                                <!--                                <td style="padding: 7px; text-align: center;">-->
-                                <!--    <t t-esc="line.sh_line_customer_code or line.product_id.default_code or ''"/>-->
-                                <!--</td>-->
-
-
                                 <td style="padding: 7px; text-align: center;">
                                     <t t-esc="line.description or ''"/>
                                 </td>
