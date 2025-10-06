@@ -74,8 +74,8 @@ class SaleOrderLine(models.Model):
             else:
                 line.delivery_date = line.delivery_date or False
 
-    @api.onchange('product_id', 'offered_description_id')
-    def _onchange_product_or_offered_description(self):
+    @api.constrains('product_id', 'offered_description_id')
+    def _check_product_or_offered_description(self):
         for line in self:
             customer = line.order_id.partner_id
             # Priority: use offered_description_id if available
@@ -94,11 +94,13 @@ class SaleOrderLine(models.Model):
             else:
                 # line.sh_line_customer_code = False
                 line.sh_line_customer_product_name = False
+
             line.ts_code = line.product_id.default_code
+
             if line.offered_description_id:
                 line.ts_code = line.offered_description_id.default_code
                 line.product_uom = line.offered_description_id.uom_id.id
-            if not line.offered_description_id:
+            else:
                 line.product_uom = line.product_id.uom_id.id
                 line.ts_code = line.product_id.default_code
                 line.price_unit = line.product_id.list_price
