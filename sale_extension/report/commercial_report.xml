@@ -183,6 +183,11 @@
                         <th class="text-center align-middle" style="background-color: #0066ff; color: white; padding: 6px; border: 1px solid #000;">
                            Delivery Terms
                         </th>
+                        <t t-if="doc.incoterm_location">
+                            <th class="text-center align-middle" style="background-color: #0066ff; color: white; padding: 6px; border: 1px solid #000;">
+                            Incoterm Location
+                            </th>
+                        </t>
                     </tr>
                 </thead>
                 <tbody>
@@ -198,6 +203,9 @@
                         <td class="text-center align-middle" style="padding: 6px; border: 1px solid #000;">As Mentioned Below</td>
                         <td class="text-center align-middle" style="padding: 6px; border: 1px solid #000;"><t t-esc="doc.payment_term_id.name"/></td>
                         <td class="text-center align-middle" style="padding: 6px; border: 1px solid #000;"><t t-esc="doc.incoterm.name"/></td>
+                        <t t-if="doc.incoterm_location">
+                            <td class="text-center align-middle" style="padding: 6px; border: 1px solid #000;"><t t-esc="doc.incoterm_location"/></td>
+                        </t>
                     </tr>
                 </tbody>
             </table>
@@ -412,11 +420,11 @@
 
 
                 <div class="row" style="page-break-inside: avoid;">
-                    <div class="col-3" style="border-radius:14px; overflow:hidden;height:100px;">
+                    <!-- <div class="col-3" style="border-radius:14px; overflow:hidden;height:100px;">
                     </div>
 
                     <div class="col-4">
-                    </div>
+                    </div> -->
 
 
                     <div class="col-5">

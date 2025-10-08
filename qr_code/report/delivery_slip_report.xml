@@ -225,7 +225,7 @@
                                 </t>
 
                                 <td style="padding: 7px; text-align: center;">
-                                    <t t-esc="line.sale_line_id.ts_code or ''"/>
+                                    <t t-esc="line.ts_code or ''"/>
                                 </td>
 
                                 <td style="padding: 7px; text-align: center;">

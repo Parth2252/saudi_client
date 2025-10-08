@@ -215,8 +215,6 @@ class StockMove(models.Model):
 
     ts_code = fields.Char(
         string="TS Code",  # Internal Reference
-        compute="_compute_ts_code",
-        store=False,
         readonly=False
     )
 
@@ -233,10 +231,25 @@ class StockMove(models.Model):
         readonly=False
     )
 
-    @api.depends('product_id')
-    def _compute_ts_code(self):
-        for move in self:
-            move.ts_code = move.product_id.default_code or ''
+    @api.constrains('product_id', 'offered_description_id')
+    def _check_product_or_offered_description(self):
+        for line in self:
+            customer = line.partner_id
+            product = line.offered_description_id or line.product_id
+            customer_info = False
+            if customer and product:
+                customer_info = self.env['sh.product.customer.info'].sudo().search([
+                    ('name', '=', customer.id),
+                    '|',
+                    ('product_id', '=', product.id),
+                    ('product_tmpl_id', '=', product.product_tmpl_id.id)
+                ], limit=1)
+                if customer_info:
+                    line.ts_code = customer_info.product_code or line.product_id.default_code or False
+                    line.description = customer_info.product_name or line.product_id.name or False
+            if not customer_info:
+                line.ts_code = line.product_id.default_code or False
+                line.description = line.product_id.name or False
 
     @api.depends('picking_id.partner_id', 'product_id', 'sale_line_id')
     def _compute_item_code(self):

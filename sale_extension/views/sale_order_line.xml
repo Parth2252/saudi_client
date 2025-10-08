@@ -86,6 +86,7 @@
             <!-- Move existing incoterm field -->
             <xpath expr="//field[@name='payment_term_id']" position="before">
             <xpath expr="//field[@name='incoterm']" position="move"/>
+            <xpath expr="//field[@name='incoterm_location']" position="move"/>
             </xpath>
         </field>
     </record>
