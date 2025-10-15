@@ -305,23 +305,10 @@
                                         <span t-esc="line.pr_number or ''"/>
                                     </td>
                                     <td style="text-align:center; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
-                                        <span t-esc="line.sh_line_customer_code or line.product_id.default_code or ''"/>
+                                        <span t-esc="line.sh_line_customer_code"/>
                                     </td>
                                     <td style="text-align:left; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
-                                        <div>
-                                            <t t-if="line.product_id.sh_product_customer_ids">
-                                                <span t-esc="line.product_id.sh_product_customer_ids[0].product_name"/>
-                                            </t>
-                                            <t t-else="">
-                                                <span t-esc="line.product_id.name" />
-                                            </t>
-                                        </div>
-                                        <!--                                        <t t-if="line.datasheet_attach">-->
-                                        <!--                                            <div style="margin-top: 5px;">-->
-                                        <!--                                                <span style="color: orange; font-weight: bold;">Datasheet Attached-->
-                                        <!--                                                </span>-->
-                                        <!--                                            </div>-->
-                                        <!--                                        </t>-->
+                                                <span t-esc="line.sh_line_customer_product_name"/>
                                     </td>
                                     <td style="text-align:center; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
                                         <span t-esc="line.ts_code or ''"/>

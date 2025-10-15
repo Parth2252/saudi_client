@@ -215,78 +215,66 @@ class StockMove(models.Model):
 
     ts_code = fields.Char(
         string="TS Code",  # Internal Reference
-        readonly=False
+        compute="_compute_ts_code",
+        readonly=False,
+        store=True
+
     )
 
     item_code = fields.Char(
         string="Item Code",  # Customer Product Code
         compute="_compute_item_code",
-        store=False
+        store=True,
+        readonly=False
+
     )
 
     description = fields.Text(
         string="SO Description",  # Customer Product Name
         compute='_compute_description',
-        store=False,
+        store=True,
         readonly=False
     )
 
-    @api.constrains('product_id', 'offered_description_id')
-    def _check_product_or_offered_description(self):
-        for line in self:
-            customer = line.partner_id
-            product = line.offered_description_id or line.product_id
-            customer_info = False
-            if customer and product:
-                customer_info = self.env['sh.product.customer.info'].sudo().search([
-                    ('name', '=', customer.id),
-                    '|',
-                    ('product_id', '=', product.id),
-                    ('product_tmpl_id', '=', product.product_tmpl_id.id)
-                ], limit=1)
-                if customer_info:
-                    line.ts_code = customer_info.product_code or line.product_id.default_code or False
-                    line.description = customer_info.product_name or line.product_id.name or False
-            if not customer_info:
-                line.ts_code = line.product_id.default_code or False
-                line.description = line.product_id.name or False
+    @api.depends('picking_id.partner_id', 'product_id', 'sale_line_id')
+    def _compute_ts_code(self):
+        for move in self:
+            product = move.offered_description_id or move.product_id
+            if product:
+                move.ts_code = product.default_code or ''
 
     @api.depends('picking_id.partner_id', 'product_id', 'sale_line_id')
     def _compute_item_code(self):
         for move in self:
-            if move.sale_line_id and move.sale_line_id.sh_line_customer_code:
-                move.item_code = move.sale_line_id.sh_line_customer_code
-            elif move.product_id and move.picking_id.partner_id:
+            product = move.offered_description_id or move.product_id
+            if product and move.picking_id.partner_id:
                 customer_info = self.env['sh.product.customer.info'].search([
                     ('name', '=', move.picking_id.partner_id.id),
-                    ('product_id', '=', move.product_id.id)
+                    ('product_id', '=', product.id)
                 ], limit=1)
-                move.item_code = customer_info.product_code or ''
+                move.item_code = customer_info.product_code or product.default_code or ''
             else:
                 move.item_code = ''
 
     @api.depends('picking_id.partner_id', 'product_id', 'sale_line_id')
     def _compute_description(self):
         for move in self:
-            if move.sale_line_id and move.sale_line_id.sh_line_customer_product_name:
-                move.description = move.sale_line_id.sh_line_customer_product_name
-            elif move.product_id and move.picking_id.partner_id:
+            product = move.offered_description_id or move.product_id
+            if product and move.picking_id.partner_id:
                 customer_info = self.env['sh.product.customer.info'].search([
                     ('name', '=', move.picking_id.partner_id.id),
-                    ('product_id', '=', move.product_id.id)
+                    ('product_id', '=', product.id)
                 ], limit=1)
-                move.description = customer_info.product_name or move.product_id.name or ''
-            elif move.product_id:
-                move.description = move.product_id.name
+                move.description = customer_info.product_name or product.name or ''
+            elif product:
+                move.description = product.name
             else:
                 move.description = ''
 
     @api.depends('sale_line_id', 'product_id', 'picking_id.partner_id')
     def _compute_sh_line_customer_code(self):
         for move in self:
-            if move.sale_line_id:
-                move.sh_line_customer_code = move.sale_line_id.sh_line_customer_code
-            elif move.product_id and move.picking_id.partner_id:
+            if move.product_id and move.picking_id.partner_id:
                 customer_info = self.env['sh.product.customer.info'].search([
                     ('name', '=', move.picking_id.partner_id.id),
                     ('product_id', '=', move.product_id.id)

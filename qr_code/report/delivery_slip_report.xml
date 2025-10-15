@@ -229,13 +229,9 @@
                                 </td>
 
                                 <td style="padding: 7px; text-align: center;">
-                                    <t t-if="line.offered_description_id">
-                                        <t t-esc="line.offered_description_id.default_code"/>
-                                    </t>
-                                    <t t-else="">
-                                        <t t-esc="line.product_id.default_code"/>
-                                    </t>
+                                    <t t-esc="line.item_code or ''"/>
                                 </td>
+
                                 <td style="padding: 7px; text-align: center;">
                                     <t t-esc="line.description or ''"/>
                                 </td>

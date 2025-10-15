@@ -19,11 +19,11 @@ class SaleOrderLine(models.Model):
 
     pr_number = fields.Char(string='PR Number')
     sr_no_so = fields.Integer(string='Order No')
-    sh_line_customer_code = fields.Char(string="Customer Product Code")
+    sh_line_customer_code = fields.Char(string="Customer Product Code", compute="_compute_sh_line_customer_code", readonly=False, store=True)
     sh_line_customer_product_name = fields.Char(string="Customer Product Name")
     # offered_description_id = fields.Many2one(
     #     'product.product', string="Offered Description", readonly=False)
-
+    
     offered_description_id = fields.Many2one(
         'product.product',
         string="Offered Description",
@@ -74,13 +74,14 @@ class SaleOrderLine(models.Model):
             else:
                 line.delivery_date = line.delivery_date or False
 
-    @api.constrains('product_id', 'offered_description_id')
-    def _check_product_or_offered_description(self):
+    @api.depends('product_id', 'offered_description_id', 'order_id.partner_id')
+    def _compute_sh_line_customer_code(self):
         for line in self:
             customer = line.order_id.partner_id
             # Priority: use offered_description_id if available
             product = line.offered_description_id or line.product_id
-
+            customer_info = False
+            line.ts_code = product.default_code
             if customer and product:
                 customer_info = self.env['sh.product.customer.info'].sudo().search([
                     ('name', '=', customer.id),
@@ -88,22 +89,16 @@ class SaleOrderLine(models.Model):
                     ('product_id', '=', product.id),
                     ('product_tmpl_id', '=', product.product_tmpl_id.id)
                 ], limit=1)
-
-                # line.sh_line_customer_code = customer_info.product_code or False
+            if customer_info:
+                line.sh_line_customer_code = customer_info.product_code or False
                 line.sh_line_customer_product_name = customer_info.product_name or False
             else:
-                # line.sh_line_customer_code = False
-                line.sh_line_customer_product_name = False
+                line.sh_line_customer_code = product.default_code or False
+                line.sh_line_customer_product_name = product.name or False
 
-            line.ts_code = line.product_id.default_code
-
-            if line.offered_description_id:
-                line.ts_code = line.offered_description_id.default_code
-                line.product_uom = line.offered_description_id.uom_id.id
-            else:
-                line.product_uom = line.product_id.uom_id.id
-                line.ts_code = line.product_id.default_code
+            if not line.offered_description_id:
                 line.price_unit = line.product_id.list_price
+
 
     @api.depends('delivery_time')
     def _compute_delivery_time_display(self):
@@ -130,22 +125,6 @@ class SaleOrderLine(models.Model):
     #     for line in self:
     #         line.offered_description_display = line.offered_description_id.display_name if line.offered_description_id else "AS SPECIFIED"
 
-    @api.onchange('product_id')
-    def _onchange_product_id_customer_code_name(self):
-        for line in self:
-            customer = line.order_id.partner_id
-            product = line.product_id
-            if customer and product:
-                # Search customer-specific product info
-                customer_info = self.env['sh.product.customer.info'].sudo().search([
-                    ('name', '=', customer.id),
-                    '|',
-                    ('product_id', '=', product.id),
-                    ('product_tmpl_id', '=', product.product_tmpl_id.id)
-                ], limit=1)
-
-                line.sh_line_customer_code = customer_info.product_code or False
-                line.sh_line_customer_product_name = customer_info.product_name or False
 
     @api.depends('offered_description_id', 'product_id', 'product_uom', 'product_uom_qty')
     def _compute_price_unit(self):
