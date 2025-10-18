@@ -475,13 +475,24 @@
                 <t t-set="currency" t-value="doc.currency_id"/>
 
 
-                <div class="row" style="page-break-inside: avoid;">
+                <div class="row" style="page-break-inside: avoid; margin-top:10px;" >
                     <!-- <div class="col-3" style="border-radius:14px; overflow:hidden;height:100px;">
                     </div>
 
                     <div class="col-4">
                     </div> -->
 
+                    <div class="col-7">
+                        <div style="margin-top: 20px; font-size:14px; line-height:18px; color:#333;">
+                            <strong>Terms of Payment:</strong>
+                            <br/>
+                            <ul style="margin: 0; padding-left: 15px;">
+                                <li>Above information is not an invoice and only an estimate of services/goods described above.</li>
+                                <li>Payment will be collected after submission of invoices of provision of services/goods described in this quote.</li>
+                                <li>Please confirm your acceptance of this quote by signing this document.</li>
+                            </ul>
+                        </div>
+                    </div>
 
                     <div class="col-5">
                         <div style="border-radius: 14px; overflow: hidden; width: 100%;">
@@ -531,23 +542,8 @@
                             </table>
                         </div>
                     </div>
-
                 </div>
-
-
             </div>
-
-
-            <div style="margin-top: 20px; font-size:14px; line-height:18px; color:#333;">
-                <strong>Terms of Payment:</strong>
-                <br/>
-                <ul style="margin: 0; padding-left: 15px;">
-                    <li>Above information is not an invoice and only an estimate of services/goods described above.</li>
-                    <li>Payment will be collected after submission of invoices of provision of services/goods described in this quote.</li>
-                    <li>Please confirm your acceptance of this quote by signing this document.</li>
-                </ul>
-            </div>
-
         </t>
 
     </template>
@@ -595,8 +591,3 @@
     </record>
 
 </odoo>
-
-
-
-
-
