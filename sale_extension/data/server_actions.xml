@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_contact_update" model="ir.actions.server">
+            <field name="name">Update Contact</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="sale_extension.model_res_partner"/>
+            <field name="binding_model_id" ref="sale_extension.model_res_partner"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="code">
+                records.update_old_contact_record_to_uppercase()
+            </field>
+        </record>
+
+        <record id="action_varient_update" model="ir.actions.server">
+            <field name="name">Update Product Varient</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="sale_extension.model_product_product"/>
+            <field name="binding_model_id" ref="sale_extension.model_product_product"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="code">
+                records.update_old_varient_record_to_uppercase()
+            </field>
+        </record>
+
+        <record id="action_template_update" model="ir.actions.server">
+            <field name="name">Update Product Template</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="sale_extension.model_product_template"/>
+            <field name="binding_model_id" ref="sale_extension.model_product_template"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="code">
+                records.update_old_product_record_to_uppercase()
+            </field>
+        </record>
+
+    </data>
+</odoo>

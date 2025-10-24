@@ -143,3 +143,23 @@ class ResPartner(models.Model):
         return super(
             ResPartner, self.with_context(skip_saudi_document_check=True)
         ).copy(default)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        print("\n\n\n --- vals_list ---", vals_list)
+        for vals in vals_list:
+            if 'name' in vals and vals['name']:
+                vals['name'] = vals['name'].upper()
+        res = super(ResPartner, self).create(vals_list)
+        return res
+
+    def write(self, vals):
+        if 'name' in vals and vals['name']:
+            vals['name'] = vals['name'].upper()
+        res = super(ResPartner, self).write(vals)
+        return res
+
+    def update_old_contact_record_to_uppercase(self):
+        for record in self:
+            if record.name:
+                record.name = record.name.upper()

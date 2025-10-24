@@ -11,6 +11,7 @@ Sale Extended
     'website': 'self.com',
     'depends': ['base','stock','sale', 'mail', 'sale_pdf_quote_builder', 'sh_product_customer_code','web','product','l10n_sa','l10n_gcc_invoice','account', 'hr','uom','sale_stock'],
     'data': [
+        'data/server_actions.xml',
         # 'security/ir.model.access.csv',
         "security/security.xml",
 

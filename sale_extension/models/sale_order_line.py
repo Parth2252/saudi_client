@@ -177,6 +177,13 @@ class SaleOrderLine(models.Model):
             line.product_qty = line.product_uom._compute_quantity(
                 line.product_uom_qty, line.product_id.uom_id, raise_if_failure = False
             )
+    
+    def show_customer_product_name(self):
+        """Return True if customer product name should be shown."""
+        for line in self:
+            if line.sh_line_customer_product_name and line.sh_line_customer_product_name.strip():
+                return True
+        return False
 
 
 class UoM(models.Model):

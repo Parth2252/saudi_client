@@ -7,6 +7,7 @@ class ProductProduct(models.Model):
     def create(self, vals_list):
         """Inherit method to enable the track inventory checkbox and set MTO & Buy routes."""
         # Get the route IDs for MTO and Buy
+
         mto_route = self.env.ref('stock.route_warehouse0_mto', raise_if_not_found=False)
         buy_route = self.env.ref('purchase_stock.route_warehouse0_buy', raise_if_not_found=False)
 
@@ -35,4 +36,18 @@ class ProductProduct(models.Model):
                 else:
                     vals["route_ids"] = [(6, 0, default_routes)]
 
+            if 'name' in vals and vals['name']:
+                vals['name'] = vals['name'].upper()
+
         return super().create(vals_list)
+
+    def write(self, vals):
+        if 'name' in vals and vals['name']:
+            vals['name'] = vals['name'].upper()
+        res = super(ProductProduct, self).write(vals)
+        return res
+
+    def update_old_varient_record_to_uppercase(self):
+        for record in self:
+            if record.name:
+                record.name = record.name.upper()

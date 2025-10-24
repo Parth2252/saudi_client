@@ -337,15 +337,36 @@
                                         style="text-align:center; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
                                         <span t-esc="line.pr_number or ''"/>
                                     </td>
+                                    <!-- CUS start. -->
                                     <td style="text-align:center; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
-                                        <span t-esc="line.sh_line_customer_code"/>
+                                        <t t-if="line.sh_line_customer_code">
+                                            <span t-esc="line.sh_line_customer_code"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span t-esc="line.product_id.default_code  or ''"/>
+                                        </t>
                                     </td>
+                                    <!-- CUS End. -->
+                                    <!-- CUS start. -->
                                     <td style="text-align:left; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
-                                                <span t-esc="line.sh_line_customer_product_name"/>
+                                        <t t-if="line.show_customer_product_name()">
+                                            <span t-esc="line.sh_line_customer_product_name"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span t-esc="line.product_template_id.name or ''"/>
+                                        </t>
                                     </td>
+                                    <!-- CUS end. -->   
+                                    <!-- Cus start -->
                                     <td style="text-align:center; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
-                                        <span t-esc="line.ts_code or ''"/>
+                                        <t t-if="line.ts_code">
+                                            <span t-esc="line.ts_code"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span t-esc="line.product_id.default_code  or ''"/>
+                                        </t>
                                     </td>
+                                    <!-- Cus end. -->
                                     <td style="text-align:left; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
                                         <!-- customization start -->
                                         <t t-if="line.offered_description_id">

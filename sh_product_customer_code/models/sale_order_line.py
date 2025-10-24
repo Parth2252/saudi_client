@@ -9,68 +9,72 @@ class SaleOrderLine(models.Model):
     sh_line_customer_code = fields.Char("Customer Product Code")
     sh_line_customer_product_name = fields.Char("Customer Product Name")
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        res_super = super().create(vals_list)
-        for res in res_super:
+    # @api.model_create_multi
+    # def create(self, vals_list):
+    #     res_super = super().create(vals_list)
+    #     for res in res_super:
+    #         if res and self.env.company.enable_pro_code_from_so:
+    #             code = self.env["sh.product.customer.info"].search(
+    #                 [
+    #                     ("name", "=", res.order_id.partner_id.name),
+    #                     ("product_code", "=", res.sh_line_customer_code),
+    #                     ("product_id", "=", res.product_id.name),
+    #                 ],
+    #                 limit=1,
+    #             )
+    #             print("\n\n\n ---- name ----", res.order_id.partner_id.name)
+    #             print("\n\n\n ----- product code ----", res.sh_line_customer_code)
+    #             print("\n\n\n ------ res.product_id.name ----", res.product_id.name)
+    #             print("\n\n\n ----- code ----", code)
 
-            if res and self.env.company.enable_pro_code_from_so:
-                code = self.env["sh.product.customer.info"].search(
-                    [
-                        ("name", "=", res.order_id.partner_id.id),
-                        ("product_code", "=", res.sh_line_customer_code),
-                        ("product_name", "=", res.product_id.name),
-                    ],
-                    limit=1,
-                )
+    #             if (
+    #                 res.product_id
+    #                 and not code
+    #                 and (res.sh_line_customer_code or res.sh_line_customer_product_name)
+    #             ):
+    #                 res.product_id.sh_product_customer_ids.sudo().create(
+    #                     {
+    #                         "name": res.order_id.partner_id.id,
+    #                         "product_tmpl_id": res.product_id.product_tmpl_id.id,
+    #                         "product_id": res.product_id.id,
+    #                         "product_code": res.sh_line_customer_code,
+    #                         "product_name": res.sh_line_customer_product_name,
+    #                     }
+    #                 )
 
-                if (
-                        not self.product_id
-                        and not code
-                        and (res.sh_line_customer_code or res.sh_line_customer_product_name)
-                ):
-                    self.product_id.sh_product_customer_ids.sudo().create(
-                        {
-                            "name": res.order_id.partner_id.id,
-                            "product_tmpl_id": res.product_id.product_tmpl_id.id,
-                            "product_id": res.product_id.id,
-                            "product_code": res.sh_line_customer_code,
-                            "product_name": res.sh_line_customer_product_name,
-                        }
-                    )
+    #     return res_super
 
-        return res_super
 
-    def write(self, values):
-        result = super().write(values)
+    # def write(self, values):
+    #     result = super().write(values)
 
-        if self.env.company.enable_pro_code_from_so and (
-                values
-                and values.get("sh_line_customer_code")
-                or values.get("sh_line_customer_product_name")
-        ):
-            code = self.env["sh.product.customer.info"].search(
-                [
-                    ("name", "=", self.order_id.partner_id.id),
-                    ("product_code", "=", self.sh_line_customer_code),
-                    ("product_name", "=", self.product_id.name),
-                ],
-                limit=1,
-            )
+    #     if self.env.company.enable_pro_code_from_so and (
+    #             values
+    #             and values.get("sh_line_customer_code")
+    #             or values.get("sh_line_customer_product_name")
+    #     ):
+    #         code = self.env["sh.product.customer.info"].search(
+    #             [
+    #                 ("name", "=", self.order_id.partner_id.id),
+    #                 ("product_code", "=", self.sh_line_customer_code),
+    #                 ("product_id", "=", self.product_id.name),
+    #             ],
+    #             limit=1,
+    #         )
 
-            if not code:
-                self.env["sh.product.customer.info"].sudo().create(
-                    {
-                        "name": self.order_id.partner_id.id,
-                        "product_tmpl_id": self.product_id.product_tmpl_id.id,
-                        "product_id": self.product_id.id,
-                        "product_code": values.get("sh_line_customer_code")
-                                        or self.sh_line_customer_code,
-                        "product_name": values.get("sh_line_customer_product_name")
-                                        or self.sh_line_customer_product_name,
-                    }
-                )
-        return result
+    #         if not code:
+    #             self.env["sh.product.customer.info"].sudo().create(
+    #                 {
+    #                     "name": self.order_id.partner_id.id,
+    #                     "product_tmpl_id": self.product_id.product_tmpl_id.id,
+    #                     "product_id": self.product_id.id,
+    #                     "product_code": values.get("sh_line_customer_code")
+    #                                     or self.sh_line_customer_code,
+    #                     "product_name": values.get("sh_line_customer_product_name")
+    #                                     or self.sh_line_customer_product_name,
+    #                 }
+    #             )
+    #     return result
 
     # @api.onchange("product_id", "offered_description_id")
     # def _onchange_product_id_warning(self):

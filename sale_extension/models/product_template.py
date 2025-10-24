@@ -35,6 +35,20 @@ class ProductTemplate(models.Model):
                 else:
                     vals["route_ids"] = [(6, 0, default_routes)]
 
+            if 'name' in vals and vals['name']:
+                vals['name'] = vals['name'].upper()
+
         return super().create(vals_list)
+
+    def write(self, vals):
+        if 'name' in vals and vals['name']:
+            vals['name'] = vals['name'].upper()
+        res = super(ProductTemplate, self).write(vals)
+        return res
+
+    def update_old_product_record_to_uppercase(self):
+        for record in self:
+            if record.name:
+                record.name = record.name.upper()
 
 
