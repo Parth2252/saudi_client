@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+product_offer_relation.access_product_offer_line,access_product_offer_line,product_offer_relation.model_product_offer_line,base.group_user,1,1,1,1
+product_offer_relation.access_product_main_line,access_product_main_line,product_offer_relation.model_product_main_line,base.group_user,1,1,1,1

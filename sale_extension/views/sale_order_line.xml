@@ -14,7 +14,6 @@
                        string="Offered Description"
                        placeholder="AS SPECIFIED"
                        class="offered-placeholder-red"
-                       options="{'no_create': True}"
                        readonly="is_not_available"
                        context="{'partner_id':parent.partner_id}"/>
 

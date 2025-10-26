@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="product_customization_product_template_tree_view_inherit_tree_view" model="ir.ui.view">
+        <field name="name">product.customization.product.template.tree.view.inherit.tree.view</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <field name="part_no" optional="hide"/>
+                <field name="brand_id" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_customization_product_template_only_form_view_inherit_form_view" model="ir.ui.view">
+        <field name="name">product.customization.product.template.only.form.view.inherit.form.view</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='barcode']" position="after">
+                <field name="part_no" />
+                <field name="brand_id"  options="{'no_open': True, 'no_create': True, 'no_create_edit': True}" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_customization_product_template_search_view_inherit_search_view" model="ir.ui.view">
+        <field name="name">product.customization.product.template.search.view.inherit.search.view</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='services']" position="before">
+                <field name="part_no" />
+                <field name="brand_id" />
+                <separator/>
+            </xpath>
+            <xpath expr="//group/filter[@name='type']" position="before">
+                <filter string="Brand" name="brand_id" context="{'group_by':'brand_id'}"/>
+                <separator/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

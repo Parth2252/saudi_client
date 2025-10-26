@@ -7,5 +7,8 @@ from . import product_template
 from . import product_product
 from . import purchase_order
 from . import stock_rule
+from . import sh_product_customer_info
+from . import product_supplierinfo
+
 
 

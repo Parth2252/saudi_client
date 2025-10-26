@@ -30,7 +30,9 @@ class AddXls(models.TransientModel):
             "Unit Price",
             "Delivery Time",
             "Product Category",
-            "UOM"
+            "UOM",
+            "Vendor Name",
+            "Vendor Price",
         ]
 
         sheet.append(headers)
@@ -51,7 +53,9 @@ class AddXls(models.TransientModel):
             "Unit Price",
             "Delivery Time",
             "Product Category",
-            "UOM"
+            "UOM",
+            "Vendor Name",
+            "Vendor Price",
         ]
         for col, header in enumerate(headers):
             sheet.write(0, col, header)
@@ -103,6 +107,8 @@ class AddXls(models.TransientModel):
             "delivery time": "delivery_time",
             "product category": "product_category",
             "uom": "unit_of_measure",
+            "vendor name": "vendor_name",
+            "vendor price": "vendor_price",
             "n/a item": "na_item",  # NEW COLUMN
         }
 
@@ -144,19 +150,42 @@ class AddXls(models.TransientModel):
             if not customer_code:
                 product_category = get_value("product_category")
                 product_categ = self.env["product.category"]
-                product_id = product_env.search([("name", "=", customer_product_name)])
-                product_category_id = product_categ.search([("name", "like", product_category)], limit=1)
+                product_id = product_env.search(
+                    [("name", "ilike", customer_product_name)], limit=1
+                )
+                product_category_id = product_categ.search(
+                    [("name", "like", product_category)], limit=1
+                )
                 if not product_id:
-                    product_id = product_env.create({'name':customer_product_name})
+                    product_id = product_env.create({"name": customer_product_name})
                     if product_category_id:
                         product_id.write({"categ_id": product_category_id.id})
             # Customization end.
 
             # Try to match based on Offered Description first
-            offered_name = get_value("offered_description_id")
+            offered_name = get_value("offered_description_id").upper()
             offered_product_id = self.env["product.product"].search(
                 [("name", "=", offered_name)], limit=1
             )
+
+            product_category = get_value("product_category")
+            product_categ = self.env["product.category"]
+            product_category_id = product_categ.search(
+                [("name", "like", product_category)], limit=1
+            )
+
+            if (
+                not offered_product_id
+                and offered_name not in (False, None, "", 0)
+                and offered_name.lower()
+                not in (
+                    "na",
+                    "not available",
+                )
+            ):
+                offered_product_id = product_env.create({"name": offered_name})
+                if product_category_id:
+                        offered_product_id.write({"categ_id": product_category_id.id})
 
             uom = get_value("unit_of_measure")
             product_uom_id = False
@@ -173,7 +202,7 @@ class AddXls(models.TransientModel):
                     "product_id": product_id.id,
                     "offered_description_id": (offered_product_id.id),
                     "product_uom_qty": quantity,
-                    "price_unit": price,
+                    "price_unit": 0.0,
                     "delivery_time": delivery_time,
                     "sh_line_customer_code": customer_code,
                     "sh_line_customer_product_name": (
@@ -182,7 +211,7 @@ class AddXls(models.TransientModel):
                     "name": (
                         offered_product_id.name if offered_name else product_id.name
                     ),
-                    "product_uom": product_uom_id.id if product_uom_id else False
+                    "product_uom": product_uom_id.id if product_uom_id else False,
                 }
             # if correct related product not set then execute below conditions.
             else:
@@ -192,7 +221,7 @@ class AddXls(models.TransientModel):
                     line_vals = {
                         "product_id": product_id.id,
                         "product_uom_qty": quantity,
-                        "price_unit": 0.0,
+                        "price_unit": price,
                         "delivery_time": delivery_time,
                         "sh_line_customer_code": customer_code,
                         "sh_line_customer_product_name": (
@@ -202,7 +231,7 @@ class AddXls(models.TransientModel):
                         ),
                         "name": (product_id.name),
                         "is_not_available": True,
-                        "product_uom": product_uom_id.id if product_uom_id else False
+                        "product_uom": product_uom_id.id if product_uom_id else False,
                     }
                 else:
                     # if no value is set in the offered description then execute this block.
@@ -218,10 +247,45 @@ class AddXls(models.TransientModel):
                             else customer_product_name
                         ),
                         "name": (product_id.name),
-                        "product_uom": product_uom_id.id if product_uom_id else False
+                        "product_uom": product_uom_id.id if product_uom_id else False,
                     }
 
             values.append((0, 0, line_vals))
+
+            # code for create product supplier info and link with product varient it self.
+            product_supplierinfo_env = self.env["product.supplierinfo"]
+            partner_env = self.env["res.partner"]
+            vendor_name = get_value("vendor_name")
+            vendor_price = float(get_value("vendor_price") or 0)
+
+            vendor_id = partner_env.search([("name", "like", vendor_name)], limit=1)
+
+            if offered_product_id:
+                product_id = offered_product_id
+
+            already_available_product_supplierinfo = product_supplierinfo_env.search(
+                [("partner_id", "=", vendor_id.id), ("product_id", "=", product_id.id)]
+            )
+
+            if 1 <= delivery_time <= 7:
+                exact_delivery_time = delivery_time - 1
+            elif 8 <= delivery_time <= 14:
+                exact_delivery_time = delivery_time - 2
+            elif delivery_time >= 15:
+                exact_delivery_time = delivery_time - 7
+            else:
+                exact_delivery_time = 1
+
+            if not already_available_product_supplierinfo and vendor_id and product_id:
+                product_supplierinfo_id = product_supplierinfo_env.create(
+                    {
+                        "partner_id": vendor_id.id,
+                        "product_id": product_id.id,
+                        "min_qty": 1.0,
+                        "price": vendor_price,
+                        "delay": exact_delivery_time,
+                    }
+                )
 
         if values:
             order.write({"order_line": values})
@@ -261,6 +325,8 @@ class AddXls(models.TransientModel):
             "delivery time": "delivery_time",
             "product category": "product_category",
             "uom": "unit_of_measure",
+            "vendor name": "vendor_name",
+            "vendor price": "vendor_price",
             "n/a item": "na_item",  # NEW COLUMN
         }
 
@@ -300,19 +366,42 @@ class AddXls(models.TransientModel):
             if not customer_code:
                 product_category = get_value("product_category")
                 product_categ = self.env["product.category"]
-                product_id = product_env.search([("name", "ilike", customer_product_name)], limit=1)
-                product_category_id = product_categ.search([("name", "like", product_category)], limit=1)
+                product_id = product_env.search(
+                    [("name", "ilike", customer_product_name)], limit=1
+                )
+                product_category_id = product_categ.search(
+                    [("name", "like", product_category)], limit=1
+                )
                 if not product_id:
-                    product_id = product_env.create({'name':customer_product_name})
+                    product_id = product_env.create({"name": customer_product_name})
                     if product_category_id:
                         product_id.write({"categ_id": product_category_id.id})
             # Customization end.
 
             # Try to match based on Offered Description first
-            offered_name = get_value("offered_description_id")
+            offered_name = get_value("offered_description_id").upper()
             offered_product_id = self.env["product.product"].search(
                 [("name", "=", offered_name)], limit=1
             )
+
+            product_category = get_value("product_category")
+            product_categ = self.env["product.category"]
+            product_category_id = product_categ.search(
+                [("name", "like", product_category)], limit=1
+            )
+
+            if (
+                not offered_product_id
+                and offered_name not in (False, None, "", 0)
+                and offered_name.lower()
+                not in (
+                    "na",
+                    "not available",
+                )
+            ):
+                offered_product_id = product_env.create({"name": offered_name})
+                if product_category_id:
+                        offered_product_id.write({"categ_id": product_category_id.id})
 
             uom = get_value("unit_of_measure")
             product_uom_id = False
@@ -329,7 +418,7 @@ class AddXls(models.TransientModel):
                     "product_id": product_id.id,
                     "offered_description_id": (offered_product_id.id),
                     "product_uom_qty": quantity,
-                    "price_unit": price,
+                    "price_unit": 0.0,
                     "delivery_time": delivery_time,
                     "sh_line_customer_code": customer_code,
                     "sh_line_customer_product_name": (
@@ -338,7 +427,7 @@ class AddXls(models.TransientModel):
                     "name": (
                         offered_product_id.name if offered_name else product_id.name
                     ),
-                    "product_uom": product_uom_id.id if product_uom_id else False
+                    "product_uom": product_uom_id.id if product_uom_id else False,
                 }
             # if correct related product not set then execute below conditions.
             else:
@@ -348,7 +437,7 @@ class AddXls(models.TransientModel):
                     line_vals = {
                         "product_id": product_id.id,
                         "product_uom_qty": quantity,
-                        "price_unit": 0.0,
+                        "price_unit": price,
                         "delivery_time": delivery_time,
                         "sh_line_customer_code": customer_code,
                         "sh_line_customer_product_name": (
@@ -358,7 +447,7 @@ class AddXls(models.TransientModel):
                         ),
                         "name": (product_id.name),
                         "is_not_available": True,
-                        "product_uom": product_uom_id.id if product_uom_id else False
+                        "product_uom": product_uom_id.id if product_uom_id else False,
                     }
                 else:
                     # if no value is set in the offered description then execute this block.
@@ -374,10 +463,45 @@ class AddXls(models.TransientModel):
                             else customer_product_name
                         ),
                         "name": (product_id.name),
-                        "product_uom": product_uom_id.id if product_uom_id else False
+                        "product_uom": product_uom_id.id if product_uom_id else False,
                     }
 
             values.append((0, 0, line_vals))
+
+            # code for create product supplier info and link with product varient it self.
+            product_supplierinfo_env = self.env["product.supplierinfo"]
+            partner_env = self.env["res.partner"]
+            vendor_name = get_value("vendor_name")
+            vendor_price = float(get_value("vendor_price") or 0)
+
+            vendor_id = partner_env.search([("name", "like", vendor_name)], limit=1)
+
+            if offered_product_id:
+                product_id = offered_product_id
+
+            already_available_product_supplierinfo = product_supplierinfo_env.search(
+                [("partner_id", "=", vendor_id.id), ("product_id", "=", product_id.id)]
+            )
+
+            if 1 <= delivery_time <= 7:
+                exact_delivery_time = delivery_time - 1
+            elif 8 <= delivery_time <= 14:
+                exact_delivery_time = delivery_time - 2
+            elif delivery_time >= 15:
+                exact_delivery_time = delivery_time - 7
+            else:
+                exact_delivery_time = 1
+
+            if not already_available_product_supplierinfo and vendor_id and product_id:
+                product_supplierinfo_id = product_supplierinfo_env.create(
+                    {
+                        "partner_id": vendor_id.id,
+                        "product_id": product_id.id,
+                        "min_qty": 1.0,
+                        "price": vendor_price,
+                        "delay": exact_delivery_time,
+                    }
+                )
 
         if values:
             order.write({"order_line": values})

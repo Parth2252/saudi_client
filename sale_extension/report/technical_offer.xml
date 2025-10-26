@@ -349,11 +349,11 @@
                                     <!-- CUS End. -->
                                     <!-- CUS start. -->
                                     <td style="text-align:left; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
-                                        <t t-if="line.show_customer_product_name()">
-                                            <span t-esc="line.sh_line_customer_product_name"/>
-                                        </t>
-                                        <t t-else="">
+                                        <t t-if="line.offered_description_id">
                                             <span t-esc="line.product_template_id.name or ''"/>
+                                        </t>
+                                        <t t-elif="line.show_customer_product_name()">
+                                            <span t-esc="line.sh_line_customer_product_name"/>
                                         </t>
                                     </td>
                                     <!-- CUS end. -->   
@@ -373,7 +373,7 @@
                                             <span t-esc="line.offered_description_id.name"/>
                                         </t>
                                         <t t-elif="line.is_not_available">
-                                            <span style="color:red; font-weight:bold;">Not Available</span>
+                                            <span style="color:darkorange; font-weight:bold;">TO BE QUOTED</span>
                                         </t>
                                         <t t-else="">
                                             <span style="color:green; font-weight:bold;">AS SPECIFIED</span>

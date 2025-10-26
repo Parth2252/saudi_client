@@ -34,5 +34,26 @@
             </field>
         </record>
 
+        <record id="action_sh_product_customer_info_update" model="ir.actions.server">
+            <field name="name">Update Customer Product Name</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="sale_extension.model_sh_product_customer_info"/>
+            <field name="binding_model_id" ref="sale_extension.model_sh_product_customer_info"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="code">
+                records.update_old_product_sh_record_to_uppercase()
+            </field>
+        </record>
+
+        <record id="action_vendor_product_name_update" model="ir.actions.server">
+            <field name="name">Update Vendor Product Name</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="sale_extension.model_product_supplierinfo"/>
+            <field name="binding_model_id" ref="sale_extension.model_product_supplierinfo"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="code">
+                records.update_old_vendor_product_name_to_uppercase()
+            </field>
+        </record>
     </data>
 </odoo>

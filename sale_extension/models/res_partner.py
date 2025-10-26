@@ -146,7 +146,6 @@ class ResPartner(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        print("\n\n\n --- vals_list ---", vals_list)
         for vals in vals_list:
             if 'name' in vals and vals['name']:
                 vals['name'] = vals['name'].upper()
