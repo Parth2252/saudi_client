@@ -59,6 +59,7 @@ class PurchaseOrder(models.Model):
 
     def _get_sale_orders(self):
         res = super(PurchaseOrder, self)._get_sale_orders()
+        
         linked_so = (
             self.order_line.move_dest_ids.group_id.sale_id
             | self.env["stock.move"]
@@ -66,7 +67,7 @@ class PurchaseOrder(models.Model):
             .group_id.sale_id
         )
         group_so = self.order_line.group_id.sale_id
-        self.sale_partner_id = False
+        # self.sale_partner_id = False
         if linked_so or group_so:
             self.sale_partner_id = linked_so[0].partner_id or group_so[0].partner_id
         return super()._get_sale_orders() | linked_so | group_so

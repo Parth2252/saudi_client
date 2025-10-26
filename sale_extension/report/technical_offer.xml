@@ -246,49 +246,49 @@
                 <t t-set="show_img" t-value="any(l.offered_image          for l in doc.order_line)"/>
                 <t t-set="show_discount" t-value="any(l.discount               for l in doc.order_line)"/>
 
-                <table style="width:100%; margin-top:20px; font-size:12px;border:1px solid white; ">
-                    <thead>
-                        <tr style="background:#0066FF; color:#fff; border:none;">
-                            <th style="width:5%; font-size:12px; font-weight:bold; padding:6px; text-align:center; vertical-align:middle; border:none; border-right:1px solid white;">
+                <table class="table table-borderless" style="margin-top:20px; font-size: 8px; border:1px solid white;">
+                    <thead style="display: table-row-group">
+                        <tr>
+                            <th class="text-center" style="background-color: #0066ff; color: white;">
                                 #<br/>SN
                             </th>
                             <th t-if="show_pr"
-                                style="width:5%; font-size:12px; font-weight:bold; padding:6px; text-align:center; vertical-align:middle; border:none; border-right:1px solid white;">
+                                class="text-center" style="background-color: #0066ff; color: white;">
                                 رقم طلب الشراء<br/>PR Number
                             </th>
-                            <th style="width:5%; font-size:12px; font-weight:bold; padding:6px; text-align:center; vertical-align:middle; border:none; border-right:1px solid white;">
+                            <th class="text-center" style="background-color: #0066ff; color: white;">
                                 رقم المنتج<br/>Item Code
                             </th>
-                            <th style="width:15%; font-size:12px; font-weight:bold; padding:6px; text-align:center; vertical-align:middle; border:none; border-right:1px solid white;">
+                            <th class="text-center" style="background-color: #0066ff; color: white;">
                                 الوصف<br/>Description
                             </th>
-                            <th style="width:10%; font-size:12px; font-weight:bold; padding:6px; text-align:center; vertical-align:middle; border:none; border-right:1px solid white;">
+                            <th class="text-center" style="background-color: #0066ff; color: white;">
                                 رقم الصنف<br/>TS Code
                             </th>
-                            <th style="width:15%; font-size:12px; font-weight:bold; padding:6px; text-align:center; vertical-align:middle; border:none; border-right:1px solid white;">
+                            <th class="text-center" style="background-color: #0066ff; color: white;">
                                 وصف البند<br/>Offered<br/>Description
                             </th>
                             <th t-if="show_img"
-                                style="width:10%; font-size:12px; font-weight:bold; padding:6px; text-align:center; vertical-align:middle; border:none; border-right:1px solid white;">
+                                class="text-center" style="background-color: #0066ff; color: white;">
                                 الصورة<br/>Photo
                             </th>
-                            <th style="width:4%; font-size:12px; font-weight:bold; padding:6px; text-align:center; vertical-align:middle; border:none; border-right:1px solid white;">
+                            <th class="text-center" style="background-color: #0066ff; color: white;">
                                 وحدة القیاس<br/>UOM
                             </th>
-                            <th style="width:4%; font-size:12px; font-weight:bold; padding:6px; text-align:center; vertical-align:middle; border:none; border-right:1px solid white;">
+                            <th class="text-center" style="background-color: #0066ff; color: white;">
                                 الكمیة<br/>Qty
                             </th>
-                            <th style="width:7%; font-size:12px; font-weight:bold; padding:6px; text-align:center; vertical-align:middle; border:none; border-right:1px solid white;">
+                            <th class="text-center" style="background-color: #0066ff; color: white;">
                                 سعر الوحدة<br/>Unit Price
                             </th>
                             <th t-if="show_discount"
-                                style="width:5%; font-size:12px; font-weight:bold; padding:6px; text-align:center; vertical-align:middle; border:none; border-right:1px solid white;">
+                                class="text-center" style="background-color: #0066ff; color: white;">
                                 نسبة الخصم<br/>Discount %
                             </th>
-                            <th style="width:5%; font-size:12px; font-weight:bold; padding:6px; text-align:center; vertical-align:middle; border:none; border-right:1px solid white;">
+                            <th class="text-center" style="background-color: #0066ff; color: white;">
                                 الإجمالي<br/>Amount
                             </th>
-                            <th style="width:5%; font-size:12px; font-weight:bold; padding:6px; text-align:center; vertical-align:middle; border:none;">
+                            <th class="text-center" style="background-color: #0066ff; color: white;">
                                 وقت التسلیم<br/>Delivery Time
                             </th>
                         </tr>
@@ -329,16 +329,16 @@
                             <t t-else="">
                                 <t t-set="sr_no" t-value="sr_no + 1"/>
 
-                                <tr t-att-class="(sr_no % 2 == 0) and 'grey-row' or ''">
-                                    <td style="text-align:center; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
+                                <tr>
+                                    <td class="text-center align-middle">
                                         <t t-esc="line.sr_no_so"/>
                                     </td>
                                     <td t-if="show_pr"
-                                        style="text-align:center; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
+                                        class="text-center align-middle">
                                         <span t-esc="line.pr_number or ''"/>
                                     </td>
                                     <!-- CUS start. -->
-                                    <td style="text-align:center; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
+                                    <td class="text-center align-middle">
                                         <t t-if="line.sh_line_customer_code">
                                             <span t-esc="line.sh_line_customer_code"/>
                                         </t>
@@ -348,7 +348,7 @@
                                     </td>
                                     <!-- CUS End. -->
                                     <!-- CUS start. -->
-                                    <td style="text-align:left; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
+                                    <td class="text-start align-middle">
                                         <t t-if="line.offered_description_id">
                                             <span t-esc="line.product_template_id.name or ''"/>
                                         </t>
@@ -358,7 +358,7 @@
                                     </td>
                                     <!-- CUS end. -->   
                                     <!-- Cus start -->
-                                    <td style="text-align:center; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
+                                    <td class="text-center align-middle">
                                         <t t-if="line.ts_code">
                                             <span t-esc="line.ts_code"/>
                                         </t>
@@ -367,7 +367,7 @@
                                         </t>
                                     </td>
                                     <!-- Cus end. -->
-                                    <td style="text-align:left; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
+                                    <td class="text-start align-middle">
                                         <!-- customization start -->
                                         <t t-if="line.offered_description_id">
                                             <span t-esc="line.offered_description_id.name"/>
@@ -381,36 +381,36 @@
                                         <!-- customization end -->
                                     </td>
                                     <td t-if="show_img"
-                                        style="text-align:center; vertical-align:middle; padding:5px; border:1px solid #D1D1D1;">
+                                        class="text-center align-middle">
                                         <t t-if="line.offered_image">
                                             <img t-att-src="image_data_uri(line.offered_image)"
                                                  style="max-width:100px; max-height:100px;" alt="Product Image"/>
                                         </t>
                                     </td>
-                                    <td style="text-align:center; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
+                                    <td class="text-center align-middle">
                                         <span t-field="line.product_uom"/>
                                     </td>
-                                    <td style="text-align:center; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
+                                    <td class="text-center align-middle">
                                         <span t-field="line.product_uom_qty"/>
                                     </td>
-                                    <td style="text-align:center; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
+                                    <td class="text-center align-middle">
                                         <span t-esc="0.0"
                                               t-options='{"widget":"monetary","display_currency":doc.currency_id}'/>
                                     </td>
                                     <td t-if="show_discount"
-                                        style="text-align:center; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
+                                        class="text-center align-middle">
                                         <span t-field="line.discount"/>
                                     </td>
-                                    <td style="text-align:center; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
+                                    <td class="text-center align-middle">
                                         <span t-esc="0.0"
                                               t-options='{"widget":"monetary","display_currency":doc.currency_id}'/>
                                     </td>
-                                    <!--                                    <td style="text-align:center; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">-->
+                                    <!--                                    <td class="text-center align-middle">-->
                                     <!--                                        <span t-esc="line.delivery_time or ''"/>-->
                                     <!--                                    </td>-->
 
 
-                                    <td style="text-align:center; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">
+                                    <td class="text-center align-middle">
                                         <t t-if="line.delivery_time_display">
                                             <span t-esc="line.delivery_time_display"/>
                                         </t>
@@ -420,7 +420,7 @@
                                     </td>
 
 
-                                    <!--                                    <td style="text-align:center; vertical-align:middle; padding:5px 5px 20px 5px; padding-top:20px; border:1px solid #D1D1D1;">-->
+                                    <!--                                    <td class="text-center align-middle">-->
                                     <!--                                        <span t-esc="line.delivery_time or ''"/>-->
                                     <!--                                    </td>-->
                                 </tr>
@@ -586,8 +586,8 @@
         <field name="orientation">Portrait</field>
         <field name="margin_top">35</field>
         <field name="margin_bottom">25</field>
-        <field name="margin_left">3</field>
-        <field name="margin_right">3</field>
+        <field name="margin_left">0</field>
+        <field name="margin_right">0</field>
         <field name="header_line" eval="False"/>
         <field name="header_spacing">35</field>
         <field name="dpi">90</field>
@@ -602,7 +602,7 @@
         <field name="report_name">sale_extension.report_technical_offer</field>
         <field name="report_file">sale_extension.report_technical_offer</field>
         <field name="binding_model_id" ref="sale.model_sale_order"/>
-        <!-- <field name="paperformat_id" ref="sale_extension.paperformat_technical_paper_format"/> -->
+        <field name="paperformat_id" ref="sale_extension.paperformat_technical_paper_format"/>
         <field name="binding_type">report</field>
         <!--        <field name="print_report_name">'Technical Offer - %s' % (object.name)</field>-->
         <field name="print_report_name">'TAMSTAR_%s_UNPRICED TECHNICAL OFFER_%s_%s' % (object.name, object.quote_desc or
