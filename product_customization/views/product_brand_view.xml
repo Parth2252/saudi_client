@@ -1,6 +1,6 @@
 <odoo>
     <record model="ir.ui.view" id="product_customization_product_brand_form_view">
-      <field name="name">product.customization.form.view</field>
+      <field name="name">product.customization.product.brand.form.view</field>
       <field name="model">product.brand</field>
       <field name="arch" type="xml">
         <form>
@@ -16,7 +16,7 @@
     </record>
 
     <record model="ir.ui.view" id="product_customization_product_brand_list_view">
-      <field name="name">product.customization.list.view</field>
+      <field name="name">product.customization.product.brand.list.view</field>
       <field name="model">product.brand</field>
       <field name="arch" type="xml">
         <list>
