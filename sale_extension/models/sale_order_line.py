@@ -3,58 +3,71 @@ from odoo.exceptions import UserError, ValidationError
 from datetime import date
 from datetime import timedelta
 
+
 class ProductProduct(models.Model):
-    _inherit = 'product.product'
+    _inherit = "product.product"
 
     attachment_ids = fields.One2many(
-        'ir.attachment', 'res_id',
+        "ir.attachment",
+        "res_id",
         string="Attachments",
         domain="[('res_model', '=', 'product.product')]",
-        readonly=True
+        readonly=True,
     )
 
 
 class SaleOrderLine(models.Model):
-    _inherit = 'sale.order.line'
+    _inherit = "sale.order.line"
 
-    pr_number = fields.Char(string='PR Number')
-    sr_no_so = fields.Integer(string='Order No')
-    sh_line_customer_code = fields.Char(string="Customer Product Code", compute="_compute_sh_line_customer_code", readonly=False, store=True)
+    pr_number = fields.Char(string="PR Number")
+    sr_no_so = fields.Integer(string="Order No")
+    sh_line_customer_code = fields.Char(
+        string="Customer Product Code",
+        compute="_compute_sh_line_customer_code",
+        readonly=False,
+        store=True,
+    )
     sh_line_customer_product_name = fields.Char(string="Customer Product Name")
     # offered_description_id = fields.Many2one(
     #     'product.product', string="Offered Description", readonly=False)
-    
+
     offered_description_id = fields.Many2one(
-        'product.product',
+        "product.product",
         string="Offered Description",
-        domain=[('sale_ok', '=', True)],
-        required=False
+        domain=[("sale_ok", "=", True)],
+        required=False,
     )
 
     # offered_image = fields.Binary(related='product_id.image_1920', readonly=True, store=True)
 
     offered_image = fields.Binary(
-        string='Image for Report',
-        compute='_compute_offered_image', store=False)
+        string="Image for Report", compute="_compute_offered_image", store=False
+    )
 
-    delivery_time = fields.Integer(string='Delivery Time')
-    ts_code = fields.Char(
-        string='TS Code',
-        store=True, readonly=False)
-    blank = fields.Monetary(string='Blank', currency_field='currency_id', compute='_compute_blank', store=False)
+    delivery_time = fields.Integer(string="Delivery Time")
+    ts_code = fields.Char(string="TS Code", store=True, readonly=False)
+    blank = fields.Monetary(
+        string="Blank",
+        currency_field="currency_id",
+        compute="_compute_blank",
+        store=False,
+    )
 
     translated_product_name = fields.Char()
 
-    delivery_time_display = fields.Char(string="Delivery Time", compute='_compute_delivery_time_display')
+    delivery_time_display = fields.Char(
+        string="Delivery Time", compute="_compute_delivery_time_display"
+    )
 
     # customization start.
     is_not_available = fields.Boolean(copy=False)
 
-    delivery_date = fields.Datetime(copy=False, compute="_compute_delivery_date", store=True, readonly=False)
+    delivery_date = fields.Datetime(
+        copy=False, compute="_compute_delivery_date", store=True, readonly=False
+    )
     # customization end.
 
-
-    @api.onchange('is_not_available')
+    @api.onchange("is_not_available")
     def _onchange_is_not_available(self):
         """Update price based on availability"""
         for line in self:
@@ -65,16 +78,17 @@ class SaleOrderLine(models.Model):
                 if line.product_id:
                     line.price_unit = line.product_id.list_price
 
-
-    @api.depends('order_id.date_order', 'delivery_time')
+    @api.depends("order_id.date_order", "delivery_time")
     def _compute_delivery_date(self):
         for line in self:
             if line.order_id.date_order and line.delivery_time:
-                line.delivery_date = line.order_id.date_order.date() + timedelta(days=line.delivery_time)
+                line.delivery_date = line.order_id.date_order.date() + timedelta(
+                    days=line.delivery_time
+                )
             else:
                 line.delivery_date = line.delivery_date or False
 
-    @api.depends('product_id', 'offered_description_id', 'order_id.partner_id')
+    @api.depends("product_id", "offered_description_id", "order_id.partner_id")
     def _compute_sh_line_customer_code(self):
         for line in self:
             customer = line.order_id.partner_id
@@ -83,12 +97,19 @@ class SaleOrderLine(models.Model):
             customer_info = False
             line.ts_code = product.default_code
             if customer and product:
-                customer_info = self.env['sh.product.customer.info'].sudo().search([
-                    ('name', '=', customer.id),
-                    '|',
-                    ('product_id', '=', product.id),
-                    ('product_tmpl_id', '=', product.product_tmpl_id.id)
-                ], limit=1)
+                customer_info = (
+                    self.env["sh.product.customer.info"]
+                    .sudo()
+                    .search(
+                        [
+                            ("name", "=", customer.id),
+                            "|",
+                            ("product_id", "=", product.id),
+                            ("product_tmpl_id", "=", product.product_tmpl_id.id),
+                        ],
+                        limit=1,
+                    )
+                )
             if customer_info:
                 line.sh_line_customer_code = customer_info.product_code or False
                 line.sh_line_customer_product_name = customer_info.product_name or False
@@ -99,8 +120,7 @@ class SaleOrderLine(models.Model):
             if not line.offered_description_id:
                 line.price_unit = line.product_id.list_price
 
-
-    @api.depends('delivery_time')
+    @api.depends("delivery_time")
     def _compute_delivery_time_display(self):
         for rec in self:
             if rec.delivery_time is not None and not rec.is_not_available:
@@ -114,7 +134,9 @@ class SaleOrderLine(models.Model):
                     rec.delivery_time_display = "Tomorrow"
                 elif days % 7 == 0:
                     weeks = days // 7
-                    rec.delivery_time_display = f"{weeks} WEEK{'S' if weeks > 1 else ''}"
+                    rec.delivery_time_display = (
+                        f"{weeks} WEEK{'S' if weeks > 1 else ''}"
+                    )
                 else:
                     rec.delivery_time_display = f"{days} DAY{'S' if days > 1 else ''}"
             else:
@@ -125,8 +147,9 @@ class SaleOrderLine(models.Model):
     #     for line in self:
     #         line.offered_description_display = line.offered_description_id.display_name if line.offered_description_id else "AS SPECIFIED"
 
-
-    @api.depends('offered_description_id', 'product_id', 'product_uom', 'product_uom_qty')
+    @api.depends(
+        "offered_description_id", "product_id", "product_uom", "product_uom_qty"
+    )
     def _compute_price_unit(self):
         for line in self:
             # Don't compute the price for deleted lines.
@@ -144,7 +167,7 @@ class SaleOrderLine(models.Model):
         for order in self:
             order.blank = 0.0
 
-    @api.depends('offered_description_id', 'product_id')
+    @api.depends("offered_description_id", "product_id")
     def _compute_offered_image(self):
         for line in self:
             if line.offered_description_id and line.offered_description_id.image_1920:
@@ -153,7 +176,7 @@ class SaleOrderLine(models.Model):
                 line.offered_image = line.product_id.image_1920
 
     def sale_order_line_sequence(self):
-        """ Generate auto sequence for sale order. """
+        """Generate auto sequence for sale order."""
         number = 1
         for record in self.order_id.order_line:
             if not record.display_type:
@@ -168,28 +191,68 @@ class SaleOrderLine(models.Model):
             line.sale_order_line_sequence()
         return lines
 
-    @api.depends('product_id', 'product_uom', 'product_uom_qty')
+    @api.depends("product_id", "product_uom", "product_uom_qty")
     def _compute_product_qty(self):
         for line in self:
             if not line.product_id or not line.product_uom or not line.product_uom_qty:
                 line.product_qty = 0.0
                 continue
             line.product_qty = line.product_uom._compute_quantity(
-                line.product_uom_qty, line.product_id.uom_id, raise_if_failure = False
+                line.product_uom_qty, line.product_id.uom_id, raise_if_failure=False
             )
-    
+
     def show_customer_product_name(self):
         """Return True if customer product name should be shown."""
         for line in self:
-            if line.sh_line_customer_product_name and line.sh_line_customer_product_name.strip():
+            if (
+                line.sh_line_customer_product_name
+                and line.sh_line_customer_product_name.strip()
+            ):
                 return True
         return False
+
+    def return_item_code(self):
+        sh_customer_info_env = self.env["sh.product.customer.info"]
+        so_partner_id = self.order_id.partner_id
+        product_id = self.product_id
+
+        if so_partner_id and product_id:
+            item_code = sh_customer_info_env.search(
+                [
+                    ("name", "=", so_partner_id.id),
+                    ("product_id", "=", product_id.id),
+                ],
+                limit=1,
+            )
+            return item_code.product_code or product_id.default_code
+        else:
+            return product_id.default_code
+
+    def return_ts_code(self):
+        sh_customer_info_env = self.env["sh.product.customer.info"]
+        so_partner_id = self.order_id.partner_id
+        product_id = self.offered_description_id
+
+        if so_partner_id and product_id:
+            ts_code = sh_customer_info_env.search(
+                [
+                    ("name", "=", so_partner_id.id),
+                    ("product_id", "=", product_id.id),
+                ],
+                limit=1,
+            )
+            return ts_code.product_code or product_id.default_code
+        else:
+            return product_id.default_code
+
 
 
 class UoM(models.Model):
     _inherit = "uom.uom"
 
-    def _compute_quantity(self, qty, to_unit, round=True, rounding_method='UP', raise_if_failure=True):
+    def _compute_quantity(
+        self, qty, to_unit, round=True, rounding_method="UP", raise_if_failure=True
+    ):
         """Override to remove category validation"""
         if not self or not qty:
             return qty
@@ -203,6 +266,10 @@ class UoM(models.Model):
                 amount = amount * to_unit.factor
 
         if to_unit and round:
-            amount = tools.float_round(amount, precision_rounding=to_unit.rounding, rounding_method=rounding_method)
+            amount = tools.float_round(
+                amount,
+                precision_rounding=to_unit.rounding,
+                rounding_method=rounding_method,
+            )
 
         return amount

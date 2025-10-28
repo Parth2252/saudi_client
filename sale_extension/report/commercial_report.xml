@@ -306,12 +306,7 @@
                                     </td>
                                     <!-- CUS start. -->
                                     <td class="text-center align-middle">
-                                        <t t-if="line.sh_line_customer_code">
-                                            <span t-esc="line.sh_line_customer_code"/>
-                                        </t>
-                                        <t t-else="">
-                                            <span t-esc="line.product_id.default_code  or ''"/>
-                                        </t>
+                                        <t t-esc="line.return_item_code()"/>
                                     </td>
                                     <!-- CUS End. -->
                                     <!-- CUS start. -->
@@ -326,12 +321,7 @@
                                     <!-- CUS end. -->   
                                     <!-- Cus start -->
                                     <td class="text-center align-middle">
-                                        <t t-if="line.ts_code">
-                                            <span t-esc="line.ts_code"/>
-                                        </t>
-                                        <t t-else="">
-                                            <span t-esc="line.product_id.default_code  or ''"/>
-                                        </t>
+                                        <t t-esc="line.return_ts_code()"/>
                                     </td>
                                     <!-- Cus end. -->
                                     <td class="text-start align-middle">

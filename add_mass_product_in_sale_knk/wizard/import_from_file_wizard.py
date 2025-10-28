@@ -157,7 +157,9 @@ class AddXls(models.TransientModel):
                     [("name", "like", product_category)], limit=1
                 )
                 if not product_id:
-                    product_id = product_env.create({"name": customer_product_name})
+                    product_id = product_env.create(
+                        {"name": customer_product_name, "list_price": price}
+                    )
                     if product_category_id:
                         product_id.write({"categ_id": product_category_id.id})
             # Customization end.
@@ -183,9 +185,11 @@ class AddXls(models.TransientModel):
                     "not available",
                 )
             ):
-                offered_product_id = product_env.create({"name": offered_name})
+                offered_product_id = product_env.create(
+                    {"name": offered_name, "list_price": price}
+                )
                 if product_category_id:
-                        offered_product_id.write({"categ_id": product_category_id.id})
+                    offered_product_id.write({"categ_id": product_category_id.id})
 
             uom = get_value("unit_of_measure")
             product_uom_id = False
@@ -373,7 +377,9 @@ class AddXls(models.TransientModel):
                     [("name", "like", product_category)], limit=1
                 )
                 if not product_id:
-                    product_id = product_env.create({"name": customer_product_name})
+                    product_id = product_env.create(
+                        {"name": customer_product_name, "list_price": price}
+                    )
                     if product_category_id:
                         product_id.write({"categ_id": product_category_id.id})
             # Customization end.
@@ -399,9 +405,11 @@ class AddXls(models.TransientModel):
                     "not available",
                 )
             ):
-                offered_product_id = product_env.create({"name": offered_name})
+                offered_product_id = product_env.create(
+                    {"name": offered_name, "list_price": price}
+                )
                 if product_category_id:
-                        offered_product_id.write({"categ_id": product_category_id.id})
+                    offered_product_id.write({"categ_id": product_category_id.id})
 
             uom = get_value("unit_of_measure")
             product_uom_id = False
@@ -418,7 +426,7 @@ class AddXls(models.TransientModel):
                     "product_id": product_id.id,
                     "offered_description_id": (offered_product_id.id),
                     "product_uom_qty": quantity,
-                    "price_unit": 0.0,
+                    "price_unit": price,
                     "delivery_time": delivery_time,
                     "sh_line_customer_code": customer_code,
                     "sh_line_customer_product_name": (
