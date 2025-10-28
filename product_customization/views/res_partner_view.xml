@@ -11,9 +11,9 @@
                     <field name="partner_product_line_ids" widget="many2one_list">
                         <list editable="bottom">
                             <field name="name" />
-                            <field name="partner_id" required="name" options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
-                            <field name="product_id" required="name" options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
-                            <field name="brand_id" required="name" options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                            <field name="partner_id"/>
+                            <field name="product_id"/>
+                            <field name="brand_id" required="1"/>
                             <field name="product_image" widget="image" options="{'size': [64, 64]}"/>
                         </list>
                     </field>

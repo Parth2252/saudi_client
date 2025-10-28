@@ -37,6 +37,16 @@ class SaleOrderLine(models.Model):
         domain=[("sale_ok", "=", True)],
         required=False,
     )
+    
+
+    @api.onchange('product_template_id')
+    def onchange_product_template(self):
+        for rec in self:
+            if rec.product_template_id and rec.product_template_id.offer_product_ids:
+                offer_product_id =  rec.product_template_id.offer_product_ids[0].product_id.id   
+                rec.offered_description_id = offer_product_id
+
+        
 
     # offered_image = fields.Binary(related='product_id.image_1920', readonly=True, store=True)
 
