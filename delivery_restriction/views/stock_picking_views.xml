@@ -8,12 +8,13 @@
                 <field name="gr_number"/>
             </xpath>
             <xpath expr="//header" position="inside">
-              <button name="confirm_gr_number" type="object" string="Confirm" invisible="state in ('delivered','done')"/>
+              <button name="confirm_gr_number" type="object" string="Confirm GRN" invisible="state not in ('done')" class="oe_highlight"/>
             </xpath>
             <xpath expr="//header/button[3]" position="attributes">
-              <attribute name="invisible">state != ('delivered')</attribute>
+              <attribute name="invisible">state in ('delivered', 'done')</attribute>
             </xpath>
             <xpath expr="//header/button[4]" position="replace">
+                <!-- <attribute name="invisible">state in ('delivered')</attribute> -->
             </xpath>
         </field>
     </record>

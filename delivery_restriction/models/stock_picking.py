@@ -13,8 +13,8 @@ class StockPicking(models.Model):
             ("waiting", "Waiting Another Operation"),
             ("confirmed", "Waiting"),
             ("assigned", "Ready"),
-            ("delivered", "Delivered"),
-            ("done", "Done"),
+            ("done", "Delivered"),
+            ("delivered", "Done"),
             ("cancel", "Cancelled"),
         ],
         string="Status",
@@ -41,11 +41,11 @@ class StockPicking(models.Model):
 
     def confirm_gr_number(self):
         for picking in self:
-            # if not self.gr_number:
-            #     raise ValidationError("Please set the GR number!")
+            if not self.gr_number:
+                raise ValidationError("Please set the GR number!")
             picking.state = 'delivered'
 
-    def button_validate(self):
-        if not self.gr_number:
-            raise ValidationError("Please set the GR number!")
-        return super().button_validate()
+    # def button_validate(self):
+    #     if not self.gr_number:
+    #         raise ValidationError("Please set the GR number!")
+    #     return super().button_validate()

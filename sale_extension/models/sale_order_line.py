@@ -231,7 +231,9 @@ class SaleOrderLine(models.Model):
     def return_ts_code(self):
         sh_customer_info_env = self.env["sh.product.customer.info"]
         so_partner_id = self.order_id.partner_id
-        product_id = self.offered_description_id
+        product_id = self.product_id
+        if self.offered_description_id:
+            product_id = self.offered_description_id
 
         if so_partner_id and product_id:
             ts_code = sh_customer_info_env.search(
