@@ -249,20 +249,20 @@
                 <table class="table table-borderless" style="margin-top:20px; font-size: 8px; border:1px solid white;">
                     <thead style="display: table-row-group">
                         <tr>
-                            <th class="text-center" style="background-color: #0066ff; color: white;">
+                            <th class="text-center" style="background-color: #0066ff; color: white; width:3%;">
                                 #<br/>SN
                             </th>
                             <th t-if="show_pr"
-                                class="text-center" style="background-color: #0066ff; color: white;">
+                                class="text-center" style="background-color: #0066ff; color: white; width:5%;">
                                 رقم طلب الشراء<br/>PR Number
                             </th>
-                            <th class="text-center" style="background-color: #0066ff; color: white;">
+                            <th class="text-center" style="background-color: #0066ff; color: white; width:5%;">
                                 رقم المنتج<br/>Item Code
                             </th>
                             <th class="text-center" style="background-color: #0066ff; color: white;">
                                 الوصف<br/>Description
                             </th>
-                            <th class="text-center" style="background-color: #0066ff; color: white;">
+                            <th class="text-center" style="background-color: #0066ff; color: white; width:5%;">
                                 رقم الصنف<br/>TS Code
                             </th>
                             <th class="text-center" style="background-color: #0066ff; color: white;">
@@ -272,23 +272,23 @@
                                 class="text-center" style="background-color: #0066ff; color: white;">
                                 الصورة<br/>Photo
                             </th>
-                            <th class="text-center" style="background-color: #0066ff; color: white;">
+                            <th class="text-center" style="background-color: #0066ff; color: white; width:3%;">
                                 وحدة القیاس<br/>UOM
                             </th>
-                            <th class="text-center" style="background-color: #0066ff; color: white;">
+                            <th class="text-center" style="background-color: #0066ff; color: white; width:3%;">
                                 الكمیة<br/>Qty
                             </th>
-                            <th class="text-center" style="background-color: #0066ff; color: white;">
+                            <th class="text-center" style="background-color: #0066ff; color: white; width:7%;">
                                 سعر الوحدة<br/>Unit Price
                             </th>
                             <th t-if="show_discount"
-                                class="text-center" style="background-color: #0066ff; color: white;">
+                                class="text-center" style="background-color: #0066ff; color: white; width:5%;">
                                 نسبة الخصم<br/>Discount %
                             </th>
-                            <th class="text-center" style="background-color: #0066ff; color: white;">
+                            <th class="text-center" style="background-color: #0066ff; color: white; width:7%;">
                                 الإجمالي<br/>Amount
                             </th>
-                            <th class="text-center" style="background-color: #0066ff; color: white;">
+                            <th class="text-center" style="background-color: #0066ff; color: white; width:5%;">
                                 وقت التسلیم<br/>Delivery Time
                             </th>
                         </tr>
@@ -330,20 +330,20 @@
                                 <t t-set="sr_no" t-value="sr_no + 1"/>
 
                                 <tr>
-                                    <td class="text-center align-middle">
+                                    <td t-attf-style="background-color: #{'#ededed' if sr_no % 2 == 0 else '#ffffff'};" class="text-center align-middle">
                                         <t t-esc="line.sr_no_so"/>
                                     </td>
-                                    <td t-if="show_pr"
+                                    <td t-attf-style="background-color: #{'#ededed' if sr_no % 2 == 0 else '#ffffff'};" t-if="show_pr"
                                         class="text-center align-middle">
                                         <span t-esc="line.pr_number or ''"/>
                                     </td>
                                     <!-- CUS start. -->
-                                    <td class="text-center align-middle">
+                                    <td t-attf-style="background-color: #{'#ededed' if sr_no % 2 == 0 else '#ffffff'};" class="text-center align-middle">
                                         <t t-esc="line.return_item_code()"/>
                                     </td>
                                     <!-- CUS End. -->
                                     <!-- CUS start. -->
-                                    <td class="text-start align-middle">
+                                    <td t-attf-style="background-color: #{'#ededed' if sr_no % 2 == 0 else '#ffffff'};" class="text-start align-middle">
                                         <t t-if="line.offered_description_id">
                                             <span t-esc="line.product_template_id.name or ''"/>
                                         </t>
@@ -353,11 +353,11 @@
                                     </td>
                                     <!-- CUS end. -->   
                                     <!-- Cus start -->
-                                    <td class="text-center align-middle">
+                                    <td t-attf-style="background-color: #{'#ededed' if sr_no % 2 == 0 else '#ffffff'};" class="text-center align-middle">
                                         <t t-esc="line.return_ts_code()"/>
                                     </td>
                                     <!-- Cus end. -->
-                                    <td class="text-start align-middle">
+                                    <td t-attf-style="background-color: #{'#ededed' if sr_no % 2 == 0 else '#ffffff'};" class="text-start align-middle">
                                         <!-- customization start -->
                                         <t t-if="line.offered_description_id">
                                             <span t-esc="line.offered_description_id.name"/>
@@ -370,37 +370,37 @@
                                         </t>
                                         <!-- customization end -->
                                     </td>
-                                    <td t-if="show_img"
+                                    <td t-attf-style="background-color: #{'#ededed' if sr_no % 2 == 0 else '#ffffff'};" t-if="show_img"
                                         class="text-center align-middle">
                                         <t t-if="line.offered_image">
                                             <img t-att-src="image_data_uri(line.offered_image)"
-                                                 style="max-width:100px; max-height:100px;" alt="Product Image"/>
+                                                 style="max-width:70px; max-height:70px;" alt="Product Image"/>
                                         </t>
                                     </td>
-                                    <td class="text-center align-middle">
+                                    <td t-attf-style="background-color: #{'#ededed' if sr_no % 2 == 0 else '#ffffff'};" class="text-center align-middle">
                                         <span t-field="line.product_uom"/>
                                     </td>
-                                    <td class="text-center align-middle">
+                                    <td t-attf-style="background-color: #{'#ededed' if sr_no % 2 == 0 else '#ffffff'};" class="text-center align-middle">
                                         <span t-field="line.product_uom_qty"/>
                                     </td>
-                                    <td class="text-center align-middle">
+                                    <td t-attf-style="background-color: #{'#ededed' if sr_no % 2 == 0 else '#ffffff'};" class="text-center align-middle">
                                         <span t-esc="0.0"
                                               t-options='{"widget":"monetary","display_currency":doc.currency_id}'/>
                                     </td>
-                                    <td t-if="show_discount"
+                                    <td t-attf-style="background-color: #{'#ededed' if sr_no % 2 == 0 else '#ffffff'};" t-if="show_discount"
                                         class="text-center align-middle">
                                         <span t-field="line.discount"/>
                                     </td>
-                                    <td class="text-center align-middle">
+                                    <td t-attf-style="background-color: #{'#ededed' if sr_no % 2 == 0 else '#ffffff'};" class="text-center align-middle">
                                         <span t-esc="0.0"
                                               t-options='{"widget":"monetary","display_currency":doc.currency_id}'/>
                                     </td>
-                                    <!--                                    <td class="text-center align-middle">-->
+                                    <!--                                    <td t-attf-style="background-color: #{'#ededed' if sr_no % 2 == 0 else '#ffffff'};" class="text-center align-middle">-->
                                     <!--                                        <span t-esc="line.delivery_time or ''"/>-->
                                     <!--                                    </td>-->
 
 
-                                    <td class="text-center align-middle">
+                                    <td t-attf-style="background-color: #{'#ededed' if sr_no % 2 == 0 else '#ffffff'};" class="text-center align-middle">
                                         <t t-if="line.delivery_time_display">
                                             <span t-esc="line.delivery_time_display"/>
                                         </t>
@@ -410,13 +410,13 @@
                                     </td>
 
 
-                                    <!--                                    <td class="text-center align-middle">-->
+                                    <!--                                    <td t-attf-style="background-color: #{'#ededed' if sr_no % 2 == 0 else '#ffffff'};" class="text-center align-middle">-->
                                     <!--                                        <span t-esc="line.delivery_time or ''"/>-->
                                     <!--                                    </td>-->
                                 </tr>
                                 <t t-if="line.datasheet_attach">
                                     <tr>
-                                        <td colspan="10"
+                                        <td t-attf-style="background-color: #{'#ededed' if sr_no % 2 == 0 else '#ffffff'};" colspan="10"
                                             style="text-align:left; padding:5px; color:orange; font-weight:bold;">
                                             Datasheet Attached
                                         </td>
