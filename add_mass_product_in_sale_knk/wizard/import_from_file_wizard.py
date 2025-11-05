@@ -194,7 +194,7 @@ class AddXls(models.TransientModel):
             uom = get_value("unit_of_measure")
             product_uom_id = False
             if uom:
-                product_uom_id = self.env["uom.uom"].search([("name", "like", uom)])
+                product_uom_id = self.env["uom.uom"].search([("name", "like", uom)], limit=1)
 
             # if related product is set then main product is set in product id field and related
             # product is set in offer description.
@@ -414,7 +414,7 @@ class AddXls(models.TransientModel):
             uom = get_value("unit_of_measure")
             product_uom_id = False
             if uom:
-                product_uom_id = self.env["uom.uom"].search([("name", "like", uom)])
+                product_uom_id = self.env["uom.uom"].search([("name", "like", uom)], limit=1)
 
             # if related product is set then main product is set in product id field and related
             # product is set in offer description.

@@ -8,6 +8,7 @@
 		<field name="arch" type="xml">
 			<xpath expr="//notebook/page[@name='bank_account']/group/group[1]/field[@name='suspense_account_id']" position="before">
 				<field name="default_bank_charge_account_id" invisible="type != 'bank'" />
+				<field name="is_bank_charges"/>
 			</xpath>
 		</field>
 	</record>

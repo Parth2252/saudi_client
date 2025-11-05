@@ -15,4 +15,5 @@ class srAccountJournal(models.Model):
     _inherit = 'account.journal'
     
     default_bank_charge_account_id = fields.Many2one('account.account', string="Extra Bank Charge Account")
+    is_bank_charges = fields.Boolean("Is Bank Charges Journal")
 

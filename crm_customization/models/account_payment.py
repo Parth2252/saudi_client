@@ -16,6 +16,6 @@ class AccountPayment(models.Model):
                 confirm_stage = self.env["crm.stage"].search(
                     [("is_customer_invoiced_state", "=", True)], limit=1
                 )
-            if confirm_stage:
-                opportunity.stage_id = confirm_stage.id
+                if confirm_stage:
+                    opportunity.stage_id = confirm_stage.id
         return res
