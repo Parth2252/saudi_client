@@ -229,24 +229,28 @@ class SaleOrderLine(models.Model):
             return product_id.default_code
 
     def return_ts_code(self):
-        sh_customer_info_env = self.env["sh.product.customer.info"]
-        so_partner_id = self.order_id.partner_id
-        product_id = self.product_id
+        # sh_customer_info_env = self.env["sh.product.customer.info"]
+        # so_partner_id = self.order_id.partner_id
+        # product_id = self.product_id
+        # if self.offered_description_id:
+        #     product_id = self.offered_description_id
+
+        # if so_partner_id and product_id:
+        #     ts_code = sh_customer_info_env.search(
+        #         [
+        #             ("name", "=", so_partner_id.id),
+        #             ("product_id", "=", product_id.id),
+        #         ],
+        #         limit=1,
+        #     )
+        #     return ts_code.product_code or product_id.default_code
+        # else:
+        #     return product_id.default_code
+
         if self.offered_description_id:
-            product_id = self.offered_description_id
-
-        if so_partner_id and product_id:
-            ts_code = sh_customer_info_env.search(
-                [
-                    ("name", "=", so_partner_id.id),
-                    ("product_id", "=", product_id.id),
-                ],
-                limit=1,
-            )
-            return ts_code.product_code or product_id.default_code
+            return self.offered_description_id.default_code
         else:
-            return product_id.default_code
-
+            return self.product_id.default_code
 
 
 class UoM(models.Model):

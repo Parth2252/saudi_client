@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="customer_customize_view_form" model="ir.ui.view">
+        <field name="name">customer.customize.form.view.inherited</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='company_type']" position="replace">
+                <div name="options">
+                    <span class="d-inline-block">
+                        <field name="is_company"/>
+                        <label for="is_company" string="Company"/>
+                    </span>
+                    <span class="d-inline-block">
+                        <field name="is_customer"/>
+                        <label for="is_customer"/>
+                    </span>
+                    <span class="d-inline-block">
+                        <field name="is_vendor"/>
+                        <label for="is_vendor"/>
+                    </span>
+                </div>
+            </xpath>
+            <xpath expr="//div[hasclass('mb24')]" position="after">
+                <div>
+                    <group>
+                        <field name="customer_code" readonly="1" invisible="not is_customer"/>
+                    </group>
+                    <group>
+                        <field name="vendor_code" readonly="1" invisible="not is_vendor"/>
+                    </group>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="zf_account_view_res_partner_filter" model="ir.ui.view">
+        <field name="name">res.partner.select.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.res_partner_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='customer']" position="attributes">
+                <attribute name="domain">[('is_customer','=', 1)]</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='supplier']" position="attributes">
+                <attribute name="domain">[('is_vendor','=', 1)]</attribute>
+            </xpath>
+        </field>
+    </record>
+
+
+
+    <record id="zf_sale_view_order_form_zafco_Sale" model="ir.ui.view">
+        <field name="name">sale.order.view.form.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="domain">
+                    [('is_customer', '=', True),
+                    '|', ('company_id', '=', False), ('company_id', '=', company_id)]
+                </attribute>
+                <attribute name="context">{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True, 'default_is_customer': True}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="zf_purchase_order_form" model="ir.ui.view">
+        <field name="name">purchase.order.view.form.inherit</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="domain">[('is_vendor', '=', True), '|', ('company_id', '=', company_id), ('company_id', '=', False)]</attribute>
+                <attribute name="context">{'res_partner_search_mode': 'supplier', 'show_vat': True, 'default_is_vendor': True}</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="account.res_partner_action_customer" model="ir.actions.act_window">
+        <field name="domain">[('is_customer','=',True)]</field>
+    </record>
+
+    <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
+        <field name="domain">[('is_vendor','=',True)]</field>
+    </record>
+
+    <record id="contacts.action_contacts" model="ir.actions.act_window">
+        <field name="domain">[('is_company','=',True)]</field>
+    </record>
+
+</odoo>

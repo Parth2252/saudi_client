@@ -39,6 +39,10 @@
                 <filter string="Brand" name="brand_id" context="{'group_by':'brand_id'}"/>
                 <separator/>
             </xpath>
+            <field name="name" position="after">
+                <field name="code_id" string="Customer Product Code" />
+                <field name="product_code_name" string="Customer Product Name" />
+            </field>
         </field>
     </record>
 

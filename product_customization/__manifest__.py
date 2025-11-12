@@ -6,7 +6,7 @@
     'website': "https://www.yourcompany.com",
     'category': 'Uncategorized',
     'version': '18.0.1.0.0',
-    'depends': ['base','product','sale','purchase','contacts'],
+    'depends': ['base','product','sale','purchase','contacts', 'sh_product_customer_code'],
     'data': [
         'security/ir.model.access.csv',
         'views/product_brand_view.xml',

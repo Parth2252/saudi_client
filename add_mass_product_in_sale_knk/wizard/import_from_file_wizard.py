@@ -147,6 +147,21 @@ class AddXls(models.TransientModel):
                 )
                 product_id = sh_product_customer_info_id.product_id
 
+                product_category = get_value("product_category")
+                product_categ = self.env["product.category"]
+                product_id = product_env.search(
+                    [("name", "ilike", customer_product_name)], limit=1
+                )
+                product_category_id = product_categ.search(
+                    [("name", "like", product_category)], limit=1
+                )
+                if not product_id:
+                    product_id = product_env.create(
+                        {"name": customer_product_name, "list_price": price}
+                    )
+                    if product_category_id:
+                        product_id.write({"categ_id": product_category_id.id})
+
             if not customer_code:
                 product_category = get_value("product_category")
                 product_categ = self.env["product.category"]
@@ -194,7 +209,32 @@ class AddXls(models.TransientModel):
             uom = get_value("unit_of_measure")
             product_uom_id = False
             if uom:
-                product_uom_id = self.env["uom.uom"].search([("name", "like", uom)], limit=1)
+                product_uom_id = self.env["uom.uom"].search(
+                    [("name", "like", uom)], limit=1
+                )
+
+            if customer_code:
+                sh_product_customer_info_id = sh_product_customer_info_env.search(
+                    [("product_code", "=", customer_code), ("name", "=", order.partner_id.id)], limit=1
+                )
+                # sh_pci = sh_product_customer_info_id.product_id.name
+                if not sh_product_customer_info_id:
+                    sh_product_id = product_id
+                    # if offered_product_id:
+                    #     sh_product_id = offered_product_id
+
+                    sh_pci = sh_product_customer_info_env.create(
+                        {
+                            "name": order.partner_id.id,
+                            "product_id": sh_product_id.id,
+                            "product_tmpl_id": sh_product_id.product_tmpl_id.id,
+                            "product_code": customer_code,
+                            "product_name": customer_product_name
+                        }
+                    )
+                    customer_code = sh_pci.product_code
+
+
 
             # if related product is set then main product is set in product id field and related
             # product is set in offer description.
@@ -367,6 +407,21 @@ class AddXls(models.TransientModel):
                 )
                 product_id = sh_product_customer_info_id.product_id
 
+                product_category = get_value("product_category")
+                product_categ = self.env["product.category"]
+                product_id = product_env.search(
+                    [("name", "ilike", customer_product_name)], limit=1
+                )
+                product_category_id = product_categ.search(
+                    [("name", "like", product_category)], limit=1
+                )
+                if not product_id:
+                    product_id = product_env.create(
+                        {"name": customer_product_name, "list_price": price}
+                    )
+                    if product_category_id:
+                        product_id.write({"categ_id": product_category_id.id})
+
             if not customer_code:
                 product_category = get_value("product_category")
                 product_categ = self.env["product.category"]
@@ -414,7 +469,30 @@ class AddXls(models.TransientModel):
             uom = get_value("unit_of_measure")
             product_uom_id = False
             if uom:
-                product_uom_id = self.env["uom.uom"].search([("name", "like", uom)], limit=1)
+                product_uom_id = self.env["uom.uom"].search(
+                    [("name", "like", uom)], limit=1
+                )
+
+            if customer_code:
+                sh_product_customer_info_id = sh_product_customer_info_env.search(
+                    [("product_code", "=", customer_code), ("name", "=", order.partner_id.id)], limit=1
+                )
+                # sh_pci = sh_product_customer_info_id.product_id.name
+                if not sh_product_customer_info_id:
+                    sh_product_id = product_id
+                    # if offered_product_id:
+                    #     sh_product_id = offered_product_id
+
+                    sh_pci = sh_product_customer_info_env.create(
+                        {
+                            "name": order.partner_id.id,
+                            "product_id": sh_product_id.id,
+                            "product_tmpl_id": sh_product_id.product_tmpl_id.id,
+                            "product_code": customer_code,
+                            "product_name": customer_product_name
+                        }
+                    )
+                    customer_code = sh_pci.product_code
 
             # if related product is set then main product is set in product id field and related
             # product is set in offer description.
@@ -510,7 +588,6 @@ class AddXls(models.TransientModel):
                         "delay": exact_delivery_time,
                     }
                 )
-
         if values:
             order.write({"order_line": values})
 
