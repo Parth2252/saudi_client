@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 PAYMENT_STATE_SELECTION = [
     ("not_paid", "Not Paid"),
@@ -35,6 +35,7 @@ class AccountMove(models.Model):
     )
 
     sale_partner_id = fields.Many2one('res.partner', string="Sale Customer")
+    payment_time_date = fields.Datetime(string="Payment Date")
 
     @api.depends("matched_payment_ids")
     def _compute_payment_journal(self):
@@ -53,3 +54,73 @@ class AccountMove(models.Model):
         for bill in self:
             if bill.purchase_ids:
                 bill.sale_partner_id = bill.purchase_ids[0].sale_partner_id
+
+
+    @api.depends('line_ids.amount_residual', 'line_ids.date_maturity', 'needed_terms')
+    def _compute_invoice_date_due(self):
+        today = fields.Date.context_today(self)
+
+        for move in self:
+
+            # -------------------------
+            # 1) Installment-based logic
+            # -------------------------
+            unpaid_lines = move.line_ids.filtered(
+                lambda l: l.date_maturity and l.amount_residual not in (0.0, 0, 0.00)
+            )
+            print("=======================unpaid_lines=====================>",unpaid_lines)
+            # IF installments exist → use installment logic
+            if move.line_ids.filtered(lambda l: l.date_maturity):
+
+                # CASE 1 → unpaid installments exist
+                if unpaid_lines:
+                    move.invoice_date_due = min(unpaid_lines.mapped('date_maturity'))
+                    continue
+
+                # CASE 2 → all installments fully paid → use last installment date
+                all_dates = move.line_ids.filtered(
+                    lambda l: l.date_maturity
+                ).mapped('date_maturity')
+
+                move.invoice_date_due = max(all_dates) if all_dates else today
+                continue
+
+            # -------------------------------------
+            # 2) No installments → fallback to needed_terms (Odoo default)
+            # -------------------------------------
+            if move.needed_terms:
+                move.invoice_date_due = max(
+                    (k['date_maturity'] for k in move.needed_terms.keys() if k),
+                    default=today,
+                )
+                continue
+
+            # -------------------------------------
+            # 3) No terms, no installments → fallback
+            # -------------------------------------
+            move.invoice_date_due = move.invoice_date_due or today
+
+
+
+class AccountMoveLine(models.Model):
+    _inherit = "account.move.line"
+    
+    def action_register_payment(self, ctx=None):
+        ''' Open the account.payment.register wizard to pay the selected journal items.
+        :return: An action opening the account.payment.register wizard.
+        '''
+        context = {
+            'active_model': 'account.move.line',
+            'active_ids': self.ids,
+        }
+        if ctx:
+            context.update(ctx)
+        return {
+            'name': _('Pay'),
+            'res_model': 'account.payment.register',
+            'view_mode': 'form',
+            'views': [[False, 'form']],
+            'context': context,
+            'target': 'new',
+            'type': 'ir.actions.act_window',
+        }

@@ -65,6 +65,8 @@ class SaleOrderLine(models.Model):
     delivery_date = fields.Datetime(
         copy=False, compute="_compute_delivery_date", store=True, readonly=False
     )
+
+    product_url = fields.Char(string="Product URL")
     # customization end.
 
     @api.onchange("is_not_available")

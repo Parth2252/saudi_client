@@ -1,0 +1,27 @@
+<!-- views/purchase_source_wizard_view.xml -->
+<odoo>
+    <record id="view_purchase_source_wizard" model="ir.ui.view">
+        <field name="name">purchase.source.wizard.form</field>
+        <field name="model">purchase.source.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Update Purchase Source">
+                <group>
+                    <field name="purchase_source"/>
+                </group>
+                <footer>
+                    <button string="Apply" type="object" name="update_purchase_source"
+                        class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_purchase_source_wizard" model="ir.actions.act_window">
+        <field name="name">Update Purchase Source</field>
+        <field name="res_model">purchase.source.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

@@ -10,7 +10,9 @@ Purchase Extended
     'category': 'Custom',
     'depends': ['product','purchase', 'sale_purchase_stock','purchase_stock','account', 'crm'],
     'data': [
+        "security/ir.model.access.csv",
         "security/security.xml",
+        "wizard/purchase_source_wizard_view.xml",
         'report/purchase_quotation_report.xml',
         'report/purchase_report.xml',
         'views/purchase_order.xml',
@@ -18,7 +20,11 @@ Purchase Extended
     ],
     'demo': [
     ],
-
+    'assets': {
+        'web.assets_backend': [
+            'purchase_extension/static/src/views/purchase_dashboard.xml',
+        ],
+    },
     'installable': True,
     'application': True,
     'license': 'OPL-1',

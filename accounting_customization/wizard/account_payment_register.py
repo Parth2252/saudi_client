@@ -17,11 +17,13 @@ class AccountPaymentRegister(models.TransientModel):
     is_already_attach = fields.Boolean(string="Is Already Attached?")
 
     def _create_payment_vals_from_wizard(self, batch_result):
+        
         payment_vals = super()._create_payment_vals_from_wizard(batch_result)
         payment_vals["bank_transaction_number"] = self.bank_transaction_number
         return payment_vals
 
     def action_create_payments(self):
+    
         # 1) call original method
         res = super().action_create_payments()
 
@@ -49,6 +51,7 @@ class AccountPaymentRegister(models.TransientModel):
 
         # 3) determine related invoices
         invoices = self.env["account.move"]
+
         if payments:
             invoices = payments.mapped("reconciled_invoice_ids") or payments.mapped("invoice_ids")
 
@@ -62,6 +65,8 @@ class AccountPaymentRegister(models.TransientModel):
                 if active_ids:
                     invoices = account_move_env.browse(active_ids)
 
+    
+        
         if not invoices:
             _logger.warning("No invoices found to attach files to. context=%s", self._context)
             return res
@@ -82,8 +87,9 @@ class AccountPaymentRegister(models.TransientModel):
                             "res_model": "account.move",
                             "res_id": inv.id,
                         })
-                        _logger.info("Attachment %s copied to invoice %s", attachment.name, inv.name)
+                        _logger.info("Attachment %s copied to invoice %s", attachment.name, inv.name)            
 
+        invoices.sudo().write({'payment_time_date':fields.Datetime.now()})
         return res
 
     @api.onchange("attachment_ids")

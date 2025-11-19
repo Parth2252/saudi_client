@@ -162,3 +162,17 @@ class ResPartner(models.Model):
         for record in self:
             if record.name:
                 record.name = record.name.upper()
+
+    @api.depends('name', 'customer_code')
+    def _compute_display_name(self):
+        super(ResPartner, self)._compute_display_name()
+        print("\n\n\n ----- ----------- context", self.env.context)
+        # Only change for CRM (lead form)
+        # if self.env.context.get('from_crm_lead'):
+        for partner in self:
+            code = partner.customer_code
+            print("\n\n\n --- code ----", code)
+            name = partner.name
+            if name and code:
+                partner.display_name = f"{name}-{code}"
+                print("\n\n\n ---- partner display name ---", partner.display_name)

@@ -13,6 +13,8 @@ class PurchaseOrderLine(models.Model):
     )
     sr_no_po = fields.Integer(string="Order No")
 
+    product_url = fields.Char(string="Product URL")
+
     def purchase_order_line_sequence(self):
         """ Generate auto sequence for purchase order. """
         number = 1
@@ -49,6 +51,20 @@ class PurchaseOrderLine(models.Model):
         if new_product_id:
             vals['product_id'] = new_product_id.id
             vals['name'] = new_product_id.name
+
+        po = self.env['purchase.order'].browse(vals.get('order_id'))
+        partner = po.partner_id
+
+        product = new_product_id or self.env['product.product'].browse(vals.get('product_id'))
+
+        if product:
+            supplierinfo = self.env['product.supplierinfo'].search([
+                ('product_tmpl_id', '=', product.product_tmpl_id.id),
+                ('partner_id', '=', partner.id)
+            ], limit=1)
+
+            if supplierinfo:
+                vals['price_unit'] = supplierinfo.price
 
         line = super(PurchaseOrderLine, self).create(vals)
 

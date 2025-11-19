@@ -11,6 +11,15 @@
                 <field name="sale_partner_id" optional="show" invisible="move_type != 'in_invoice'"/>
                 <field name="buyer_id" optional="show" invisible="move_type != 'in_invoice'"/>
             </xpath>
+            <xpath expr="//field[@name='payment_creation_date']" position="attributes">
+                <attribute name="string">Payment Creation Date</attribute>
+            </xpath>
+            <xpath expr="//field[@name='payment_creation_date']" position="after">
+                <field name="payment_time_date" string="Payment Done Date" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='amount_total_in_currency_signed'][2]" position="after">
+                <field name="amount_residual" optional="show"/>
+            </xpath>
         </field>
     </record>
 
@@ -25,9 +34,12 @@
                 <field name="buyer_id" invisible="move_type != 'in_invoice'" />
                 <field name="sale_partner_id" invisible="move_type != 'in_invoice'"/>
                 <field name="purchase_id" />
+                <field name="payment_time_date" readonly="1" />
             </xpath>
         </field>
     </record>
+
+
 
     <!-- Inherit search view. -->
     <record id="accounting_customization_account_move_search_invoice_inherit" model="ir.ui.view">
