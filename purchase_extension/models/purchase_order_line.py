@@ -44,9 +44,13 @@ class PurchaseOrderLine(models.Model):
                     new_product_id = sale_line.offered_description_id
         else:
             if move and move.sale_line_id:
+                sale_line_id = move.sale_line_id
                 sr_no_po_value = move.sale_line_id.sr_no_so
                 if move.sale_line_id.offered_description_id:
                     new_product_id = move.sale_line_id.offered_description_id
+
+        if sale_line_id:
+            vals['sale_line_id'] = sale_line_id.id
 
         if new_product_id:
             vals['product_id'] = new_product_id.id
@@ -58,7 +62,7 @@ class PurchaseOrderLine(models.Model):
         product = new_product_id or self.env['product.product'].browse(vals.get('product_id'))
 
         if product:
-            supplierinfo = self.env['product.supplierinfo'].search([
+            supplierinfo = self.env['   '].search([
                 ('product_tmpl_id', '=', product.product_tmpl_id.id),
                 ('partner_id', '=', partner.id)
             ], limit=1)
@@ -67,7 +71,7 @@ class PurchaseOrderLine(models.Model):
                 vals['price_unit'] = supplierinfo.price
 
         line = super(PurchaseOrderLine, self).create(vals)
-
+        line.product_url = sale_line_id.product_url
         if sr_no_po_value:
             line.sr_no_po = sr_no_po_value
 

@@ -1,12 +1,27 @@
 <odoo>
-    <record id="view_crm_lead_form_view_inherit" model="ir.ui.view">
-        <field name="name">sale.extension.crm.lead.form.inherit</field>
+    <record id="view_crm_lead_form_view_inherit_customer_code" model="ir.ui.view">
+        <field name="name">sale.extension.crm.lead.form.inherit.customer.code</field>
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm.crm_lead_view_form"/>
         <field name="arch" type="xml">
-            <field name="partner_id" position="attributes">
-                <attribute name="context">{'from_crm_lead': True}</attribute>
-            </field>
+            <xpath expr="//group[@name='lead_partner']/field[@name='partner_id']" position="attributes">
+                <attribute name="context">{'from_crm_lead': True, 'default_is_customer': True, 'default_is_company': True}</attribute>
+            </xpath>
+            <xpath expr="//group[@name='opportunity_partner']/field[@name='partner_id']" position="attributes">
+                <attribute name="context">{'from_crm_lead': True, 'default_is_customer': True, 'default_is_company': True}</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="view_crm_lead_kanban_view_inherit_customer_code" model="ir.ui.view">
+        <field name="name">sale.extension.crm.lead.kanban.inherit.customer.code</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="context">{'from_crm_lead': True, 'default_is_customer': True, 'default_is_company': True   }</attribute>
+            </xpath>
         </field>
     </record>
 </odoo>

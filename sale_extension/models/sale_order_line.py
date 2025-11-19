@@ -67,6 +67,28 @@ class SaleOrderLine(models.Model):
     )
 
     product_url = fields.Char(string="Product URL")
+
+    product_vendor_id = fields.Many2one(
+        'res.partner',
+        string='Vendor',
+        domain="[('id', 'in', allowed_vendor_ids)]"
+    )
+
+    allowed_vendor_ids = fields.Many2many(
+        'res.partner',
+        compute='_compute_allowed_vendors',
+        store=False
+    )
+
+    @api.depends('product_id', 'offered_description_id')
+    def _compute_allowed_vendors(self):
+        for line in self:
+            product = line.offered_description_id or line.product_id
+            if product:
+                line.allowed_vendor_ids = product.seller_ids.mapped('partner_id')
+            else:
+                line.allowed_vendor_ids = False
+
     # customization end.
 
     @api.onchange("is_not_available")

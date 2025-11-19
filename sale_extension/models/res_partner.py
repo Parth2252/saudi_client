@@ -165,14 +165,23 @@ class ResPartner(models.Model):
 
     @api.depends('name', 'customer_code')
     def _compute_display_name(self):
-        super(ResPartner, self)._compute_display_name()
-        print("\n\n\n ----- ----------- context", self.env.context)
-        # Only change for CRM (lead form)
-        # if self.env.context.get('from_crm_lead'):
+        super()._compute_display_name()
+        is_crm = (
+                    self.env.context.get('from_crm_lead') or 
+                    self.env.context.get('params', {}).get('action') == 'crm'
+                )
         for partner in self:
-            code = partner.customer_code
-            print("\n\n\n --- code ----", code)
-            name = partner.name
-            if name and code:
-                partner.display_name = f"{name}-{code}"
-                print("\n\n\n ---- partner display name ---", partner.display_name)
+            if is_crm and partner.name and partner.customer_code:
+                partner.display_name = f"{partner.name} - {partner.customer_code}"
+
+
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        args = list(args or [])
+        if not name:
+            return super().name_search(name=name, args=args, operator=operator, limit=limit)
+        domain = ['|', ('name', operator, name), ('customer_code', operator, name)]
+        if args:
+            domain = ['&'] + args + domain
+        partners = self.search_fetch(domain, ['display_name'], limit=limit)
+        return [(partner.id, partner.display_name) for partner in partners]
