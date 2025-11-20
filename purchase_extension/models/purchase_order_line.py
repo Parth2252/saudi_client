@@ -62,7 +62,7 @@ class PurchaseOrderLine(models.Model):
         product = new_product_id or self.env['product.product'].browse(vals.get('product_id'))
 
         if product:
-            supplierinfo = self.env['   '].search([
+            supplierinfo = self.env['product.supplierinfo'].search([
                 ('product_tmpl_id', '=', product.product_tmpl_id.id),
                 ('partner_id', '=', partner.id)
             ], limit=1)

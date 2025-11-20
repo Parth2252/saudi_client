@@ -29,7 +29,7 @@
                                 </div>
                                 <div class="g-col-3 p-0" t-on-click="setSearchContext" title="All Late RFQs" filter_name="standard_purchase_receipt_delay">
                                     <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
-                                        <div class="fs-2" t-out="purchaseData['standard_purchase_receipt_delay']"/>Standard Purchase – Receipt Delayed
+                                        <div class="fs-2" t-out="purchaseData['standard_purchase_receipt_delay']"/>Standard Purchase – Material Not received(delay)
                                     </a>
                                 </div>
                             </div>
@@ -60,7 +60,7 @@
                                 </div>
                                 <div class="g-col-3 p-0" t-on-click="setSearchContext" title="All Late RFQs" filter_name="local_purchase_receipt_delay">
                                     <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
-                                        <div class="fs-2" t-out="purchaseData['local_purchase_receipt_delay']"/>Local Purchase – Receipt Delayed
+                                        <div class="fs-2" t-out="purchaseData['local_purchase_receipt_delay']"/>Local Purchase – Material Not received(delay)
                                     </a>
                                 </div>
                             </div>
@@ -91,7 +91,7 @@
                                 </div>
                                 <div class="g-col-3 p-0" t-on-click="setSearchContext" title="All Late RFQs" filter_name="online_purchase_receipt_delay">
                                     <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
-                                        <div class="fs-2" t-out="purchaseData['online_purchase_receipt_delay']"/>Online Purchase – Receipt Delayed
+                                        <div class="fs-2" t-out="purchaseData['online_purchase_receipt_delay']"/>Online Purchase – Material Not received(delay)
                                     </a>
                                 </div>
                             </div>
