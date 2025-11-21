@@ -168,7 +168,7 @@
 
 
 
-            <table style="width: 100%;margin-top:20px; border: hidden; font-size: 15px;">
+            <table style="width: 100%;margin-top:20px; border: hidden; font-size: 14px;">
                 <thead>
                     <tr>
                         <th class="text-center align-middle" style="background-color: #0066ff; color: white; padding: 6px; border: 1px solid #000;">
@@ -214,7 +214,7 @@
                 <t t-set="show_img" t-value="any(l.offered_image          for l in doc.order_line)"/>
                 <t t-set="show_discount" t-value="any(l.discount               for l in doc.order_line)"/>
 
-                <table class="table table-borderless" style="margin-top:20px; font-size: 8px;">
+                <table class="table table-borderless" style="margin-top:10px; font-size: 13px;">
                     <thead style="display: table-row-group">
                         <tr>
                             <th class="text-center" style="background-color: #0066ff; color: white; width:3%;">

@@ -80,14 +80,38 @@ class SaleOrderLine(models.Model):
         store=False
     )
 
+    vendor_price = fields.Integer(string="Vendor Price")
+
+    is_vendor_price = fields.Boolean(compute="_compute_is_vendor_price")
+
+    def _compute_is_vendor_price(self):
+        for rec in self:
+            rec.is_vendor_price = bool(rec.vendor_price)
+
+
     @api.depends('product_id', 'offered_description_id')
     def _compute_allowed_vendors(self):
         for line in self:
+            vendors = self.env['res.partner']
+
+            # Product-based vendors
             product = line.offered_description_id or line.product_id
             if product:
-                line.allowed_vendor_ids = product.seller_ids.mapped('partner_id')
-            else:
-                line.allowed_vendor_ids = False
+                product_vendors = product.seller_ids.mapped('partner_id')
+                vendors |= product_vendors
+
+            # All contacts with is_vendor = True
+            vendor_contacts = self.env['res.partner'].search([('is_vendor', '=', True)])
+            vendors |= vendor_contacts
+
+            line.allowed_vendor_ids = vendors
+
+            # Auto set first seller if no vendor manually selected
+            if product:
+                seller = product.seller_ids[:1]
+                if seller:
+                    line.product_vendor_id = seller.partner_id.id
+                    line.vendor_price = seller.price
 
     # customization end.
 

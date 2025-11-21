@@ -55,7 +55,7 @@
                  style="padding:0; font-size:11px; line-height:15px;">
 
 
-                <div style="border-radius: 12px;background: #f8f8ff;padding: 0;margin-bottom: 20px;font-size: 12px;">
+                <div style="border-radius: 12px;background: #f8f8ff;padding: 0;margin-bottom: 10px;font-size: 12px;">
                     <table style="width: 100%; border-collapse: collapse;border:1px solid white;">
                         <tr>
                             <!--                            <td style="width: 33%; vertical-align: top; padding: 20px;border:none;">-->
@@ -200,7 +200,7 @@
                     </table>
                 </div>
 
-            <table style="width: 100%;margin-top:20px; border: hidden; font-size: 15px;">
+            <table style="width: 100%;margin-top:20px; border: hidden; font-size: 14px;">
                 <thead>
                     <tr>
                         <th class="text-center align-middle" style="background-color: #0066ff; color: white; padding: 6px; border: 1px solid #000;">
@@ -246,7 +246,7 @@
                 <t t-set="show_img" t-value="any(l.offered_image          for l in doc.order_line)"/>
                 <t t-set="show_discount" t-value="any(l.discount               for l in doc.order_line)"/>
 
-                <table class="table table-borderless" style="margin-top:20px; font-size: 8px; border:1px solid white;">
+                <table class="table table-borderless" style="margin-top:10px; font-size: 13px; border:1px solid white;">
                     <thead style="display: table-row-group">
                         <tr>
                             <th class="text-center" style="background-color: #0066ff; color: white; width:3%;">

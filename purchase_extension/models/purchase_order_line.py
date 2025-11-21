@@ -71,7 +71,8 @@ class PurchaseOrderLine(models.Model):
                 vals['price_unit'] = supplierinfo.price
 
         line = super(PurchaseOrderLine, self).create(vals)
-        line.product_url = sale_line_id.product_url
+        if sale_line_id:
+            line.product_url = sale_line_id.product_url
         if sr_no_po_value:
             line.sr_no_po = sr_no_po_value
 

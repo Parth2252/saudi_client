@@ -13,6 +13,7 @@
             <xpath expr="//field[@name='name']" position="after">
                 <field name="sale_partner_id"/>
                 <field name="receipt_delay" optional='hide'/>
+                <field name="purchase_source" optional="show" />
             </xpath>
             <xpath expr="//field[@name='date_order']" position="after">
                 <field name="date_order_display"/>
