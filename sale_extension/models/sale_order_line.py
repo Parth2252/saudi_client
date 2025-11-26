@@ -69,15 +69,11 @@ class SaleOrderLine(models.Model):
     product_url = fields.Char(string="Product URL")
 
     product_vendor_id = fields.Many2one(
-        'res.partner',
-        string='Vendor',
-        domain="[('id', 'in', allowed_vendor_ids)]"
+        "res.partner", string="Vendor", domain="[('id', 'in', allowed_vendor_ids)]"
     )
 
     allowed_vendor_ids = fields.Many2many(
-        'res.partner',
-        compute='_compute_allowed_vendors',
-        store=False
+        "res.partner", compute="_compute_allowed_vendors", store=False
     )
 
     vendor_price = fields.Integer(string="Vendor Price")
@@ -88,20 +84,19 @@ class SaleOrderLine(models.Model):
         for rec in self:
             rec.is_vendor_price = bool(rec.vendor_price)
 
-
-    @api.depends('product_id', 'offered_description_id')
+    @api.depends("product_id", "offered_description_id")
     def _compute_allowed_vendors(self):
         for line in self:
-            vendors = self.env['res.partner']
+            vendors = self.env["res.partner"]
 
             # Product-based vendors
             product = line.offered_description_id or line.product_id
             if product:
-                product_vendors = product.seller_ids.mapped('partner_id')
+                product_vendors = product.seller_ids.mapped("partner_id")
                 vendors |= product_vendors
 
             # All contacts with is_vendor = True
-            vendor_contacts = self.env['res.partner'].search([('is_vendor', '=', True)])
+            vendor_contacts = self.env["res.partner"].search([("is_vendor", "=", True)])
             vendors |= vendor_contacts
 
             line.allowed_vendor_ids = vendors

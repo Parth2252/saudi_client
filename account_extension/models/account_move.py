@@ -175,7 +175,7 @@ class AccountMove(models.Model):
                     if not getattr(partner, field):
                         missing_fields.append(label)
 
-                if missing_fields:
+                if missing_fields and not record.partner_id.is_online:
                     raise ValidationError(
                         "You cannot confirm this vendor bill because the following fields "
                         "are missing on the partner:\n- %s" % "\n- ".join(missing_fields)

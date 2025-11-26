@@ -12,6 +12,8 @@ class ResPartner(models.Model):
     customer_code = fields.Char('Customer Code', company_dependent=True, store=True)
     vendor_code = fields.Char('Vendor Code', company_dependent=True, store=True)
 
+    is_online = fields.Boolean(copy=False)
+
     @api.constrains('is_customer', 'is_vendor')
     def check_customer_vendor(self):
         for rec in self:

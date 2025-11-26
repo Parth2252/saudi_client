@@ -73,6 +73,7 @@ class PurchaseOrderLine(models.Model):
         line = super(PurchaseOrderLine, self).create(vals)
         if sale_line_id:
             line.product_url = sale_line_id.product_url
+            line.product_uom = sale_line_id.product_uom.id
         if sr_no_po_value:
             line.sr_no_po = sr_no_po_value
 

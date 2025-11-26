@@ -56,7 +56,7 @@ class SaleOrder(models.Model):
                 if error_messages:
                     raise ValidationError("\n\n".join(error_messages))
 
-            if record.move_type == 'in_invoice' and warn_fields:
+            if record.move_type in ['in_invoice', 'in_refund'] and warn_fields and not record.partner_id.is_online:
                 # Log a warning to the chatter (not blocking, not popup)
                raise ValidationError(
                     "You cannot confirm this bill because the following fields "
