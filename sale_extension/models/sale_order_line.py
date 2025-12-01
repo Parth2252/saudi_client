@@ -80,6 +80,8 @@ class SaleOrderLine(models.Model):
 
     is_vendor_price = fields.Boolean(compute="_compute_is_vendor_price")
 
+    vendor_currency_id = fields.Many2one("res.currency", copy=False, string="Vendor Currency")
+
     def _compute_is_vendor_price(self):
         for rec in self:
             rec.is_vendor_price = bool(rec.vendor_price)
@@ -104,7 +106,8 @@ class SaleOrderLine(models.Model):
             # Auto set first seller if no vendor manually selected
             if product:
                 seller = product.seller_ids[:1]
-                if seller:
+                line.vendor_currency_id = seller.currency_id.id
+                if seller and not line.product_vendor_id and not line.vendor_price:
                     line.product_vendor_id = seller.partner_id.id
                     line.vendor_price = seller.price
 

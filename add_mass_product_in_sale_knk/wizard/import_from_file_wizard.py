@@ -215,7 +215,11 @@ class AddXls(models.TransientModel):
 
             if customer_code:
                 sh_product_customer_info_id = sh_product_customer_info_env.search(
-                    [("product_code", "=", customer_code), ("name", "=", order.partner_id.id)], limit=1
+                    [
+                        ("product_code", "=", customer_code),
+                        ("name", "=", order.partner_id.id),
+                    ],
+                    limit=1,
                 )
                 # sh_pci = sh_product_customer_info_id.product_id.name
                 if not sh_product_customer_info_id:
@@ -229,12 +233,55 @@ class AddXls(models.TransientModel):
                             "product_id": sh_product_id.id,
                             "product_tmpl_id": sh_product_id.product_tmpl_id.id,
                             "product_code": customer_code,
-                            "product_name": customer_product_name
+                            "product_name": customer_product_name,
                         }
                     )
                     customer_code = sh_pci.product_code
 
+            # code for create product supplier info and link with product varient it self.
+            product_supplierinfo_env = self.env["product.supplierinfo"]
+            partner_env = self.env["res.partner"]
+            vendor_name = get_value("vendor_name")
+            vendor_price = float(get_value("vendor_price") or 0)
 
+            vendor_id = partner_env.search([("name", "like", vendor_name)], limit=1)
+
+            if offered_product_id:
+                product_id = offered_product_id
+
+            already_available_product_supplierinfo = product_supplierinfo_env.search(
+                [("partner_id", "=", vendor_id.id), ("product_tmpl_id", "=", product_id.product_tmpl_id.id)]
+            )
+
+            if 1 <= delivery_time <= 7:
+                exact_delivery_time = delivery_time - 1
+            elif 8 <= delivery_time <= 14:
+                exact_delivery_time = delivery_time - 2
+            elif delivery_time >= 15:
+                exact_delivery_time = delivery_time - 7
+            else:
+                exact_delivery_time = 1
+
+            if not already_available_product_supplierinfo and not vendor_id:
+                vendor_id = partner_env.create({"name": vendor_name, "is_vendor": True})
+
+            if not already_available_product_supplierinfo and product_id:
+                product_supplierinfo_id = product_supplierinfo_env.create(
+                    {
+                        "partner_id": vendor_id.id,
+                        "product_id": product_id.id,
+                        "min_qty": 1.0,
+                        "price": vendor_price,
+                        "delay": exact_delivery_time,
+                    }
+                )
+
+            if already_available_product_supplierinfo:
+                product_vendor_id = already_available_product_supplierinfo.partner_id
+                vendor_price = vendor_price or already_available_product_supplierinfo.price
+            else:
+                product_vendor_id = product_supplierinfo_id.partner_id
+                vendor_price = vendor_price or product_supplierinfo_id.price
 
             # if related product is set then main product is set in product id field and related
             # product is set in offer description.
@@ -256,6 +303,8 @@ class AddXls(models.TransientModel):
                         offered_product_id.name if offered_name else product_id.name
                     ),
                     "product_uom": product_uom_id.id if product_uom_id else False,
+                    "product_vendor_id": product_vendor_id.id,
+                    "vendor_price": vendor_price,
                 }
             # if correct related product not set then execute below conditions.
             else:
@@ -276,6 +325,8 @@ class AddXls(models.TransientModel):
                         "name": (product_id.name),
                         "is_not_available": True,
                         "product_uom": product_uom_id.id if product_uom_id else False,
+                        "product_vendor_id": product_vendor_id.id,
+                        "vendor_price": vendor_price,
                     }
                 else:
                     # if no value is set in the offered description then execute this block.
@@ -292,44 +343,12 @@ class AddXls(models.TransientModel):
                         ),
                         "name": (product_id.name),
                         "product_uom": product_uom_id.id if product_uom_id else False,
+                        "product_vendor_id": product_vendor_id.id,
+                        "vendor_price": vendor_price,
                     }
 
             values.append((0, 0, line_vals))
 
-            # code for create product supplier info and link with product varient it self.
-            product_supplierinfo_env = self.env["product.supplierinfo"]
-            partner_env = self.env["res.partner"]
-            vendor_name = get_value("vendor_name")
-            vendor_price = float(get_value("vendor_price") or 0)
-
-            vendor_id = partner_env.search([("name", "like", vendor_name)], limit=1)
-
-            if offered_product_id:
-                product_id = offered_product_id
-
-            already_available_product_supplierinfo = product_supplierinfo_env.search(
-                [("partner_id", "=", vendor_id.id), ("product_id", "=", product_id.id)]
-            )
-
-            if 1 <= delivery_time <= 7:
-                exact_delivery_time = delivery_time - 1
-            elif 8 <= delivery_time <= 14:
-                exact_delivery_time = delivery_time - 2
-            elif delivery_time >= 15:
-                exact_delivery_time = delivery_time - 7
-            else:
-                exact_delivery_time = 1
-
-            if not already_available_product_supplierinfo and vendor_id and product_id:
-                product_supplierinfo_id = product_supplierinfo_env.create(
-                    {
-                        "partner_id": vendor_id.id,
-                        "product_id": product_id.id,
-                        "min_qty": 1.0,
-                        "price": vendor_price,
-                        "delay": exact_delivery_time,
-                    }
-                )
 
         if values:
             order.write({"order_line": values})
@@ -475,7 +494,11 @@ class AddXls(models.TransientModel):
 
             if customer_code:
                 sh_product_customer_info_id = sh_product_customer_info_env.search(
-                    [("product_code", "=", customer_code), ("name", "=", order.partner_id.id)], limit=1
+                    [
+                        ("product_code", "=", customer_code),
+                        ("name", "=", order.partner_id.id),
+                    ],
+                    limit=1,
                 )
                 # sh_pci = sh_product_customer_info_id.product_id.name
                 if not sh_product_customer_info_id:
@@ -489,10 +512,56 @@ class AddXls(models.TransientModel):
                             "product_id": sh_product_id.id,
                             "product_tmpl_id": sh_product_id.product_tmpl_id.id,
                             "product_code": customer_code,
-                            "product_name": customer_product_name
+                            "product_name": customer_product_name,
                         }
                     )
                     customer_code = sh_pci.product_code
+
+            # code for create product supplier info and link with product varient it self.
+            product_supplierinfo_env = self.env["product.supplierinfo"]
+            partner_env = self.env["res.partner"]
+            vendor_name = get_value("vendor_name")
+            vendor_price = float(get_value("vendor_price") or 0)
+
+            vendor_id = partner_env.search([("name", "like", vendor_name)], limit=1)
+
+            if offered_product_id:
+                product_id = offered_product_id
+
+            already_available_product_supplierinfo = product_supplierinfo_env.search(
+                [("partner_id", "=", vendor_id.id), ("product_tmpl_id", "=", product_id.product_tmpl_id.id)]
+            )
+
+            if 1 <= delivery_time <= 7:
+                exact_delivery_time = delivery_time - 1
+            elif 8 <= delivery_time <= 14:
+                exact_delivery_time = delivery_time - 2
+            elif delivery_time >= 15:
+                exact_delivery_time = delivery_time - 7
+            else:
+                exact_delivery_time = 1
+
+            if not already_available_product_supplierinfo and not vendor_id:
+                vendor_id = partner_env.create({"name": vendor_name, "is_vendor": True})
+
+            if not already_available_product_supplierinfo and product_id:
+                product_supplierinfo_id = product_supplierinfo_env.create(
+                    {
+                        "partner_id": vendor_id.id,
+                        "product_id": product_id.id,
+                        "min_qty": 1.0,
+                        "price": vendor_price,
+                        "delay": exact_delivery_time,
+                    }
+                )
+
+            if already_available_product_supplierinfo:
+                product_vendor_id = already_available_product_supplierinfo.partner_id
+                vendor_price = vendor_price or already_available_product_supplierinfo.price
+            else:
+                product_vendor_id = product_supplierinfo_id.partner_id
+                vendor_price = vendor_price or product_supplierinfo_id.price
+
 
             # if related product is set then main product is set in product id field and related
             # product is set in offer description.
@@ -514,6 +583,8 @@ class AddXls(models.TransientModel):
                         offered_product_id.name if offered_name else product_id.name
                     ),
                     "product_uom": product_uom_id.id if product_uom_id else False,
+                    "product_vendor_id": product_vendor_id.id,
+                    "vendor_price": vendor_price,
                 }
             # if correct related product not set then execute below conditions.
             else:
@@ -534,6 +605,8 @@ class AddXls(models.TransientModel):
                         "name": (product_id.name),
                         "is_not_available": True,
                         "product_uom": product_uom_id.id if product_uom_id else False,
+                        "product_vendor_id": product_vendor_id.id,
+                        "vendor_price": vendor_price,
                     }
                 else:
                     # if no value is set in the offered description then execute this block.
@@ -550,44 +623,12 @@ class AddXls(models.TransientModel):
                         ),
                         "name": (product_id.name),
                         "product_uom": product_uom_id.id if product_uom_id else False,
+                        "product_vendor_id": product_vendor_id.id,
+                        "vendor_price": vendor_price,
                     }
 
             values.append((0, 0, line_vals))
 
-            # code for create product supplier info and link with product varient it self.
-            product_supplierinfo_env = self.env["product.supplierinfo"]
-            partner_env = self.env["res.partner"]
-            vendor_name = get_value("vendor_name")
-            vendor_price = float(get_value("vendor_price") or 0)
-
-            vendor_id = partner_env.search([("name", "like", vendor_name)], limit=1)
-
-            if offered_product_id:
-                product_id = offered_product_id
-
-            already_available_product_supplierinfo = product_supplierinfo_env.search(
-                [("partner_id", "=", vendor_id.id), ("product_id", "=", product_id.id)]
-            )
-
-            if 1 <= delivery_time <= 7:
-                exact_delivery_time = delivery_time - 1
-            elif 8 <= delivery_time <= 14:
-                exact_delivery_time = delivery_time - 2
-            elif delivery_time >= 15:
-                exact_delivery_time = delivery_time - 7
-            else:
-                exact_delivery_time = 1
-
-            if not already_available_product_supplierinfo and vendor_id and product_id:
-                product_supplierinfo_id = product_supplierinfo_env.create(
-                    {
-                        "partner_id": vendor_id.id,
-                        "product_id": product_id.id,
-                        "min_qty": 1.0,
-                        "price": vendor_price,
-                        "delay": exact_delivery_time,
-                    }
-                )
         if values:
             order.write({"order_line": values})
 

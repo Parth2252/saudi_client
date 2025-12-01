@@ -1,4 +1,6 @@
 from odoo import models, fields, api, _
+import datetime
+from datetime import timedelta
 
 
 class PurchaseOrderLine(models.Model):
@@ -80,6 +82,32 @@ class PurchaseOrderLine(models.Model):
         if not sale_line_id and not (move and move.sale_line_id):
             line.purchase_order_line_sequence()
 
+        for line in self:
+            partner = line.order_id.partner_id
+            product = line.product_id
+
+            if not product or not partner:
+                continue
+
+            # Find supplierinfo
+            supplierinfo = self.env['product.supplierinfo'].search([
+                ('product_id', '=', product.id),
+                ('partner_id', '=', partner.id)
+            ], limit=1)
+
+            if supplierinfo:
+                delay = supplierinfo.delay or 0   # delay in days
+                po_date = line.order_id.date_order or fields.Date.today()
+
+                # Convert to date (date_order may be datetime)
+                if isinstance(po_date, datetime.datetime):
+                    po_date = po_date.date()
+
+                # Expected Arrival = PO Date + Delay
+                line.date_planned = po_date + timedelta(days=delay)
+            else:
+                line.date_planned = False
+
         return line
 
     @api.onchange("product_id", "partner_id")
@@ -99,3 +127,45 @@ class PurchaseOrderLine(models.Model):
             else:
                 self.product_code = 0.0
         return super(PurchaseOrderLine, self).onchange_product_id()
+
+    def write(self, vals):
+        # If bypass flag is set, skip logic to avoid recursion
+        if self.env.context.get("bypass_date_planned"):
+            return super(PurchaseOrderLine, self).write(vals)
+
+        res = super(PurchaseOrderLine, self).write(vals)
+
+        for line in self:
+            partner = line.order_id.partner_id
+            product = line.product_id
+
+            if not partner or not product:
+                continue
+
+            supplierinfo = self.env['product.supplierinfo'].search([
+                ('product_id', '=', product.id),
+                ('partner_id', '=', partner.id)
+            ], limit=1)
+
+            if supplierinfo:
+                delay = supplierinfo.delay or 0
+                po_date = line.order_id.date_order or fields.Date.today()
+
+                # Convert datetime to date
+                if isinstance(po_date, datetime.datetime):
+                    po_date = po_date.date()
+
+                new_date = po_date + timedelta(days=delay)
+
+                # Write WITHOUT recursion using context flag
+                line.with_context(bypass_date_planned=True).write({
+                    'date_planned': new_date
+                })
+            else:
+                line.with_context(bypass_date_planned=True).write({
+                    'date_planned': False
+                })
+
+        return res
+
+

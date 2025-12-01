@@ -52,17 +52,17 @@ class PurchaseOrderLine(models.Model):
                 if seller:
                     seller.product_name = line.vendor_product_name
                     seller.product_code = line.vendor_product_code
-                else:
-                    self.env['product.supplierinfo'].create({
-                        'partner_id': line.partner_id.id,
-                        'product_id': line.product_id.id,
-                        'product_tmpl_id': line.product_id.product_tmpl_id.id,
-                        'product_code': line.vendor_product_code,
-                        'product_name': line.vendor_product_name,
-                        'price': line.price_unit,
-                        'currency_id': line.order_id.currency_id.id,
-                        'min_qty': 1,
-                    })
+                # else:
+                #     self.env['product.supplierinfo'].create({
+                #         'partner_id': line.partner_id.id,
+                #         'product_id': line.product_id.id,
+                #         'product_tmpl_id': line.product_id.product_tmpl_id.id,
+                #         'product_code': line.vendor_product_code,
+                #         'product_name': line.vendor_product_name,
+                #         'price': line.price_unit,
+                #         'currency_id': line.order_id.currency_id.id,
+                #         'min_qty': 1,
+                #     })
 
     def _prepare_account_move_line(self, move=False):
         res = super(PurchaseOrderLine, self)._prepare_account_move_line(move)

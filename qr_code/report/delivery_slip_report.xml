@@ -233,7 +233,7 @@
                                 </td>
 
                                 <td style="padding: 7px; text-align: center;">
-                                    <t t-esc="line.description or ''"/>
+                                    <t t-esc="line.product_id.name or ''"/>
                                 </td>
                                 <td style="padding: 7px; text-align: center;">
                                     <t t-if="line.offered_description_id">
