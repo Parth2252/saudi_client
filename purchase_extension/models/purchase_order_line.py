@@ -168,4 +168,17 @@ class PurchaseOrderLine(models.Model):
 
         return res
 
+    def _prepare_stock_moves(self, picking):
+        vals_list = super()._prepare_stock_moves(picking)
+
+        # Ensure we always have a list
+        if not isinstance(vals_list, list):
+            vals_list = [vals_list]
+
+        for vals in vals_list:
+            if isinstance(vals, dict):   # Prevent boolean crash
+                vals['date'] = self.date_planned or fields.Datetime.now()
+
+        return vals_list
+
 

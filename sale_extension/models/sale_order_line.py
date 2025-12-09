@@ -76,7 +76,7 @@ class SaleOrderLine(models.Model):
         "res.partner", compute="_compute_allowed_vendors", store=False
     )
 
-    vendor_price = fields.Integer(string="Vendor Price")
+    vendor_price = fields.Float(string="Vendor Price")
 
     is_vendor_price = fields.Boolean(compute="_compute_is_vendor_price")
 

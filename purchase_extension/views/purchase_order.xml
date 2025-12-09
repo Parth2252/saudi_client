@@ -186,6 +186,10 @@
                 <field name="purchase_source" />
             </xpath>
 
+            <xpath expr="//page/field[@name='order_line']/list/field[@name='date_planned']" position="attributes">
+                <attribute name="required">0</attribute>
+            </xpath>
+
         </field>
     </record>
 

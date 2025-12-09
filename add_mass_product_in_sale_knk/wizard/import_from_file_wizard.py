@@ -246,11 +246,8 @@ class AddXls(models.TransientModel):
 
             vendor_id = partner_env.search([("name", "like", vendor_name)], limit=1)
 
-            if offered_product_id:
-                product_id = offered_product_id
-
             already_available_product_supplierinfo = product_supplierinfo_env.search(
-                [("partner_id", "=", vendor_id.id), ("product_tmpl_id", "=", product_id.product_tmpl_id.id)]
+                [("partner_id", "=", vendor_id.id), ("product_tmpl_id", "=", offered_product_id.product_tmpl_id.id)]
             )
 
             if 1 <= delivery_time <= 7:
@@ -440,6 +437,7 @@ class AddXls(models.TransientModel):
                     )
                     if product_category_id:
                         product_id.write({"categ_id": product_category_id.id})
+                print("\n\n\n ---- product_id and name ----", product_id, product_id.name)
 
             if not customer_code:
                 product_category = get_value("product_category")
@@ -525,11 +523,8 @@ class AddXls(models.TransientModel):
 
             vendor_id = partner_env.search([("name", "like", vendor_name)], limit=1)
 
-            if offered_product_id:
-                product_id = offered_product_id
-
             already_available_product_supplierinfo = product_supplierinfo_env.search(
-                [("partner_id", "=", vendor_id.id), ("product_tmpl_id", "=", product_id.product_tmpl_id.id)]
+                [("partner_id", "=", vendor_id.id), ("product_tmpl_id", "=", offered_product_id.product_tmpl_id.id)]
             )
 
             if 1 <= delivery_time <= 7:
