@@ -57,6 +57,14 @@ class SaleOrder(models.Model):
                     raise UserError(
                         _("Please set the delivery date on all product lines: %s") % names
                     )
+
+            # ✅ New Validation: Vendor Price required (not 0 or empty)
+            missing_vendor_price = product_lines.filtered(lambda l: not l.vendor_price or l.vendor_price == 0.0)
+            if missing_vendor_price:
+                names = ", ".join(missing_vendor_price.mapped(lambda l: l.product_id.display_name))
+                raise UserError(
+                    _("Please set the Vendor Price for product(s): %s") % names
+                )
         return super(SaleOrder, self).action_confirm()
 
     # @api.constrains("client_order_ref")

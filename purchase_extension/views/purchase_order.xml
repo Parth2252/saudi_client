@@ -13,7 +13,13 @@
             <xpath expr="//field[@name='name']" position="after">
                 <field name="sale_partner_id"/>
                 <field name="receipt_delay" optional='hide'/>
-                <field name="purchase_source" optional="show" />
+                <field name="purchase_source" 
+                       optional="show" 
+                       decoration-success="purchase_source == 'local'"
+                       decoration-info="purchase_source == 'standard'"
+                       decoration-warning="purchase_source == 'online'"
+                       widget="badge"
+                       />
             </xpath>
             <xpath expr="//field[@name='date_order']" position="after">
                 <field name="date_order_display"/>
@@ -31,6 +37,11 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="partner_ref"/>
+                <field name="purchase_source" />
+            </xpath>
+
+            <xpath expr="//group" position="inside">
+                <filter string="Purchase Source" name="purchase_source" domain="[]" context="{'group_by':'purchase_source'}"/>
             </xpath>
 
             <xpath expr="//filter[@name='starred']" position="after">

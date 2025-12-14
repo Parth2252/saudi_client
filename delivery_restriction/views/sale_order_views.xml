@@ -1,6 +1,6 @@
 <odoo>
-    <record id="delivery_restriction_sale_order_form_inherit" model="ir.ui.view">
-        <field name="name">delivery.restriction.sale.order.form.inherit</field>
+    <record id="delivery_restriction_sale_order_tree_inherit" model="ir.ui.view">
+        <field name="name">delivery.restriction.sale.order.tree.inherit</field>
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.sale_order_tree"/>
         <field name="arch" type="xml">
@@ -12,9 +12,22 @@
                         decoration-info="delivery_status in ['pending', 'started']"
                         widget="badge"
                         optional="hide"/>
+            </xpath>    
+        </field>
+    </record>
+
+
+    <record id="delivery_restriction_view_order_tree_inherit" model="ir.ui.view">
+        <field name="name">delivery_restriction_view_order_tree_inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_stock.view_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='delivery_status']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
             </xpath>
         </field>
     </record>
+
 
     <record id="delivery_restriction_sale_order_search_inherit" model="ir.ui.view">
         <field name="name">delivery.restriction.sale.order.search.inherit</field>

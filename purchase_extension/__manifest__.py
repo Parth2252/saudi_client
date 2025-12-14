@@ -17,6 +17,8 @@ Purchase Extended
         'report/purchase_report.xml',
         'views/purchase_order.xml',
         'views/product.xml',
+        'views/stock_picking.xml',
+        'views/account.move.xml',
     ],
     'demo': [
     ],

@@ -106,7 +106,7 @@ class PurchaseOrderLine(models.Model):
                 # Expected Arrival = PO Date + Delay
                 line.date_planned = po_date + timedelta(days=delay)
             else:
-                line.date_planned = False
+                line.date_planned = fields.datetime.now()
 
         return line
 
@@ -163,7 +163,7 @@ class PurchaseOrderLine(models.Model):
                 })
             else:
                 line.with_context(bypass_date_planned=True).write({
-                    'date_planned': False
+                    'date_planned': fields.datetime.now()
                 })
 
         return res
@@ -180,5 +180,6 @@ class PurchaseOrderLine(models.Model):
                 vals['date'] = self.date_planned or fields.Datetime.now()
 
         return vals_list
+
 
 

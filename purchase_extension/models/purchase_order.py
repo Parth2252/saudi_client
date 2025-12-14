@@ -454,3 +454,16 @@ class PurchaseOrder(models.Model):
         result["all_total_last_7_days"] = format_amount(self.env, res[2] or 0, currency)
 
         return result
+
+    def _prepare_picking(self):
+        res = super()._prepare_picking()
+        res.update({'purchase_source':self.purchase_source})
+        return res
+
+    def _prepare_invoice(self):
+        res = super()._prepare_invoice()
+        res.update({'purchase_source':self.purchase_source})
+        return res
+
+
+

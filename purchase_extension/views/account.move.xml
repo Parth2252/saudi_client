@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+   <record id="purchase_extension_view_move_form_inherit" model="ir.ui.view">
+        <field name="name">purchase.extension.view.move.form.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='ref'][2]" position="after">
+                <field name="purchase_source" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="purchase_extension_view_invoice_tree_inherit" model="ir.ui.view">
+        <field name="name">purchase.extension.view.invoice.tree.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list/field[@name='create_date']" position="after">
+                <field name="purchase_source" 
+                    optional="show" 
+                    decoration-success="purchase_source == 'local'"
+                    decoration-info="purchase_source == 'standard'"
+                    decoration-warning="purchase_source == 'online'"
+                    widget="badge"
+                    />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="purchase_extension_view_account_invoice_filter_inherit" model="ir.ui.view">
+        <field name="name">purchase.extension.view.account.invoice.filter.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='journal_id']" position="after">
+                <field name="purchase_source" />
+            </xpath>
+            <xpath expr="//group/filter[@name='partner']" position="after">
+                <filter string="Purchase Source" name="purchase_source" domain="[]" context="{'group_by':'purchase_source'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

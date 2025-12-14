@@ -7,10 +7,10 @@
 
                     <!-- Standard Purchase Block -->
                     <div class="col-12 col-lg-5 col-xl-5 col-xxl-4 flex-grow-1 flex-lg-grow-0 flex-shrink-0">
+                        <div style="margin-left: 201px; font-weight: bold; color: #272AF5;">
+                        Standard Purchase
+                        </div>
                         <div class="grid gap-4">
-                            <div class="g-col-3 g-col-sm-2 d-flex align-items-center py-2 justify-content-end text-end justify-content-lg-start text-lg-start text-break" style="margin-left: 25px; font-weight: bold; color: #272AF5;">
-                            Standard Purchase
-                            </div>
                             <div class="g-col-9 g-col-sm-10 grid gap-1">
                                 <div class="g-col-3 p-0" t-on-click="setSearchContext" title="All Draft RFQs" filter_name="standard_purchase_to_issues">
                                     <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
@@ -38,10 +38,10 @@
 
                     <!-- Local purchase block -->
                     <div class="col-12 col-lg-5 col-xl-5 col-xxl-4 flex-grow-1 flex-lg-grow-0 flex-shrink-0">
+                        <div style="margin-left: 201px; font-weight: bold; color: #06BA3D;">
+                            Local Purchase
+                        </div>
                         <div class="grid gap-4">
-                            <div class="g-col-3 g-col-sm-2 d-flex align-items-center py-2 justify-content-end text-end justify-content-lg-start text-lg-start text-break" style="margin-left: 25px; font-weight: bold; color: #06BA3D;">
-                                Local Purchase
-                            </div>
                             <div class="g-col-9 g-col-sm-10 grid gap-1">
                                 <div class="g-col-3 p-0" t-on-click="setSearchContext" title="All Draft RFQs" filter_name="local_purchase_to_issues">
                                     <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
@@ -69,10 +69,10 @@
 
                     <!-- Online Purchase Block -->
                     <div class="col-12 col-lg-5 col-xl-5 col-xxl-4 flex-grow-1 flex-lg-grow-0 flex-shrink-0">
+                        <div style="margin-left: 201px; font-weight: bold; color: #EB6D05;">
+                            Online Purchase
+                        </div>
                         <div class="grid gap-4">
-                            <div class="g-col-3 g-col-sm-2 d-flex align-items-center py-2 justify-content-end text-end justify-content-lg-start text-lg-start text-break" style="margin-left: 25px; font-weight: bold; color: #EB6D05;">
-                                Online Purchase
-                            </div>
                             <div class="g-col-9 g-col-sm-10 grid gap-1">
                                 <div class="g-col-3 p-0" t-on-click="setSearchContext" title="All Draft RFQs" filter_name="online_purchase_to_issues">
                                     <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">

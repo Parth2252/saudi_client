@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="purchase_extension_view_picking_form_inherit" model="ir.ui.view">
+        <field name="name">purchase.extension.view.picking.form.inherit</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='location_dest_id'][2]" position="after">
+                <field name="purchase_source" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="purchase_extension_vpicktree_inherit" model="ir.ui.view">
+        <field name="name">purchase.extension.vpicktree.inherit</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list/field[@name='location_dest_id']" position="after">
+                <field name="purchase_source" 
+                    optional="show" 
+                    decoration-success="purchase_source == 'local'"
+                    decoration-info="purchase_source == 'standard'"
+                    decoration-warning="purchase_source == 'online'"
+                    widget="badge"
+                    />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="purchase_extension_view_picking_internal_search_inherit" model="ir.ui.view">
+        <field name="name">purchase.extension.view.picking.internal.search.inherit</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search/field[@name='product_id']" position="after">
+                <field name="purchase_source" />
+            </xpath>
+            <xpath expr="//group" position="inside">
+                <filter string="Purchase Source" name="purchase_source" domain="[]" context="{'group_by':'purchase_source'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
