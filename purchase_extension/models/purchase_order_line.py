@@ -17,6 +17,8 @@ class PurchaseOrderLine(models.Model):
 
     product_url = fields.Char(string="Product URL")
 
+    customer_pdd = fields.Datetime(string="Customer PDD", copy=False)
+
     def purchase_order_line_sequence(self):
         """ Generate auto sequence for purchase order. """
         number = 1
@@ -76,6 +78,7 @@ class PurchaseOrderLine(models.Model):
         if sale_line_id:
             line.product_url = sale_line_id.product_url
             line.product_uom = sale_line_id.product_uom.id
+            line.customer_pdd = sale_line_id.delivery_date
         if sr_no_po_value:
             line.sr_no_po = sr_no_po_value
 
