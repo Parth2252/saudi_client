@@ -4,6 +4,8 @@ from odoo import models, fields, api
 class Product_Supplierinfo(models.Model):
     _inherit = "product.supplierinfo"
 
+    product_url = fields.Char(string="Product URL")
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:

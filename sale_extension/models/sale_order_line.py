@@ -41,7 +41,7 @@ class SaleOrderLine(models.Model):
     # offered_image = fields.Binary(related='product_id.image_1920', readonly=True, store=True)
 
     offered_image = fields.Binary(
-        string="Image for Report", compute="_compute_offered_image", store=False
+        string="Image for Report", compute="_compute_offered_image", store=True
     )
 
     delivery_time = fields.Integer(string="Delivery Time")
@@ -58,6 +58,20 @@ class SaleOrderLine(models.Model):
     delivery_time_display = fields.Char(
         string="Delivery Time", compute="_compute_delivery_time_display"
     )
+
+    # product_category_id = fields.Many2one(
+    #     related="product_template_id.categ_id",
+    #     string="Product Category",
+    #     store=True,
+    #     readonly=False,
+    # )
+
+    # offered_product_category_id = fields.Many2one(
+    #     related="offered_description_id.categ_id",
+    #     string="Offered Product Category",
+    #     store=True,
+    #     readonly=False,
+    # )
 
     # customization start.
     is_not_available = fields.Boolean(copy=False)
@@ -110,6 +124,7 @@ class SaleOrderLine(models.Model):
                 if seller and not line.product_vendor_id and not line.vendor_price:
                     line.product_vendor_id = seller.partner_id.id
                     line.vendor_price = seller.price
+                    line.product_url = seller.product_url
 
     # customization end.
 
@@ -133,6 +148,21 @@ class SaleOrderLine(models.Model):
                 )
             else:
                 line.delivery_date = line.delivery_date or False
+
+    # @api.onchange(
+    #     "product_id",
+    #     "offered_description_id",
+    #     "product_category_id",
+    #     "offered_product_category_id",
+    # )
+    # def _onchange_product_category_update_ts_code(self):
+    #     for line in self:
+    #         print("\n\n\n ---- line.offered_description_id ---", line.offered_description_id)
+    #         print("\n\n\n ----- line.product_id ----", line.product_id, line.product_id.default_code)
+    #         product = line.offered_description_id or line.product_template_id
+    #         print("\n\n\n ---- product ---", product, product.default_code)
+    #         if product:
+    #             line.ts_code = product.default_code
 
     @api.depends("product_id", "offered_description_id", "order_id.partner_id")
     def _compute_sh_line_customer_code(self):
@@ -235,7 +265,50 @@ class SaleOrderLine(models.Model):
         lines = super().create(vals_list)
         for line in lines:
             line.sale_order_line_sequence()
+            line._update_supplier_info()
         return lines
+
+    # def write(self, vals):
+    #     res = super(SaleOrderLine, self).write(vals)
+    #     if (
+    #         "product_vendor_id" in vals
+    #         or "vendor_price" in vals
+    #         or "vendor_currency_id" in vals
+    #         or "product_url" in vals
+    #     ):
+    #         self._update_supplier_info()
+    #     return res
+
+    def _update_supplier_info(self):
+        """Create product.supplierinfo based on SO line vendor details if not exists"""
+        for line in self:
+            target_product = line.offered_description_id or line.product_id
+            if not target_product and not line.product_vendor_id:
+                continue
+
+            # Search if a supplier info already exists for this vendor and product
+            domain = [
+                ("partner_id", "=", line.product_vendor_id.id),
+                ("product_tmpl_id", "=", target_product.product_tmpl_id.id),
+            ]
+            supplier_info = self.env["product.supplierinfo"].search(domain, limit=1)
+
+            if not supplier_info:
+                # Create new record ONLY if it doesn't exist
+                vals = {
+                    "partner_id": line.product_vendor_id.id,
+                    "product_tmpl_id": target_product.product_tmpl_id.id,
+                    "min_qty": 1.0,
+                }
+                if line.vendor_price:
+                    vals["price"] = line.vendor_price
+                if line.vendor_currency_id:
+                    vals["currency_id"] = line.vendor_currency_id.id
+                if line.product_url:
+                    vals["product_url"] = line.product_url
+
+                self.env["product.supplierinfo"].create(vals)
+
 
     @api.depends("product_id", "product_uom", "product_uom_qty")
     def _compute_product_qty(self):
@@ -297,6 +370,7 @@ class SaleOrderLine(models.Model):
             return self.offered_description_id.default_code
         else:
             return self.product_id.default_code
+
 
 
 class UoM(models.Model):

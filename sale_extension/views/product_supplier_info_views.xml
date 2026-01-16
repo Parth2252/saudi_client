@@ -1,0 +1,14 @@
+<odoo>
+    <record id="product_supplierinfo_tree_inherit_product_url" model="ir.ui.view">
+        <field name="name">product.supplierinfo.tree.product.url</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="inherit_id" ref="product.product_supplierinfo_tree_view"/>
+        <field name="arch" type="xml">
+            <!-- Currency field pachi Product URL -->
+            <xpath expr="//field[@name='currency_id']" position="after">
+                <field name="product_url" widget="url" optional="show"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

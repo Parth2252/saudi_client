@@ -42,6 +42,7 @@ Sale Extended
         "views/account_move.xml",
         "views/res_partner.xml",
         'views/crm_views.xml',
+        "views/product_supplier_info_views.xml"
     ],
     "demo": [],
     "assets": {

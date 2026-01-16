@@ -6,6 +6,7 @@ import base64
 import os
 import tempfile
 from openpyxl import load_workbook, Workbook
+from openpyxl.worksheet.datavalidation import DataValidation
 from io import BytesIO
 import xlrd
 import xlwt
@@ -25,17 +26,29 @@ class AddXls(models.TransientModel):
         headers = [
             "Customer Product Code",
             "Customer Product Name",
-            "Offered Description",
-            "Quantity",
-            "Unit Price",
-            "Delivery Time",
-            "Product Category",
             "UOM",
-            "Vendor Name",
+            "Quantity",
+            "Product Category",
+            "Offered Description",
             "Vendor Price",
+            "Vendor Name",
+            "Vendor Currency",
+            "Product URL",
+            "Delivery Time",
+            "Unit Price",
         ]
 
         sheet.append(headers)
+
+        # Add Data Validation for Vendor Currency (Column I)
+        dv = DataValidation(type="list", formula1='"SAR,USD,AED,EUR,GBP,INR,JPY"', allow_blank=True)
+        dv.error = "Your entry is not in the list"
+        dv.errorTitle = "Invalid Entry"
+        dv.prompt = "Select from the list"
+        dv.promptTitle = "List Selection"
+        sheet.add_data_validation(dv)
+        dv.add("H2:H1000")
+
 
         stream = BytesIO()
         workbook.save(stream)
@@ -48,14 +61,16 @@ class AddXls(models.TransientModel):
         headers = [
             "Customer Product Code",
             "Customer Product Name",
-            "Offered Description",
-            "Quantity",
-            "Unit Price",
-            "Delivery Time",
-            "Product Category",
             "UOM",
-            "Vendor Name",
+            "Quantity",
+            "Product Category",
+            "Offered Description",
             "Vendor Price",
+            "Vendor Name",
+            "Vendor Currency",
+            "Product URL",
+            "Delivery Time",
+            "Unit Price",
         ]
         for col, header in enumerate(headers):
             sheet.write(0, col, header)
@@ -109,6 +124,8 @@ class AddXls(models.TransientModel):
             "uom": "unit_of_measure",
             "vendor name": "vendor_name",
             "vendor price": "vendor_price",
+            "vendor currency": "vendor_currency",
+            "product url": "product_url",
             "n/a item": "na_item",  # NEW COLUMN
         }
 
@@ -140,6 +157,7 @@ class AddXls(models.TransientModel):
             product_env = self.env["product.product"]
             customer_product_name = get_value("sh_line_customer_product_name")
             customer_code = get_value("sh_line_customer_code")
+            product_url = get_value("product_url")
 
             if customer_code:
                 sh_product_customer_info_id = sh_product_customer_info_env.search(
@@ -243,8 +261,11 @@ class AddXls(models.TransientModel):
             partner_env = self.env["res.partner"]
             vendor_name = get_value("vendor_name")
             vendor_price = float(get_value("vendor_price") or 0)
+            vendor_currency = get_value("vendor_currency")
 
-            vendor_id = partner_env.search([("name", "like", vendor_name)], limit=1)
+            vendor_id = partner_env.browse()
+            if vendor_name:
+                vendor_id = partner_env.search([("name", "like", vendor_name)], limit=1)
 
             vendor_name_from_upload_excel = vendor_id
             vendor_price_from_upload_excel = vendor_price
@@ -285,26 +306,38 @@ class AddXls(models.TransientModel):
             if not already_available_product_supplierinfo and not vendor_id and vendor_name:
                 vendor_id = partner_env.create({"name": vendor_name, "is_vendor": True})
 
-            if not already_available_product_supplierinfo and offered_product_id:
-                product_supplierinfo_id = product_supplierinfo_env.create(
-                    {
-                        "partner_id": vendor_id.id,
-                        "product_id": offered_product_id.id,
-                        "min_qty": 1.0,
-                        "price": vendor_price,
-                        "delay": exact_delivery_time,
-                    }
+            currency_id = False
+            if vendor_currency:
+                currency_id = self.env["res.currency"].search(
+                    [("name", "ilike", vendor_currency)], limit=1
                 )
-            elif not already_available_product_supplierinfo and product_id:
-                product_supplierinfo_id = product_supplierinfo_env.create(
-                    {
-                        "partner_id": vendor_id.id,
-                        "product_id": product_id.id,
-                        "min_qty": 1.0,
-                        "price": vendor_price,
-                        "delay": exact_delivery_time,
-                    }
-                )
+
+            product_supplierinfo_id = False
+            if vendor_id:
+                if not already_available_product_supplierinfo and offered_product_id:
+                    product_supplierinfo_id = product_supplierinfo_env.create(
+                        {
+                            "partner_id": vendor_id.id,
+                            "product_id": offered_product_id.id,
+                            "min_qty": 1.0,
+                            "price": vendor_price,
+                            "delay": exact_delivery_time,
+                            "currency_id": currency_id.id if currency_id else False,
+                            "product_url": product_url,
+                        }
+                    )
+                elif not already_available_product_supplierinfo and product_id:
+                    product_supplierinfo_id = product_supplierinfo_env.create(
+                        {
+                            "partner_id": vendor_id.id,
+                            "product_id": product_id.id,
+                            "min_qty": 1.0,
+                            "price": vendor_price,
+                            "delay": exact_delivery_time,
+                            "currency_id": currency_id.id if currency_id else False,
+                            "product_url": product_url,
+                        }
+                    )
 
             if vendor_name_from_upload_excel:
                 product_vendor_id = vendor_name_from_upload_excel
@@ -346,6 +379,8 @@ class AddXls(models.TransientModel):
                     "product_uom": product_uom_id.id if product_uom_id else False,
                     "product_vendor_id": product_vendor_id.id,
                     "vendor_price": vendor_price,
+                    "product_url": product_url,
+                    "vendor_currency_id": currency_id.id if currency_id else False,
                 }
             # if correct related product not set then execute below conditions.
             else:
@@ -368,6 +403,8 @@ class AddXls(models.TransientModel):
                         "product_uom": product_uom_id.id if product_uom_id else False,
                         "product_vendor_id": product_vendor_id.id,
                         "vendor_price": vendor_price,
+                        "product_url": product_url,
+                        "vendor_currency_id": currency_id.id if currency_id else False,
                     }
                 else:
                     # if no value is set in the offered description then execute this block.
@@ -386,6 +423,8 @@ class AddXls(models.TransientModel):
                         "product_uom": product_uom_id.id if product_uom_id else False,
                         "product_vendor_id": product_vendor_id.id,
                         "vendor_price": vendor_price,
+                        "product_url": product_url,
+                        "vendor_currency_id": currency_id.id if currency_id else False,
                     }
 
             values.append((0, 0, line_vals))
@@ -430,6 +469,8 @@ class AddXls(models.TransientModel):
             "uom": "unit_of_measure",
             "vendor name": "vendor_name",
             "vendor price": "vendor_price",
+            "product url": "product_url",
+            "vendor currency": "vendor_currency",
             "n/a item": "na_item",  # NEW COLUMN
         }
 
@@ -459,6 +500,8 @@ class AddXls(models.TransientModel):
             product_env = self.env["product.product"]
             customer_product_name = get_value("sh_line_customer_product_name")
             customer_code = get_value("sh_line_customer_code")
+            product_url = get_value("product_url")
+            vendor_currency = get_value("vendor_currency")
 
             if customer_code:
                 sh_product_customer_info_id = sh_product_customer_info_env.search(
@@ -563,7 +606,9 @@ class AddXls(models.TransientModel):
             vendor_name = get_value("vendor_name")
             vendor_price = float(get_value("vendor_price") or 0)
 
-            vendor_id = partner_env.search([("name", "like", vendor_name)], limit=1)
+            vendor_id = partner_env.browse()
+            if vendor_name:
+                vendor_id = partner_env.search([("name", "like", vendor_name)], limit=1)
 
             vendor_name_from_upload_excel = vendor_id
             vendor_price_from_upload_excel = vendor_price
@@ -604,6 +649,12 @@ class AddXls(models.TransientModel):
             if not already_available_product_supplierinfo and not vendor_id and vendor_name:
                 vendor_id = partner_env.create({"name": vendor_name, "is_vendor": True})
 
+            currency_id = False
+            if vendor_currency:
+                currency_id = self.env["res.currency"].search(
+                    [("name", "ilike", vendor_currency)], limit=1
+                )
+
             if not already_available_product_supplierinfo and offered_product_id:
                 product_supplierinfo_id = product_supplierinfo_env.create(
                     {
@@ -612,6 +663,8 @@ class AddXls(models.TransientModel):
                         "min_qty": 1.0,
                         "price": vendor_price,
                         "delay": exact_delivery_time,
+                        "currency_id": currency_id.id if currency_id else False,
+                        "product_url": product_url,
                     }
                 )
             elif not already_available_product_supplierinfo and offered_product_id:
@@ -622,6 +675,8 @@ class AddXls(models.TransientModel):
                         "min_qty": 1.0,
                         "price": vendor_price,
                         "delay": exact_delivery_time,
+                        "currency_id": currency_id.id if currency_id else False,
+                        "product_url": product_url,
                     }
                 )
 
@@ -665,6 +720,8 @@ class AddXls(models.TransientModel):
                     "product_uom": product_uom_id.id if product_uom_id else False,
                     "product_vendor_id": product_vendor_id.id,
                     "vendor_price": vendor_price,
+                    "product_url": product_url,
+                    "vendor_currency_id": currency_id.id if currency_id else False,
                 }
             # if correct related product not set then execute below conditions.
             else:
@@ -687,6 +744,8 @@ class AddXls(models.TransientModel):
                         "product_uom": product_uom_id.id if product_uom_id else False,
                         "product_vendor_id": product_vendor_id.id,
                         "vendor_price": vendor_price,
+                        "product_url": product_url,
+                        "vendor_currency_id": currency_id.id if currency_id else False,
                     }
                 else:
                     # if no value is set in the offered description then execute this block.
@@ -705,6 +764,8 @@ class AddXls(models.TransientModel):
                         "product_uom": product_uom_id.id if product_uom_id else False,
                         "product_vendor_id": product_vendor_id.id,
                         "vendor_price": vendor_price,
+                        "product_url": product_url,
+                        "vendor_currency_id": currency_id.id if currency_id else False,
                     }
 
             values.append((0, 0, line_vals))

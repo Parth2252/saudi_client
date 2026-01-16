@@ -9,6 +9,7 @@
             <!-- Added field. -->
             <xpath expr="/form/sheet/notebook/page/field[@name='order_line']/list/field[@name='name']" position="after">
                 <field name="pr_number" optional='hide'/>
+                <!-- <field name="product_category_id" optional="show"/> -->
                 <field name="ts_code" optional="show"/>
                 <field name="offered_description_id"
                        string="Offered Description"
@@ -16,13 +17,14 @@
                        class="offered-placeholder-red"
                        readonly="is_not_available"
                        context="{'partner_id':parent.partner_id}" optional="show"/>
+                <!-- <field name="offered_product_category_id" optional="show"/> -->
 
                 <field name="product_url" widget="url" optional="show"/>
                 <field name="product_vendor_id" optional="show"/>
                 <field name="vendor_price" optional="show" decoration-danger="is_vendor_price"/>
                 <field name="vendor_currency_id" optional="show"/>
                 <field name="is_not_available" optional='hide'/>
-                <field name="offered_image" widget="image" options="{'size': [64, 64]}" readonly="1"/>
+                <field name="offered_image" widget="image" options="{'size': [64, 64]}" readonly="0"/>
                 <field name="delivery_time" string="Delivery Time" optional="show"/>
                 <field name="delivery_date" optional="show"/>
             </xpath>

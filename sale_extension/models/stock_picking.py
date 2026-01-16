@@ -89,3 +89,10 @@ class StockMove(models.Model):
             elif move.purchase_line_id:
                 move.sr_no_do = move.purchase_line_id.sr_no_po
 
+
+class StockPicking(models.Model):
+    _inherit = "stock.picking"
+
+    def _can_return(self):
+        self.ensure_one()
+        return self.state in ["done", "delivered"]
