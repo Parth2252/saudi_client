@@ -335,6 +335,9 @@ class SaleOrderLine(models.Model):
         so_partner_id = self.order_id.partner_id
         product_id = self.product_id
 
+        if self.sh_line_customer_code:
+            return self.sh_line_customer_code
+
         if so_partner_id and product_id:
             item_code = sh_customer_info_env.search(
                 [

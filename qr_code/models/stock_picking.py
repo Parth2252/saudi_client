@@ -271,14 +271,10 @@ class StockMove(models.Model):
             else:
                 move.description = ''
 
-    @api.depends('sale_line_id', 'product_id', 'picking_id.partner_id')
+    @api.depends('sale_line_id')
     def _compute_sh_line_customer_code(self):
         for move in self:
-            if move.product_id and move.picking_id.partner_id:
-                customer_info = self.env['sh.product.customer.info'].search([
-                    ('name', '=', move.picking_id.partner_id.id),
-                    ('product_id', '=', move.product_id.id)
-                ], limit=1)
-                move.sh_line_customer_code = customer_info.product_code or ''
+            if move.sale_line_id:
+                move.sh_line_customer_code = move.sale_line_id.sh_line_customer_code or ''
             else:
                 move.sh_line_customer_code = ''

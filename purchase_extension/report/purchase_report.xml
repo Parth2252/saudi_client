@@ -241,7 +241,7 @@
                     <td class="text-center align-middle">
                         <span t-field="line.product_id.default_code"/>
                     </td>
-                    <td class="text-center align-middle">
+                    <td class="text-left align-middle">
                         <span t-field="line.name"/>
                     </td>
                     <td t-if="o.print_vendor_item_code_and_name" class="text-center align-middle">

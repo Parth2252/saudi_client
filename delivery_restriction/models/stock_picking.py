@@ -5,7 +5,10 @@ from odoo.exceptions import ValidationError
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
-    gr_number = fields.Char(string="GR Number", size=15, copy=False)
+    gr_number = fields.Char(string="Supplier Invoice Number", size=15, copy=False)
+    is_supplier_invoiced_attached = fields.Boolean(
+        string="Is Supplier Invoice Attached?", default=False, copy=False
+    )
 
     state = fields.Selection(
         [
@@ -33,19 +36,23 @@ class StockPicking(models.Model):
         " * Cancelled: The transfer has been cancelled.",
     )
 
-    @api.constrains("gr_number")
-    def _check_gr_number(self):
-        for picking in self:
-            if picking.gr_number and not picking.gr_number.isdigit():
-                raise ValidationError(_("The GR Number must contain only digits."))
+    # @api.constrains("gr_number")
+    # def _check_gr_number(self):
+    #     for picking in self:
+    #         if picking.gr_number and not picking.gr_number.isdigit():
+    #             raise ValidationError(_("The Supplier Invoice Number must contain only digits."))
 
     def confirm_gr_number(self):
         for picking in self:
-            if not self.gr_number:
-                raise ValidationError("Please set the GR number!")
-            picking.state = 'delivered'
+            if not picking.gr_number:
+                raise ValidationError("Please set the Supplier Invoice Number!")
+            if not picking.is_supplier_invoiced_attached:
+                raise ValidationError(
+                    "Supplier Invoice Missing! Please attach the supplier invoice and check the 'Is Supplier Invoice Attached?' box."
+                )
+            picking.state = "delivered"
 
     # def button_validate(self):
     #     if not self.gr_number:
-    #         raise ValidationError("Please set the GR number!")
+    #         raise ValidationError("Please set the Supplier Invoice Number!")
     #     return super().button_validate()

@@ -6,6 +6,7 @@
         <field name="arch" type="xml">
             <xpath expr="//sheet/group/group[2]/field[@name='origin']" position="after">
                 <field name="gr_number"/>
+                <field name="is_supplier_invoiced_attached"/>
             </xpath>
             <xpath expr="//header" position="inside">
               <button name="confirm_gr_number" type="object" string="Confirm GRN" invisible="state not in ('done')" class="oe_highlight"/>
