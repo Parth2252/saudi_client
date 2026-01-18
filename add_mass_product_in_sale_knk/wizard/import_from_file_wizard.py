@@ -40,6 +40,28 @@ class AddXls(models.TransientModel):
 
         sheet.append(headers)
 
+        # Add Data Validation for UOM (Column C)
+        uom_names = self.env["uom.uom"].search([]).mapped("name")
+        uom_formula = f'"{",".join(uom_names)}"' if uom_names else '""'
+        dv_uom = DataValidation(type="list", formula1=uom_formula, allow_blank=True)
+        dv_uom.error = "Your entry is not in the list"
+        dv_uom.errorTitle = "Invalid Entry"
+        dv_uom.prompt = "Select from the list"
+        dv_uom.promptTitle = "List Selection"
+        sheet.add_data_validation(dv_uom)
+        dv_uom.add("C2:C1000")
+
+        # Add Data Validation for Product Category (Column E)
+        category_names = self.env["product.category"].search([]).mapped("name")
+        category_formula = f'"{",".join(category_names)}"' if category_names else '""'
+        dv_categ = DataValidation(type="list", formula1=category_formula, allow_blank=True)
+        dv_categ.error = "Your entry is not in the list"
+        dv_categ.errorTitle = "Invalid Entry"
+        dv_categ.prompt = "Select from the list"
+        dv_categ.promptTitle = "List Selection"
+        sheet.add_data_validation(dv_categ)
+        dv_categ.add("E2:E1000")
+
         # Add Data Validation for Vendor Currency (Column I)
         dv = DataValidation(type="list", formula1='"SAR,USD,AED,EUR,GBP,INR,JPY"', allow_blank=True)
         dv.error = "Your entry is not in the list"
@@ -47,7 +69,7 @@ class AddXls(models.TransientModel):
         dv.prompt = "Select from the list"
         dv.promptTitle = "List Selection"
         sheet.add_data_validation(dv)
-        dv.add("H2:H1000")
+        dv.add("I2:I1000")
 
 
         stream = BytesIO()
