@@ -107,14 +107,13 @@ class SaleOrderLine(models.Model):
 
             # Product-based vendors
             product = line.offered_description_id or line.product_id
-            if product:
-                product_vendors = product.seller_ids.mapped("partner_id")
-                vendors |= product_vendors
+            # if product:
+            #     product_vendors = product.seller_ids.mapped("partner_id")
+            #     vendors |= product_vendors
 
             # All contacts with is_vendor = True
             vendor_contacts = self.env["res.partner"].search([("is_vendor", "=", True)])
             vendors |= vendor_contacts
-
             line.allowed_vendor_ids = vendors
 
             # Auto set first seller if no vendor manually selected
@@ -279,26 +278,98 @@ class SaleOrderLine(models.Model):
     #         self._update_supplier_info()
     #     return res
 
+
+    @api.onchange("product_vendor_id", "vendor_price", "vendor_currency_id", "product_url")
+    def _onchange_vendor_call_update_supplier(self):
+        for line in self:
+            line._update_supplier_info()
+
+    # def _update_supplier_info(self):
+    #     """Create product.supplierinfo based on SO line vendor details if not exists"""
+    #     for line in self:
+    #         target_product = line.offered_description_id or line.product_id
+    #         if not target_product and not line.product_vendor_id and not line.vendor_currency_id:
+    #             continue
+
+    #         # Search if a supplier info already exists for this vendor and product
+    #         domain = [
+    #             ("partner_id", "=", line.product_vendor_id.id),
+    #             ("product_tmpl_id", "=", target_product.product_tmpl_id.id),
+    #             ("currency_id", "=", line.vendor_currency_id.id),
+    #         ]
+    #         supplier_info = self.env["product.supplierinfo"].search(domain, limit=1)
+
+    #         if supplier_info:
+    #             vals = {
+    #                 "sequence": 1,
+    #             }
+    #             if line.vendor_price:
+    #                 vals["price"] = line.vendor_price
+
+    #             supplier_info.write(vals)
+    #         else:
+    #             # Create new record ONLY if it doesn't exist
+    #             vals = {
+    #                 "partner_id": line.product_vendor_id.id,
+    #                 "product_tmpl_id": target_product.product_tmpl_id.id,
+    #                 "min_qty": 1.0,
+    #                 "sequence": 1,
+    #             }
+    #             if line.vendor_price:
+    #                 vals["price"] = line.vendor_price
+    #             if line.vendor_currency_id:
+    #                 vals["currency_id"] = line.vendor_currency_id.id
+    #             if line.product_url:
+    #                 vals["product_url"] = line.product_url
+
+    #             self.env["product.supplierinfo"].create(vals)
+
+
     def _update_supplier_info(self):
-        """Create product.supplierinfo based on SO line vendor details if not exists"""
+        """Create or update product.supplierinfo and manage sequence priority"""
+        SupplierInfo = self.env["product.supplierinfo"]
+
         for line in self:
             target_product = line.offered_description_id or line.product_id
-            if not target_product and not line.product_vendor_id:
+            if not target_product or not line.product_vendor_id:
                 continue
 
-            # Search if a supplier info already exists for this vendor and product
             domain = [
                 ("partner_id", "=", line.product_vendor_id.id),
                 ("product_tmpl_id", "=", target_product.product_tmpl_id.id),
             ]
-            supplier_info = self.env["product.supplierinfo"].search(domain, limit=1)
 
-            if not supplier_info:
-                # Create new record ONLY if it doesn't exist
+            if line.vendor_currency_id:
+                domain.append(("currency_id", "=", line.vendor_currency_id.id))
+
+            supplier_info = SupplierInfo.search(domain, limit=1)
+
+            all_supplier_infos = SupplierInfo.search([
+                ("product_tmpl_id", "=", target_product.product_tmpl_id.id),
+            ])
+
+            if supplier_info:
+                others = all_supplier_infos - supplier_info
+                if others:
+                    others.write({"sequence": 2})
+
+                vals = {
+                    "sequence": 1,
+                }
+                if line.vendor_price:
+                    vals["price"] = line.vendor_price
+
+                supplier_info.write(vals)
+
+            else:
+                if all_supplier_infos:
+                    all_supplier_infos.write({"sequence": 2})
+
                 vals = {
                     "partner_id": line.product_vendor_id.id,
                     "product_tmpl_id": target_product.product_tmpl_id.id,
                     "min_qty": 1.0,
+                    "sequence": 1,
                 }
                 if line.vendor_price:
                     vals["price"] = line.vendor_price
@@ -307,7 +378,8 @@ class SaleOrderLine(models.Model):
                 if line.product_url:
                     vals["product_url"] = line.product_url
 
-                self.env["product.supplierinfo"].create(vals)
+                SupplierInfo.create(vals)
+
 
 
     @api.depends("product_id", "product_uom", "product_uom_qty")

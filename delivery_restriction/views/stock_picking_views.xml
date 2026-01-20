@@ -5,11 +5,14 @@
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet/group/group[2]/field[@name='origin']" position="after">
-                <field name="gr_number"/>
-                <field name="is_supplier_invoiced_attached"/>
+                <field name="picking_type_code" invisible="1"/>
+                <field name="gr_number" invisible="picking_type_code != 'outgoing'"/>
+                <field name="supplier_invoice_number" invisible="picking_type_code != 'incoming'"/>
+                <field name="is_supplier_invoiced_attached" invisible="picking_type_code != 'incoming'"/>
             </xpath>
             <xpath expr="//header" position="inside">
-              <button name="confirm_gr_number" type="object" string="Confirm GRN" invisible="state not in ('done')" class="oe_highlight"/>
+              <button name="confirm_gr_number" type="object" string="Confirm GRN" invisible="state not in ('done') or picking_type_code != 'outgoing'" class="oe_highlight"/>
+              <button name="confirm_gr_number" type="object" string="Confirm Supplier Invoice" invisible="state not in ('done') or picking_type_code != 'incoming'" class="oe_highlight"/>
             </xpath>
             <xpath expr="//header/button[3]" position="attributes">
               <attribute name="invisible">state in ('delivered', 'done')</attribute>

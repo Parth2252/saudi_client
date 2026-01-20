@@ -361,6 +361,7 @@ class AddXls(models.TransientModel):
                         }
                     )
 
+            product_vendor_id = False
             if vendor_name_from_upload_excel:
                 product_vendor_id = vendor_name_from_upload_excel
             else:
@@ -702,6 +703,7 @@ class AddXls(models.TransientModel):
                     }
                 )
 
+            product_vendor_id = False
             if vendor_name_from_upload_excel:
                 product_vendor_id = vendor_name_from_upload_excel
             else:
@@ -709,8 +711,9 @@ class AddXls(models.TransientModel):
                     product_vendor_id = (
                         already_available_product_supplierinfo.partner_id
                     )
-                else:
-                    product_vendor_id = product_supplierinfo_id.partner_id
+                # else:
+                #     print("\n\n\n --- product supplierinfo id ---", pro)
+                #     product_vendor_id = product_supplierinfo_id.partner_id
 
             if vendor_price_from_upload_excel:
                 vendor_price = vendor_price_from_upload_excel
@@ -740,7 +743,7 @@ class AddXls(models.TransientModel):
                         offered_product_id.name if offered_name else product_id.name
                     ),
                     "product_uom": product_uom_id.id if product_uom_id else False,
-                    "product_vendor_id": product_vendor_id.id,
+                    "product_vendor_id": product_vendor_id.id if product_vendor_id else False,
                     "vendor_price": vendor_price,
                     "product_url": product_url,
                     "vendor_currency_id": currency_id.id if currency_id else False,
@@ -764,7 +767,7 @@ class AddXls(models.TransientModel):
                         "name": (product_id.name),
                         "is_not_available": True,
                         "product_uom": product_uom_id.id if product_uom_id else False,
-                        "product_vendor_id": product_vendor_id.id,
+                        "product_vendor_id": product_vendor_id.id if product_vendor_id else False,
                         "vendor_price": vendor_price,
                         "product_url": product_url,
                         "vendor_currency_id": currency_id.id if currency_id else False,
@@ -784,7 +787,7 @@ class AddXls(models.TransientModel):
                         ),
                         "name": (product_id.name),
                         "product_uom": product_uom_id.id if product_uom_id else False,
-                        "product_vendor_id": product_vendor_id.id,
+                        "product_vendor_id": product_vendor_id.id if product_vendor_id else False,
                         "vendor_price": vendor_price,
                         "product_url": product_url,
                         "vendor_currency_id": currency_id.id if currency_id else False,
