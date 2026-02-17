@@ -62,7 +62,7 @@
             <xpath expr="//field[@name='payment_term_id']" position="after">
 
                 <field name="client_order_ref"
-                       placeholder="PO Reference" string="PO Reference" readonly="state in ['cancel', 'sale']"/>
+                       placeholder="Customer PO Reference" string="Customer PO Reference" readonly="state in ['cancel', 'sale']"/>
                 <field name="quote_desc" string="RFQ / Description"/>
                 <field name="po_expire_date" />
                 <field name="commitment_date"/>

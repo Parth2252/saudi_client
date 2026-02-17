@@ -116,17 +116,17 @@
         <field name="inherit_id" ref="stock.view_picking_internal_search"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='origin']" position="after">
-<!--                <field name="client_order_ref" string="PO Reference"/>-->
-                <field name="porder_ref" string="PO Reference"/>
+<!--                <field name="client_order_ref" string="Customer PO Reference"/>-->
+                <field name="porder_ref" string="Customer PO Reference"/>
             </xpath>
             <xpath expr="//filter[@name='starred']" position="after">
-                <filter name="client_ref_filter" string="PO Reference"
+                <filter name="client_ref_filter" string="Customer PO Reference"
                         domain="[('client_order_ref', '!=', False)]"
                         help="Transfers that have a client order reference"/>
             </xpath>
             <xpath expr="//filter[@name='starred']" position="after">
                 <separator/>
-                <filter string="PO Reference"
+                <filter string="Customer PO Reference"
                         name="group_by_client_ref"
                         context="{'group_by': 'client_order_ref'}"/>
             </xpath>

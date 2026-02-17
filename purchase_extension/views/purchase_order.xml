@@ -20,6 +20,12 @@
                        decoration-warning="purchase_source == 'online'"
                        widget="badge"
                        />
+                <field name="order_confirmation_number" optional="hide"/>
+                <field name="po_status" optional="show" widget="badge"/>
+                <field name="order_status"
+                       optional="hide"
+                       decoration-success="order_status in ('acknowledged', 'shipped')"/>
+                <field name="tracking_number" invisible="order_status != 'shipped'"/>
             </xpath>
             <xpath expr="//field[@name='date_order']" position="after">
                 <field name="date_order_display"/>
@@ -48,6 +54,7 @@
                 <!-- Standard Filter -->
                 <separator/>
                 <filter name="standard_purchase_to_issues" string="Standard Purchase To Issue" domain="[('state', 'in', ('draft', 'sent')), ('po_reference', '!=', False), ('purchase_source', '=', 'standard')]"/>
+                <filter name="standard_purchase_ordered" string="Standard Purchase (Ordered)" domain="[('state', 'in', ('purchase', 'done')), ('po_reference', '!=', False), ('purchase_source', '=', 'standard')]"/>
                 <filter name="standard_purchase_pending_bill"
                 string="Standard Purchase – Pending Vendor Bill"
                 domain="[
@@ -57,6 +64,15 @@
                     '|',
                         ('invoice_ids', '=', False),
                         ('invoice_ids.state', '=', 'draft')
+                ]"/>
+                <filter name="standard_purchase_bill_not_paid"
+                string="Standard Purchase – Bill Not Paid"
+                domain="[
+                    ('state', 'in', ('purchase','done')),
+                    ('po_reference', '!=', False),
+                    ('purchase_source', '=', 'standard'),
+                    ('invoice_ids', '!=', False),
+                    ('invoice_ids.payment_state', '!=', 'paid')
                 ]"/>
                 <filter name="standard_purchase_bill_paid_not_received"
                 string="Standard Purchase – Bill Paid but Not Received"
@@ -84,6 +100,7 @@
                 <!-- Local Purchase -->
                 <separator/>
                 <filter name="local_purchase_to_issues" string="Local Purchase To Issue" domain="[('state', 'in', ('draft', 'sent')), ('po_reference', '!=', False), ('purchase_source', '=', 'local')]"/>
+                <filter name="local_purchase_ordered" string="Local Purchase (Ordered)" domain="[('state', 'in', ('purchase', 'done')), ('po_reference', '!=', False), ('purchase_source', '=', 'local')]"/>
                 <filter name="local_purchase_pending_bill"
                 string="Local Purchase – Pending Vendor Bill"
                 domain="[
@@ -93,6 +110,15 @@
                     '|',
                         ('invoice_ids', '=', False),
                         ('invoice_ids.state', '=', 'draft')
+                ]"/>
+                <filter name="local_purchase_bill_not_paid"
+                string="Local Purchase – Bill Not Paid"
+                domain="[
+                    ('state', 'in', ('purchase','done')),
+                    ('po_reference', '!=', False),
+                    ('purchase_source', '=', 'local'),
+                    ('invoice_ids', '!=', False),
+                    ('invoice_ids.payment_state', '!=', 'paid')
                 ]"/>
                 <filter name="local_purchase_bill_paid_not_received"
                 string="Local Purchase – Bill Paid but Not Received"
@@ -120,6 +146,7 @@
                 <!-- Online Purchase -->
                 <separator/>
                 <filter name="online_purchase_to_issues" string="Online Purchase To Issue" domain="[('state', 'in', ('draft', 'sent')), ('po_reference', '!=', False), ('purchase_source', '=', 'online')]"/>
+                <filter name="online_purchase_ordered" string="Online Purchase (Ordered)" domain="[('state', 'in', ('purchase', 'done')), ('po_reference', '!=', False), ('purchase_source', '=', 'online')]"/>
                 <filter name="online_purchase_pending_bill"
                 string="Online Purchase – Pending Vendor Bill"
                 domain="[
@@ -129,6 +156,15 @@
                     '|',
                         ('invoice_ids', '=', False),
                         ('invoice_ids.state', '=', 'draft')
+                ]"/>
+                <filter name="online_purchase_bill_not_paid"
+                string="Online Purchase – Bill Not Paid"
+                domain="[
+                    ('state', 'in', ('purchase','done')),
+                    ('po_reference', '!=', False),
+                    ('purchase_source', '=', 'online'),
+                    ('invoice_ids', '!=', False),
+                    ('invoice_ids.payment_state', '!=', 'paid')
                 ]"/>
                 <filter name="online_purchase_bill_paid_not_received"
                 string="Online Purchase – Bill Paid but Not Received"
@@ -187,6 +223,16 @@
                        widget="res_partner_many2one"
                        context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}"
                        placeholder="Type to find a customer contact..." readonly="state in ['cancel', 'sale']"/>
+                <field name="customer_contact_id"
+                       widget="res_partner_many2one"
+                       context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}"
+                       placeholder="Type to find a customer contact..."/>
+                <field name="partner_invoice_id"
+                       context="{'show_address': 1}"
+                       options='{"always_reload": True}'/>
+                <field name="partner_shipping_id"
+                       context="{'show_address': 1}"
+                       options='{"always_reload": True}'/>
             </xpath>
             <xpath expr="//field[@name='currency_id']" position="after">
                 <field name="po_expire_date" />
@@ -196,6 +242,11 @@
 
             <xpath expr="//field[@name='project_id']" position="after">
                 <field name="purchase_source" />
+                <field name="order_confirmation_number" />
+                <field name="po_status" />
+                <field name="order_status"
+                       decoration-success="order_status in ('acknowledged', 'shipped')"/>
+                <field name="tracking_number" invisible="order_status != 'shipped'"/>
             </xpath>
 
             <xpath expr="//page/field[@name='order_line']/list/field[@name='date_planned']" position="attributes">
@@ -222,5 +273,16 @@
         </field>
     </record>
 
+
+    <record id="action_update_po_status" model="ir.actions.server">
+        <field name="name">Update PO Status (Recompute)</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">
+            records._compute_po_status()
+        </field>
+    </record>
 
 </odoo>

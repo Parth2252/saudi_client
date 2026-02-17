@@ -44,7 +44,7 @@ class SaleOrder(models.Model):
     def action_confirm(self):
         for order in self:
             if not order.client_order_ref:
-                raise UserError(_("PO Reference is required before confirming the order."))
+                raise UserError(_("Customer PO Reference is required before confirming the order."))
             # Raise the validation if delivery date is missing in sol.
             # in sale.order (or purchase.order) wherever you validate, e.g. before confirm/save
             product_lines = self.order_line.filtered(lambda l: not l.display_type and l.product_id)
@@ -70,7 +70,7 @@ class SaleOrder(models.Model):
     # @api.constrains("client_order_ref")
     # def _check_client_order_ref(self):
     #     if self.client_order_ref and not self.client_order_ref.isdigit():
-    #         raise ValidationError(_("The PO Reference must contain only digits."))
+    #         raise ValidationError(_("The Customer PO Reference must contain only digits."))
 
     def _check_quote_word_limit(self):
         for record in self:

@@ -1,4 +1,5 @@
-from odoo import models, fields, api, _
+from odoo import models, fields, api, _, Command
+from odoo.tools import format_amount
 
 PAYMENT_STATE_SELECTION = [
     ("not_paid", "Not Paid"),
@@ -33,6 +34,16 @@ class AccountMove(models.Model):
         copy=False,
         store=True,
     )
+
+    @api.depends('state', 'payment_state')
+    def _compute_status_in_payment(self):
+        for move in self:
+            if move.state == 'draft':
+                move.status_in_payment = 'draft'
+            elif move.state == 'cancel':
+                move.status_in_payment = 'cancel'
+            else:
+                move.status_in_payment = move.payment_state
 
     sale_partner_id = fields.Many2one('res.partner', string="Sale Customer")
     payment_time_date = fields.Datetime(string="Payment Date")
@@ -99,6 +110,87 @@ class AccountMove(models.Model):
             # 3) No terms, no installments → fallback
             # -------------------------------------
             move.invoice_date_due = move.invoice_date_due or today
+
+    @api.model
+    def retrieve_dashboard(self):
+        """Returns the values to populate the custom dashboard in
+        the account move views.
+        """
+        self.browse().check_access("read")
+        today = fields.Date.context_today(self)
+        
+        move_type = 'in_invoice'
+        company_id = self.env.company.id
+        currency = self.env.company.currency_id
+
+        # To Validate
+        to_validate = self.search([
+            ('move_type', '=', move_type),
+            ('state', '=', 'draft'),
+            ('company_id', '=', company_id)
+        ])
+        
+        # Today Payable
+        today_payable = self.search([
+            ('move_type', '=', move_type),
+            ('state', '=', 'posted'),
+            ('payment_state', 'in', ('not_paid', 'partial')),
+            ('invoice_date_due', '=', today),
+            ('company_id', '=', company_id)
+        ])
+
+        # Late Payments
+        late_payments = self.search([
+            ('move_type', '=', move_type),
+            ('state', '=', 'posted'),
+            ('payment_state', 'in', ('not_paid', 'partial')),
+            ('invoice_date_due', '<', today),
+            ('company_id', '=', company_id)
+        ])
+
+        # Partially Paid Bills
+        partially_paid = self.search([
+            ('move_type', '=', move_type),
+            ('status_in_payment', '=', 'partial'),
+            ('company_id', '=', company_id)
+        ])
+
+        # Fully Paid Bills
+        fully_paid = self.search([
+            ('move_type', '=', move_type),
+            ('status_in_payment', '=', 'paid'),
+            ('company_id', '=', company_id)
+        ])
+
+        # Credit Note
+        credit_note = self.search([
+            ('move_type', '=', 'in_refund'),
+            ('company_id', '=', company_id)
+        ])
+
+        # Utility Bills (Placeholder - logic to be confirmed)
+        utility_bills = self.search([
+            ('move_type', '=', move_type),
+            ('company_id', '=', company_id),
+            ('journal_id.name', 'ilike', 'Utility') # Example check
+        ])
+
+        def get_data(records, total_field='amount_total'):
+            return {
+                'count': len(records),
+                'total': format_amount(self.env, sum(records.mapped(total_field)), currency)
+            }
+
+        result = {
+            'to_validate': get_data(to_validate),
+            'today_payable': get_data(today_payable, 'amount_residual'),
+            'late_payments': get_data(late_payments, 'amount_residual'),
+            'partially_paid': get_data(partially_paid, 'amount_residual'),
+            'fully_paid': get_data(fully_paid),
+            'credit_note': get_data(credit_note),
+            'utility_bills': get_data(utility_bills),
+        }
+        return result
 
 
 

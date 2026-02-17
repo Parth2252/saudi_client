@@ -3,97 +3,139 @@
     <t t-inherit="purchase.PurchaseDashboard" t-inherit-mode="extension" >
         <xpath expr="//div[1]" position='replace'>
             <div class="o_purchase_dashboard container-fluid py-4 border-bottom bg-view">
-                <div class="row justify-content-between gap-3 gap-lg-0">
+                <div class="d-flex justify-content-center gap-2 flex-nowrap px-0">
 
                     <!-- Standard Purchase Block -->
-                    <div class="col-12 col-lg-5 col-xl-5 col-xxl-4 flex-grow-1 flex-lg-grow-0 flex-shrink-0">
-                        <div style="margin-left: 201px; font-weight: bold; color: #272AF5;">
-                        Standard Purchase
+                    <div class="flex-shrink-0">
+                        <div class="text-center fw-bold mb-2" style="color: #272AF5; font-size: 0.95rem;">
+                            Standard Purchase
                         </div>
-                        <div class="grid gap-4">
-                            <div class="g-col-9 g-col-sm-10 grid gap-1">
-                                <div class="g-col-3 p-0" t-on-click="setSearchContext" title="All Draft RFQs" filter_name="standard_purchase_to_issues">
-                                    <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
-                                        <div class="fs-2" t-out="purchaseData['standard_purchase_to_issues']"/>To Issue PO
-                                    </a>
-                                </div>
-                                <div class="g-col-3 p-0" t-on-click="setSearchContext" title="All Waiting RFQs" filter_name="standard_purchase_pending_bill">
-                                    <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
-                                        <div class="fs-2" t-out="purchaseData['standard_purchase_pending_bill']"/>Pending Vendor Bill
-                                    </a>
-                                </div>
-                                <div class="g-col-3 p-0" t-on-click="setSearchContext" title="All Late RFQs" filter_name="standard_purchase_bill_paid_not_received">
-                                    <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
-                                        <div class="fs-2" t-out="purchaseData['standard_purchase_bill_paid_not_received']"/>Bill Paid / Material Not Received
-                                    </a>
-                                </div>
-                                <div class="g-col-3 p-0" t-on-click="setSearchContext" title="All Late RFQs" filter_name="standard_purchase_receipt_delay">
-                                    <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
-                                        <div class="fs-2" t-out="purchaseData['standard_purchase_receipt_delay']"/>Material Delay
-                                    </a>
-                                </div>
+                        <div class="d-flex gap-1 justify-content-center">
+                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Draft RFQs" filter_name="standard_purchase_to_issues" style="width: 92px;">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 d-flex flex-column align-items-center justify-content-center p-1" style="background-color: #5d4057 !important; min-height: 85px;">
+                                    <div class="fs-3 fw-bold" t-out="purchaseData['standard_purchase_to_issues']"/>
+                                    <div class="text-center" style="font-size: 0.7rem; line-height: 1.1;">To Issue PO</div>
+                                </a>
+                            </div>
+                            <div class="p-0 border-0" t-on-click="setSearchContext" title="Ordered Purchase Orders" filter_name="standard_purchase_ordered" style="width: 92px;">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 d-flex flex-column align-items-center justify-content-center p-1" style="background-color: #5d4057 !important; min-height: 85px;">
+                                    <div class="fs-3 fw-bold" t-out="purchaseData['standard_purchase_ordered']"/>
+                                    <div class="text-center" style="font-size: 0.7rem; line-height: 1.1;">Ordered (Purchase Order)</div>
+                                </a>
+                            </div>
+                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Waiting RFQs" filter_name="standard_purchase_pending_bill" style="width: 92px;">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 d-flex flex-column align-items-center justify-content-center p-1" style="background-color: #5d4057 !important; min-height: 85px;">
+                                    <div class="fs-3 fw-bold" t-out="purchaseData['standard_purchase_pending_bill']"/>
+                                    <div class="text-center" style="font-size: 0.7rem; line-height: 1.1;">Pending Vendor Bill</div>
+                                </a>
+                            </div>
+                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Not Paid Bills" filter_name="standard_purchase_bill_not_paid" style="width: 92px;">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 d-flex flex-column align-items-center justify-content-center p-1" style="background-color: #5d4057 !important; min-height: 85px;">
+                                    <div class="fs-3 fw-bold" t-out="purchaseData['standard_purchase_bill_not_paid']"/>
+                                    <div class="text-center" style="font-size: 0.7rem; line-height: 1.1;">Bill Not Paid</div>
+                                </a>
+                            </div>
+                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Late RFQs" filter_name="standard_purchase_bill_paid_not_received" style="width: 92px;">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 d-flex flex-column align-items-center justify-content-center p-1" style="background-color: #5d4057 !important; min-height: 85px;">
+                                    <div class="fs-3 fw-bold" t-out="purchaseData['standard_purchase_bill_paid_not_received']"/>
+                                    <div class="text-center" style="font-size: 0.7rem; line-height: 1.1;">Bill Paid / Material Not Received</div>
+                                </a>
+                            </div>
+                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Late RFQs" filter_name="standard_purchase_receipt_delay" style="width: 92px;">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 d-flex flex-column align-items-center justify-content-center p-1" style="background-color: #5d4057 !important; min-height: 85px;">
+                                    <div class="fs-3 fw-bold" t-out="purchaseData['standard_purchase_receipt_delay']"/>
+                                    <div class="text-center" style="font-size: 0.7rem; line-height: 1.1;">Material Delay</div>
+                                </a>
                             </div>
                         </div>
                     </div>
 
                     <!-- Local purchase block -->
-                    <div class="col-12 col-lg-5 col-xl-5 col-xxl-4 flex-grow-1 flex-lg-grow-0 flex-shrink-0">
-                        <div style="margin-left: 201px; font-weight: bold; color: #06BA3D;">
+                    <div class="flex-shrink-0 mx-4">
+                        <div class="text-center fw-bold mb-2" style="color: #06BA3D; font-size: 0.95rem;">
                             Local Purchase
                         </div>
-                        <div class="grid gap-4">
-                            <div class="g-col-9 g-col-sm-10 grid gap-1">
-                                <div class="g-col-3 p-0" t-on-click="setSearchContext" title="All Draft RFQs" filter_name="local_purchase_to_issues">
-                                    <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
-                                        <div class="fs-2" t-out="purchaseData['local_purchase_to_issues']"/>To Issue PO
-                                    </a>
-                                </div>
-                                <div class="g-col-3 p-0" t-on-click="setSearchContext" title="All Waiting RFQs" filter_name="local_purchase_pending_bill">
-                                    <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
-                                        <div class="fs-2" t-out="purchaseData['local_purchase_pending_bill']"/>Pending Vendor Bill
-                                    </a>
-                                </div>
-                                <div class="g-col-3 p-0" t-on-click="setSearchContext" title="All Late RFQs" filter_name="local_purchase_bill_paid_not_received">
-                                    <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
-                                        <div class="fs-2" t-out="purchaseData['local_purchase_bill_paid_not_received']"/>Bill Paid / Material Not Received
-                                    </a>
-                                </div>
-                                <div class="g-col-3 p-0" t-on-click="setSearchContext" title="All Late RFQs" filter_name="local_purchase_receipt_delay">
-                                    <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
-                                        <div class="fs-2" t-out="purchaseData['local_purchase_receipt_delay']"/>Material Delay
-                                    </a>
-                                </div>
+                        <div class="d-flex gap-1 justify-content-center">
+                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Draft RFQs" filter_name="local_purchase_to_issues" style="width: 92px;">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 d-flex flex-column align-items-center justify-content-center p-1" style="background-color: #5d4057 !important; min-height: 85px;">
+                                    <div class="fs-3 fw-bold" t-out="purchaseData['local_purchase_to_issues']"/>
+                                    <div class="text-center" style="font-size: 0.7rem; line-height: 1.1;">To Issue PO</div>
+                                </a>
+                            </div>
+                            <div class="p-0 border-0" t-on-click="setSearchContext" title="Ordered Purchase Orders" filter_name="local_purchase_ordered" style="width: 92px;">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 d-flex flex-column align-items-center justify-content-center p-1" style="background-color: #5d4057 !important; min-height: 85px;">
+                                    <div class="fs-3 fw-bold" t-out="purchaseData['local_purchase_ordered']"/>
+                                    <div class="text-center" style="font-size: 0.7rem; line-height: 1.1;">Ordered (Purchase Order)</div>
+                                </a>
+                            </div>
+                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Waiting RFQs" filter_name="local_purchase_pending_bill" style="width: 92px;">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 d-flex flex-column align-items-center justify-content-center p-1" style="background-color: #5d4057 !important; min-height: 85px;">
+                                    <div class="fs-3 fw-bold" t-out="purchaseData['local_purchase_pending_bill']"/>
+                                    <div class="text-center" style="font-size: 0.7rem; line-height: 1.1;">Pending Vendor Bill</div>
+                                </a>
+                            </div>
+                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Not Paid Bills" filter_name="local_purchase_bill_not_paid" style="width: 92px;">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 d-flex flex-column align-items-center justify-content-center p-1" style="background-color: #5d4057 !important; min-height: 85px;">
+                                    <div class="fs-3 fw-bold" t-out="purchaseData['local_purchase_bill_not_paid']"/>
+                                    <div class="text-center" style="font-size: 0.7rem; line-height: 1.1;">Bill Not Paid</div>
+                                </a>
+                            </div>
+                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Late RFQs" filter_name="local_purchase_bill_paid_not_received" style="width: 92px;">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 d-flex flex-column align-items-center justify-content-center p-1" style="background-color: #5d4057 !important; min-height: 85px;">
+                                    <div class="fs-3 fw-bold" t-out="purchaseData['local_purchase_bill_paid_not_received']"/>
+                                    <div class="text-center" style="font-size: 0.7rem; line-height: 1.1;">Bill Paid / Material Not Received</div>
+                                </a>
+                            </div>
+                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Late RFQs" filter_name="local_purchase_receipt_delay" style="width: 92px;">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 d-flex flex-column align-items-center justify-content-center p-1" style="background-color: #5d4057 !important; min-height: 85px;">
+                                    <div class="fs-3 fw-bold" t-out="purchaseData['local_purchase_receipt_delay']"/>
+                                    <div class="text-center" style="font-size: 0.7rem; line-height: 1.1;">Material Delay</div>
+                                </a>
                             </div>
                         </div>
                     </div>
 
                     <!-- Online Purchase Block -->
-                    <div class="col-12 col-lg-5 col-xl-5 col-xxl-4 flex-grow-1 flex-lg-grow-0 flex-shrink-0">
-                        <div style="margin-left: 201px; font-weight: bold; color: #EB6D05;">
+                    <div class="flex-shrink-0">
+                        <div class="text-center fw-bold mb-2" style="color: #EB6D05; font-size: 0.95rem;">
                             Online Purchase
                         </div>
-                        <div class="grid gap-4">
-                            <div class="g-col-9 g-col-sm-10 grid gap-1">
-                                <div class="g-col-3 p-0" t-on-click="setSearchContext" title="All Draft RFQs" filter_name="online_purchase_to_issues">
-                                    <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
-                                        <div class="fs-2" t-out="purchaseData['online_purchase_to_issues']"/>To Issue PO
-                                    </a>
-                                </div>
-                                <div class="g-col-3 p-0" t-on-click="setSearchContext" title="All Waiting RFQs" filter_name="online_purchase_pending_bill">
-                                    <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
-                                        <div class="fs-2" t-out="purchaseData['online_purchase_pending_bill']"/>Pending Vendor Bill
-                                    </a>
-                                </div>
-                                <div class="g-col-3 p-0" t-on-click="setSearchContext" title="All Late RFQs" filter_name="online_purchase_bill_paid_not_received">
-                                    <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
-                                        <div class="fs-2" t-out="purchaseData['online_purchase_bill_paid_not_received']"/>Bill Paid / Material Not Received
-                                    </a>
-                                </div>
-                                <div class="g-col-3 p-0" t-on-click="setSearchContext" title="All Late RFQs" filter_name="online_purchase_receipt_delay">
-                                    <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
-                                        <div class="fs-2" t-out="purchaseData['online_purchase_receipt_delay']"/>Material Delay
-                                    </a>
-                                </div>
+                        <div class="d-flex gap-1 justify-content-center">
+                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Draft RFQs" filter_name="online_purchase_to_issues" style="width: 92px;">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 d-flex flex-column align-items-center justify-content-center p-1" style="background-color: #5d4057 !important; min-height: 85px;">
+                                    <div class="fs-3 fw-bold" t-out="purchaseData['online_purchase_to_issues']"/>
+                                    <div class="text-center" style="font-size: 0.7rem; line-height: 1.1;">To Issue PO</div>
+                                </a>
+                            </div>
+                            <div class="p-0 border-0" t-on-click="setSearchContext" title="Ordered Purchase Orders" filter_name="online_purchase_ordered" style="width: 92px;">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 d-flex flex-column align-items-center justify-content-center p-1" style="background-color: #5d4057 !important; min-height: 85px;">
+                                    <div class="fs-3 fw-bold" t-out="purchaseData['online_purchase_ordered']"/>
+                                    <div class="text-center" style="font-size: 0.7rem; line-height: 1.1;">Ordered (Purchase Order)</div>
+                                </a>
+                            </div>
+                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Waiting RFQs" filter_name="online_purchase_pending_bill" style="width: 92px;">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 d-flex flex-column align-items-center justify-content-center p-1" style="background-color: #5d4057 !important; min-height: 85px;">
+                                    <div class="fs-3 fw-bold" t-out="purchaseData['online_purchase_pending_bill']"/>
+                                    <div class="text-center" style="font-size: 0.7rem; line-height: 1.1;">Pending Vendor Bill</div>
+                                </a>
+                            </div>
+                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Not Paid Bills" filter_name="online_purchase_bill_not_paid" style="width: 92px;">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 d-flex flex-column align-items-center justify-content-center p-1" style="background-color: #5d4057 !important; min-height: 85px;">
+                                    <div class="fs-3 fw-bold" t-out="purchaseData['online_purchase_bill_not_paid']"/>
+                                    <div class="text-center" style="font-size: 0.7rem; line-height: 1.1;">Bill Not Paid</div>
+                                </a>
+                            </div>
+                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Late RFQs" filter_name="online_purchase_bill_paid_not_received" style="width: 92px;">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 d-flex flex-column align-items-center justify-content-center p-1" style="background-color: #5d4057 !important; min-height: 85px;">
+                                    <div class="fs-3 fw-bold" t-out="purchaseData['online_purchase_bill_paid_not_received']"/>
+                                    <div class="text-center" style="font-size: 0.7rem; line-height: 1.1;">Bill Paid / Material Not Received</div>
+                                </a>
+                            </div>
+                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Late RFQs" filter_name="online_purchase_receipt_delay" style="width: 92px;">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 d-flex flex-column align-items-center justify-content-center p-1" style="background-color: #5d4057 !important; min-height: 85px;">
+                                    <div class="fs-3 fw-bold" t-out="purchaseData['online_purchase_receipt_delay']"/>
+                                    <div class="text-center" style="font-size: 0.7rem; line-height: 1.1;">Material Delay</div>
+                                </a>
                             </div>
                         </div>
                     </div>

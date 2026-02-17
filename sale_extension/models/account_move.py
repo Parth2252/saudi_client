@@ -10,7 +10,7 @@ class AccountMove(models.Model):
         compute="_compute_delivery_note_number",
         store=False,
     )
-    po_ref = fields.Char(string="PO Reference")
+    po_ref = fields.Char(string="Customer PO Reference")
 
     @api.constrains("po_ref")
     def _check_po_ref_customer_invoice(self):
@@ -18,7 +18,7 @@ class AccountMove(models.Model):
             # Apply only for customer invoices being posted (not drafts, not bills)
             if move.move_type == "out_invoice" and not move.po_ref:
                 raise ValidationError(
-                    "PO Reference is required to confirm a customer invoice."
+                    "Customer PO Reference is required to confirm a customer invoice."
                 )
 
     def _compute_delivery_note_number(self):

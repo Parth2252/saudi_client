@@ -36,21 +36,6 @@
         <xpath expr="//t[@t-if='o.dest_address_id']" position="replace">
             <div style="border: 2px solid #000; border-radius: 8px; padding: 10px;">
                 <div class="row">
-                    <!-- Shipping Address -->
-                    <div class="col-4">
-                        <t t-if="o.dest_address_id">
-                            <strong class="d-block" style="font-weight: bold; color: #0066ff;">Shipping address</strong>
-                            <div t-field="o.dest_address_id"
-                                 t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
-                        </t>
-                        <t t-else="">
-                            <strong class="d-block" style="font-weight: bold; color: #0066ff;">Shipping address:</strong>
-                            <span t-field="o.picking_type_id.warehouse_id.name"/>
-                            <div t-field="o.picking_type_id.warehouse_id.partner_id"
-                                 t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
-                        </t>
-                    </div>
-
                     <!-- Supplier Information -->
                     <div class="col-4">
                         <strong style="font-weight: bold; color: #0066ff; margin-bottom: 6px;">Supplier Information</strong>
@@ -71,21 +56,82 @@
                                 <span t-esc="o.partner_id.country_id.name"/>
                             </t>
                             <br/>
-                            <span t-esc="o.partner_id.email"/><br/>
-                            <span t-esc="o.partner_id.phone"/><br/>
-                            <span t-esc="o.partner_id.mobile"/>
+                            <span t-esc="o.partner_id.email"/>
                         </div>
                     </div>
 
-                    <!-- Contact Person Information -->
+                    <!-- Invoicing Address -->
+                    <div class="col-4">
+                        <strong style="font-weight: bold; color: #0066ff; margin-bottom: 6px;">Invoicing address:</strong>
+                        <div t-if="o.partner_invoice_id">
+                            <span t-esc="o.partner_invoice_id.name"/><br/>
+                            <t t-if="o.partner_invoice_id.street"><span t-esc="o.partner_invoice_id.street"/><br/></t>
+                            <t t-if="o.partner_invoice_id.street2"><span t-esc="o.partner_invoice_id.street2"/><br/></t>
+                            <div>
+                                <span t-if="o.partner_invoice_id.city" t-esc="o.partner_invoice_id.city"/>
+                                <t t-if="o.partner_invoice_id.state_id">
+                                    <span>, <t t-esc="o.partner_invoice_id.state_id.name"/></span>
+                                </t>
+                                <t t-if="o.partner_invoice_id.zip">
+                                    <span> - <t t-esc="o.partner_invoice_id.zip"/></span>
+                                </t>
+                            </div>
+                            <t t-if="o.partner_invoice_id.country_id">
+                                <span t-esc="o.partner_invoice_id.country_id.name"/>
+                            </t>
+                            <br/>
+                            <span t-esc="o.partner_invoice_id.phone"/>
+                        </div>
+                    </div>
+
+                    <!-- Shipping Address -->
+                    <div class="col-4">
+                        <strong style="font-weight: bold; color: #0066ff; margin-bottom: 6px;">Shipping address:</strong>
+                        <div t-if="o.partner_shipping_id">
+                            <span t-esc="o.partner_shipping_id.name"/><br/>
+                            <t t-if="o.partner_shipping_id.street"><span t-esc="o.partner_shipping_id.street"/><br/></t>
+                            <t t-if="o.partner_shipping_id.street2"><span t-esc="o.partner_shipping_id.street2"/><br/></t>
+                            <div>
+                                <span t-if="o.partner_shipping_id.city" t-esc="o.partner_shipping_id.city"/>
+                                <t t-if="o.partner_shipping_id.state_id">
+                                    <span>, <t t-esc="o.partner_shipping_id.state_id.name"/></span>
+                                </t>
+                                <t t-if="o.partner_shipping_id.zip">
+                                    <span> - <t t-esc="o.partner_shipping_id.zip"/></span>
+                                </t>
+                            </div>
+                            <t t-if="o.partner_shipping_id.country_id">
+                                <span t-esc="o.partner_shipping_id.country_id.name"/>
+                            </t>
+                            <br/>
+                            <span t-esc="o.partner_shipping_id.phone"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <!-- Supplier Contact Person Information -->
                     <div class="col-4">
                         <t t-set="contact_person" t-value="o.partner_id.child_ids.filtered(lambda c: c.type == 'contact')[:1]"/>
                         <t t-if="contact_person">
-                            <strong style="font-weight: bold; color: #0066ff; margin-bottom: 6px;">Contact Person Information</strong>
+                            <strong style="font-weight: bold; color: #0066ff; margin-bottom: 6px;">Supplier Contact Person Information</strong>
                             <div t-esc="contact_person.name"/>
-                            <div t-esc="contact_person.phone"/>
-                            <div t-esc="contact_person.mobile"/>
-                            <div t-esc="contact_person.email"/>
+                            <div t-if="contact_person.phone" t-esc="contact_person.phone"/>
+                            <div t-if="contact_person.mobile" t-esc="contact_person.mobile"/>
+                            <div t-if="contact_person.email" t-esc="contact_person.email"/>
+                        </t>
+                    </div>
+
+                    <!-- Buyer Information -->
+                    <div class="col-4">
+                        <t t-if="o.user_id">
+                            <strong style="font-weight: bold; color: #0066ff; margin-bottom: 6px;">Buyer information</strong>
+                            <div t-if="o.user_id">
+                                <div t-field="o.user_id.name"/>
+                                <div t-if="o.user_id.partner_id.phone" t-field="o.user_id.partner_id.phone"/>
+                                <div t-if="o.user_id.partner_id.mobile" t-field="o.user_id.partner_id.mobile"/>
+                                <div t-if="o.user_id.partner_id.email" t-field="o.user_id.partner_id.email"/>
+                            </div>
                         </t>
                     </div>
                 </div>

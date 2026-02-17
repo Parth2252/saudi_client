@@ -23,6 +23,17 @@
         </field>
     </record>
 
+    <record id="accounting_customization_vendor_bill_tree_view" model="ir.ui.view">
+        <field name="name">accounting_customization.vendor.bill.tree.view</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_in_invoice_bill_tree"/>
+        <field name="arch" type="xml">
+            <list position="attributes">
+                <attribute name="js_class">account_dashboard_list</attribute>
+            </list>
+        </field>
+    </record>
+
     <!-- Inherit invoice view to add field. -->
     <record id="accounting_customization_account_move_inherited_form_view" model="ir.ui.view">
         <field name="name">accounting_customization.account.move.inherited.form.view</field>
@@ -64,6 +75,15 @@
                     <filter name="blocked" string="Blocked" domain="[('status_in_payment', '=', 'blocked')]" />
                     <filter name="draft" string="Draft" domain="[('status_in_payment', '=', 'draft')]"/>
                     <filter name="cancell" string="Cancelled" domain="[('status_in_payment', '=', 'cancel')]"/>
+                <separator/>
+                <!-- Dashboard Filters -->
+                <filter name="to_validate" string="To Validate" domain="[('state', '=', 'draft'), ('move_type', '=', 'in_invoice')]"/>
+                <filter name="today_payable" string="Today Payable" domain="[('state', '=', 'posted'), ('payment_state', 'in', ('not_paid', 'partial')), ('invoice_date_due', '=', context_today().strftime('%Y-%m-%d')), ('move_type', '=', 'in_invoice')]"/>
+                <filter name="late_payments" string="Late Payments" domain="[('state', '=', 'posted'), ('payment_state', 'in', ('not_paid', 'partial')), ('invoice_date_due', '&lt;', context_today().strftime('%Y-%m-%d')), ('move_type', '=', 'in_invoice')]"/>
+                <filter name="partially_paid" string="Partially Paid Bills" domain="[('status_in_payment', '=', 'partial'), ('move_type', '=', 'in_invoice')]"/>
+                <filter name="fully_paid" string="Fully Paid Bills" domain="[('status_in_payment', '=', 'paid'), ('move_type', '=', 'in_invoice')]"/>
+                <filter name="credit_note" string="Credit Note" domain="[('move_type', '=', 'in_refund')]"/>
+                <filter name="utility_bills" string="Utility Bills" domain="[('move_type', '=', 'in_invoice'), ('journal_id.name', 'ilike', 'Utility')]"/>
                 <separator/>
             </xpath>
         </field>

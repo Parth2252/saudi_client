@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//page//field[@name='order_line']//list//field[@name='ts_code']" position="after">
                     <field name="datasheet_attach"/>
+                    <field name="upload_datasheet_attachment" invisible="not datasheet_attach"/>
                 </xpath>
 
             </field>

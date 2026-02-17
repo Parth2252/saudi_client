@@ -90,8 +90,8 @@ class StockPicking(models.Model):
         readonly=False,
         store=True
     )
-    client_order_ref = fields.Char(string="PO Reference", related='sale_id.client_order_ref', readonly=False)
-    porder_ref = fields.Char(string="PO Reference", readonly=False)
+    client_order_ref = fields.Char(string="Customer PO Reference", related='sale_id.client_order_ref', readonly=False)
+    porder_ref = fields.Char(string="Customer PO Reference", readonly=False)
 
     purchase_order_names = fields.Char(
         string='PO Number(s)', compute='_compute_purchase_order_names', store=False

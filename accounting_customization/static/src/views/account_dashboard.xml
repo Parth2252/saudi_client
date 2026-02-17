@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="accounting_customization.AccountDashboardListView" t-inherit="web.ListRenderer" t-inherit-mode="primary">
+        <xpath expr="//div[hasclass('o_list_renderer')]" position="before">
+            <AccountDashBoard />
+        </xpath>
+    </t>
+
+    <t t-name="accounting_customization.AccountDashboard">
+        <div class="o_account_dashboard ps-3 pe-3 pt-4 pb-4 bg-view border-bottom">
+            <style>
+                .dash-container {
+                    display: flex;
+                    justify-content: center;
+                    gap: 2px;
+                }
+                .dash-box {
+                    display: flex;
+                    flex-direction: column;
+                    width: 140px;
+                    cursor: pointer;
+                    transition: opacity 0.2s;
+                }
+                .dash-box:hover {
+                    opacity: 0.9;
+                }
+                .dash-item {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 10px 5px;
+                    color: white;
+                    text-align: center;
+                    border: 0.5px solid rgba(255,255,255,0.2);
+                }
+                .dash-title {
+                    height: 60px;
+                    font-size: 0.9rem;
+                    font-weight: 500;
+                }
+                .dash-count {
+                    height: 50px;
+                    font-size: 1.4rem;
+                    font-weight: bold;
+                }
+                .dash-total {
+                    height: 50px;
+                    font-size: 1rem;
+                    font-weight: 500;
+                }
+                .bg-maroon {
+                    background-color: #701d45 !important;
+                }
+                .bg-orange {
+                    background-color: #f04d33 !important;
+                }
+            </style>
+            <div class="dash-container">
+                <!-- To Validate -->
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="to_validate">
+                    <div class="dash-item dash-title bg-maroon">To Validate</div>
+                    <div class="dash-item dash-count bg-maroon" t-out="purchaseData['to_validate']['count'] or 0"/>
+                    <div class="dash-item dash-total bg-maroon" t-out="purchaseData['to_validate']['total'] or 0"/>
+                </div>
+
+                <!-- Today Payable -->
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="today_payable">
+                    <div class="dash-item dash-title bg-maroon">Today Payable</div>
+                    <div class="dash-item dash-count bg-maroon" t-out="purchaseData['today_payable']['count'] or 0"/>
+                    <div class="dash-item dash-total bg-maroon" t-out="purchaseData['today_payable']['total'] or 0"/>
+                </div>
+
+                <!-- Late Payments -->
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="late_payments">
+                    <div class="dash-item dash-title bg-maroon">Late Payments</div>
+                    <div class="dash-item dash-count bg-maroon" t-out="purchaseData['late_payments']['count'] or 0"/>
+                    <div class="dash-item dash-total bg-maroon" t-out="purchaseData['late_payments']['total'] or 0"/>
+                </div>
+
+                <!-- Partially Paid Bills -->
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="partially_paid">
+                    <div class="dash-item dash-title bg-maroon">Partially Paid Bills</div>
+                    <div class="dash-item dash-count bg-maroon" t-out="purchaseData['partially_paid']['count'] or 0"/>
+                    <div class="dash-item dash-total bg-maroon" t-out="purchaseData['partially_paid']['total'] or 0"/>
+                </div>
+
+                <!-- Fully Paid Bills -->
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="fully_paid">
+                    <div class="dash-item dash-title bg-maroon">Fully Paid Bills</div>
+                    <div class="dash-item dash-count bg-maroon" t-out="purchaseData['fully_paid']['count'] or 0"/>
+                    <div class="dash-item dash-total bg-maroon" t-out="purchaseData['fully_paid']['total'] or 0"/>
+                </div>
+
+                <!-- Credit Note -->
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="credit_note">
+                    <div class="dash-item dash-title bg-maroon">Credit Note</div>
+                    <div class="dash-item dash-count bg-maroon" t-out="purchaseData['credit_note']['count'] or 0"/>
+                    <div class="dash-item dash-total bg-maroon" t-out="purchaseData['credit_note']['total'] or 0"/>
+                </div>
+
+                <!-- Utility Bills -->
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="utility_bills">
+                    <div class="dash-item dash-title bg-orange">Utility Bills</div>
+                    <div class="dash-item dash-count bg-orange" t-out="purchaseData['utility_bills']['count'] or 0"/>
+                    <div class="dash-item dash-total bg-orange" t-out="purchaseData['utility_bills']['total'] or 0"/>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

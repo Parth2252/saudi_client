@@ -1,4 +1,4 @@
-from odoo import models, fields, api, _
+from odoo import models, fields, api, _, Command
 from odoo.exceptions import ValidationError, UserError
 from datetime import date
 from dateutil.relativedelta import relativedelta
@@ -7,6 +7,27 @@ from odoo.tools import format_amount, format_date, format_list, formatLang, grou
 
 class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
+
+    def _get_default_customer_contact_id(self):
+        return self.env["res.partner"].search(
+            [("name", "=", "TAMSTAR TRADING ESTABLISHMENT")], limit=1
+        )
+
+    def _get_default_partner_invoice_id(self):
+        contact = self._get_default_customer_contact_id()
+        if contact:
+            return contact.address_get(["invoice"])["invoice"]
+        return False
+
+    def _get_default_partner_shipping_id(self):
+        contact = self._get_default_customer_contact_id()
+        if contact:
+            return contact.address_get(["delivery"])["delivery"]
+        return False
+
+    date_planned = fields.Datetime(
+        string='Expected Arrival', index=True, copy=False, store=True, readonly=False,
+        help="Delivery date promised by vendor. This date is used to determine expected arrival of products.")
 
     is_overdue = fields.Boolean(
         string="Overdue", compute="_compute_is_overdue", store=True
@@ -28,6 +49,34 @@ class PurchaseOrder(models.Model):
         string="Delivery Time", compute="_compute_date_order_display"
     )
     contact_id = fields.Many2one("res.partner", "Customer Contact", readonly=True)
+    customer_contact_id = fields.Many2one(
+        "res.partner",
+        string="Customer Contact",
+        check_company=True,
+        default=_get_default_customer_contact_id,
+    )
+    partner_invoice_id = fields.Many2one(
+        "res.partner",
+        string="Partner Invoice Address",
+        check_company=True,
+        default=_get_default_partner_invoice_id,
+    )
+    partner_shipping_id = fields.Many2one(
+        "res.partner",
+        string="Partner Shipping Address",
+        check_company=True,
+        default=_get_default_partner_shipping_id,
+    )
+
+    @api.onchange("customer_contact_id")
+    def _onchange_customer_contact_id(self):
+        if self.customer_contact_id:
+            addr = self.customer_contact_id.address_get(["delivery", "invoice"])
+            self.partner_invoice_id = addr["invoice"]
+            self.partner_shipping_id = addr["delivery"]
+        else:
+            self.partner_invoice_id = False
+            self.partner_shipping_id = False
 
     # Added new field.
     po_expire_date = fields.Datetime(copy=False)
@@ -41,9 +90,73 @@ class PurchaseOrder(models.Model):
         string="Purchase Source",
     )
 
+    order_confirmation_number = fields.Char(string="Order Confirmation Number")
+
+    order_status = fields.Selection(
+        [
+            ("acknowledged", "Order Acknowledged by vendor"),
+            ("shipped", "order shipped"),
+        ],
+        string="Order status",
+    )
+
+    tracking_number = fields.Char(string="Tracking Number")
+
     receipt_delay = fields.Integer(
         string="Receipt Delay (Days)", compute="_compute_receipt_delay", store=True
     )
+
+    po_status = fields.Selection(
+        [
+            ("to_issue", "To Issue PO"),
+            ("ordered", "Ordered(Purchase Order)"),
+            ("pending_bill", "Pending Vendor Bill"),
+            ("bill_paid", "Bill Paid"),
+            ("paid_not_received", "Bill Paid/Material not Received"),
+            ("material_delay", "Material Delay"),
+        ],
+        string="PO Status",
+        compute="_compute_po_status",
+        store=True,
+    )
+
+    @api.depends(
+        "state",
+        "po_reference",
+        "invoice_ids.state",
+        "invoice_ids.payment_state",
+        "picking_ids.state",
+        "receipt_delay",
+    )
+    def _compute_po_status(self):
+        for order in self:
+            status = False
+            if order.po_reference:
+                if order.state in ("draft", "sent"):
+                    status = "to_issue"
+                elif order.state in ("purchase", "done"):
+                    # Logic for specific statuses
+                    invoices = order.invoice_ids
+                    pickings = order.picking_ids
+                    is_paid = any(inv.payment_state == "paid" for inv in invoices)
+                    pending_bill = not invoices or any(inv.state == "draft" for inv in invoices)
+
+                    # Material Delay
+                    if is_paid and any(p.state in ("done", "delivered") for p in pickings) and order.receipt_delay > 0:
+                        status = "material_delay"
+                    # Bill Paid/Material not Received
+                    elif is_paid and (not pickings or any(p.state in ("waiting", "assigned", "confirmed") for p in pickings)):
+                        status = "paid_not_received"
+                    # Bill Paid
+                    elif is_paid:
+                        status = "bill_paid"
+                    # Pending Vendor Bill
+                    elif pending_bill:
+                        status = "pending_bill"
+                    # Ordered (Base state for confirmed POs)
+                    else:
+                        status = "ordered"
+            order.po_status = status
 
     @api.depends("date_planned", "picking_ids.scheduled_date")
     def _compute_receipt_delay(self):
@@ -94,6 +207,100 @@ class PurchaseOrder(models.Model):
                         )
             else:
                 rec.date_order_display = "False"
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            purchase_source = vals.get("purchase_source")
+            currency_id = vals.get("currency_id")
+            currency_name = self.env['res.currency'].browse(currency_id).name if currency_id else False
+
+            # Tax removal condition
+            remove_taxes = purchase_source == "online" or (purchase_source == "standard" and currency_name and currency_name != "SAR")
+
+            if remove_taxes:
+                order_lines = vals.get("order_line", [])
+                for line in order_lines:
+                    if (
+                        isinstance(line, (list, tuple))
+                        and len(line) >= 3
+                        and line[0] in [Command.CREATE, Command.UPDATE]
+                    ):
+                        line[2]["taxes_id"] = [Command.set([])]
+
+            if purchase_source == "online":
+                delivery_product = (
+                    self.env["product.product"]
+                    .sudo()
+                    .search([("is_delivery_charge", "=", True)], limit=1)
+                )
+                if delivery_product:
+                    order_lines = vals.get("order_line", [])
+                    has_delivery = False
+                    for line in order_lines:
+                        if (
+                            isinstance(line, (list, tuple))
+                            and len(line) >= 3
+                            and line[0] == Command.CREATE
+                            and line[2].get("product_id") == delivery_product.id
+                        ):
+                            has_delivery = True
+
+                    if not has_delivery:
+                        vals.setdefault("order_line", []).append(
+                            Command.create(
+                                {
+                                    "product_id": delivery_product.id,
+                                    "product_qty": 1,
+                                    "taxes_id": [Command.set([])] if remove_taxes else False
+                                }
+                            )
+                        )
+        return super().create(vals_list)
+
+    def write(self, vals):
+        res = super().write(vals)
+        if self.env.context.get("skip_delivery_charge"):
+            return res
+        for order in self:
+            if order.purchase_source == "online":
+                delivery_product = (
+                    self.env["product.product"]
+                    .sudo()
+                    .search([("is_delivery_charge", "=", True)], limit=1)
+                )
+                if delivery_product:
+                    if not any(
+                        line.product_id == delivery_product
+                        for line in order.order_line
+                    ):
+                        order.with_context(skip_delivery_charge=True).write(
+                            {
+                                "order_line": [
+                                    Command.create(
+                                        {
+                                            "product_id": delivery_product.id,
+                                            "product_qty": 1,
+                                        }
+                                    )
+                                ]
+                            }
+                        )
+
+            if order.purchase_source == "online" or (order.purchase_source == "standard" and order.currency_id.name != "SAR"):
+                # Automatically remove taxes for all lines if it's an online order or standard order with non-SAR currency
+                lines_to_clear_taxes = order.order_line.filtered(lambda l: l.taxes_id)
+                if lines_to_clear_taxes:
+                    lines_to_clear_taxes.with_context(skip_delivery_charge=True).write(
+                        {"taxes_id": [Command.clear()]}
+                    )
+        return res
+
+    @api.onchange("purchase_source", "currency_id")
+    def _onchange_purchase_source_currency_clear_taxes(self):
+        if self.purchase_source == "online" or (self.purchase_source == "standard" and self.currency_id.name != "SAR"):
+            for line in self.order_line:
+                line.taxes_id = [Command.clear()]
 
     # NEW
 
@@ -237,6 +444,28 @@ class PurchaseOrder(models.Model):
                             )
                         )
 
+    @api.constrains("purchase_source", "order_line")
+    def _check_product_url(self):
+        """
+        Validates that all purchase order lines have a product URL when the
+        purchase source is set to 'online'. Displays all missing products in one message.
+        """
+        for order in self:
+            if order.purchase_source == "online":
+                missing_url_products = []
+                for line in order.order_line:
+                    if not line.display_type and not line.product_url and not line.product_id.is_delivery_charge:
+                        missing_url_products.append(line.product_id.display_name)
+
+                if missing_url_products:
+                    products_str = "\n\n- " + "\n- ".join(missing_url_products)
+                    raise ValidationError(
+                        _(
+                            "Product URL is required for the following products when Purchase Source is 'Online Purchase':%s"
+                        )
+                        % products_str
+                    )
+
     @api.model
     def retrieve_dashboard(self):
         """Overide this function returns the values to populate the custom dashboard in
@@ -321,6 +550,13 @@ class PurchaseOrder(models.Model):
                 ("purchase_source", "=", "standard"),
             ]
         )
+        result["standard_purchase_ordered"] = po.search_count(
+            [
+                ("state", "in", ("purchase", "done")),
+                ("po_reference", "!=", False),
+                ("purchase_source", "=", "standard"),
+            ]
+        )
         result["standard_purchase_pending_bill"] = po.search_count(
             [
                 ("state", "in", ("purchase", "done")),
@@ -329,6 +565,15 @@ class PurchaseOrder(models.Model):
                 "|",
                 ("invoice_ids", "=", False),
                 ("invoice_ids.state", "=", "draft"),
+            ]
+        )
+        result["standard_purchase_bill_not_paid"] = po.search_count(
+            [
+                ("state", "in", ("purchase", "done")),
+                ("po_reference", "!=", False),
+                ("purchase_source", "=", "standard"),
+                ("invoice_ids", "!=", False),
+                ("invoice_ids.payment_state", "!=", "paid"),
             ]
         )
         result["standard_purchase_bill_paid_not_received"] = po.search_count(
@@ -362,6 +607,13 @@ class PurchaseOrder(models.Model):
                 ("purchase_source", "=", "local"),
             ]
         )
+        result["local_purchase_ordered"] = po.search_count(
+            [
+                ("state", "in", ("purchase", "done")),
+                ("po_reference", "!=", False),
+                ("purchase_source", "=", "local"),
+            ]
+        )
         result["local_purchase_pending_bill"] = po.search_count(
             [
                 ("state", "in", ("purchase", "done")),
@@ -370,6 +622,15 @@ class PurchaseOrder(models.Model):
                 "|",
                 ("invoice_ids", "=", False),
                 ("invoice_ids.state", "=", "draft"),
+            ]
+        )
+        result["local_purchase_bill_not_paid"] = po.search_count(
+            [
+                ("state", "in", ("purchase", "done")),
+                ("po_reference", "!=", False),
+                ("purchase_source", "=", "local"),
+                ("invoice_ids", "!=", False),
+                ("invoice_ids.payment_state", "!=", "paid"),
             ]
         )
         result["local_purchase_bill_paid_not_received"] = po.search_count(
@@ -403,6 +664,13 @@ class PurchaseOrder(models.Model):
                 ("purchase_source", "=", "online"),
             ]
         )
+        result["online_purchase_ordered"] = po.search_count(
+            [
+                ("state", "in", ("purchase", "done")),
+                ("po_reference", "!=", False),
+                ("purchase_source", "=", "online"),
+            ]
+        )
         result["online_purchase_pending_bill"] = po.search_count(
             [
                 ("state", "in", ("purchase", "done")),
@@ -411,6 +679,15 @@ class PurchaseOrder(models.Model):
                 "|",
                 ("invoice_ids", "=", False),
                 ("invoice_ids.state", "=", "draft"),
+            ]
+        )
+        result["online_purchase_bill_not_paid"] = po.search_count(
+            [
+                ("state", "in", ("purchase", "done")),
+                ("po_reference", "!=", False),
+                ("purchase_source", "=", "online"),
+                ("invoice_ids", "!=", False),
+                ("invoice_ids.payment_state", "!=", "paid"),
             ]
         )
         result["online_purchase_bill_paid_not_received"] = po.search_count(
@@ -463,6 +740,15 @@ class PurchaseOrder(models.Model):
     def _prepare_invoice(self):
         res = super()._prepare_invoice()
         res.update({'purchase_source':self.purchase_source})
+        return res
+
+    def button_confirm(self):
+        res = super(PurchaseOrder, self).button_confirm()
+        for order in self:
+            if not order.purchase_source:
+                raise ValidationError("Please Select Purchase Source!")
+            if not order.date_planned:
+                    raise ValidationError("Please Select Expected Arrival Date!")
         return res
 
 

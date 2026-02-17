@@ -44,15 +44,21 @@
 
             <t t-set="company" t-value="res_company"/>
 
-            <h2 style="color:#0066ff; font-weight:bold; text-align:center;">
-                العرض الفني
-                <br/>
-                Unpriced Technical Offer
-            </h2>
-
-
             <div class="page"
                  style="padding:0; font-size:11px; line-height:15px;">
+
+                <t t-set="render_part" t-value="env.context.get('render_part') or context.get('render_part', 'full')"/>
+                <t t-set="target_line_id" t-value="env.context.get('line_id') or context.get('line_id')"/>
+                <t t-set="target_line_id" t-value="int(target_line_id) if target_line_id else False"/>
+
+                <!-- 1. MAIN REPORT SECTION (Summary, Terms, Totals) -->
+                <t t-if="render_part in ('full', 'main')">
+
+                <h2 style="color:#0066ff; font-weight:bold; text-align:center;">
+                    العرض الفني
+                    <br/>
+                    Unpriced Technical Offer
+                </h2>
 
 
                 <div style="border-radius: 12px;background: #f8f8ff;padding: 0;margin-bottom: 10px;font-size: 12px;">
@@ -311,7 +317,7 @@
                                         font-weight: bold;
                                         color: #008000;
                                         background: #f7f7f7;
-                                        padding: 20px 10px 20px 25px;
+                                        padding: 8px;
                                         vertical-align: bottom;
                                     ">
                                         <span t-esc="line.name"/>
@@ -416,14 +422,12 @@
                                 </tr>
                                 <t t-if="line.datasheet_attach">
                                     <tr>
-                                        <td t-attf-style="background-color: #{'#ededed' if sr_no % 2 == 0 else '#ffffff'};" colspan="10"
-                                            style="text-align:left; padding:5px; color:orange; font-weight:bold;">
+                                        <td t-attf-style="background-color: #{'#ededed' if sr_no % 2 == 0 else '#ffffff'}; color:#ea5d05 !important;" colspan="10"
+                                            style="text-align:left; padding:5px; color:orange !important; font-weight:bold;">
                                             Datasheet Attached
                                         </td>
                                     </tr>
                                 </t>
-
-
                             </t>
                         </t>
 
@@ -481,6 +485,7 @@
                     </tbody>
 
                 </table>
+
 
 
                 <t t-set="currency" t-value="doc.currency_id"/>
@@ -554,6 +559,88 @@
                         </div>
                     </div>
                 </div>
+
+                </t> <!-- End Main Part -->
+
+
+                <!-- 2. APPENDIX ITEM SECTION (Header + Image/Note) -->
+                <t t-if="render_part == 'appendix_item' and target_line_id">
+                    <t t-set="appendix_lines" t-value="doc.order_line.filtered(lambda l: l.datasheet_attach)"/>
+                    <t t-foreach="doc.order_line" t-as="line">
+                        <t t-if="line.id == target_line_id">
+
+                            <!-- Page for Item Header/Table -->
+                            <div style="margin-top: 20px;">
+                                <h4 style="color: #0066ff; font-weight: bold; border-bottom: 2px solid #0066ff; padding-bottom: 5px; margin-bottom: 15px;">
+                                    Detailed Technical Datasheet - Item #<t t-esc="line.sr_no_so"/>
+                                </h4>
+
+                                <table class="table table-bordered mb-4" style="font-size: 10px; width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center" style="background-color: #0066ff; color: white;">#<br/>SN</th>
+                                            <t t-if="show_pr"><th class="text-center" style="background-color: #0066ff; color: white;">PR Number</th></t>
+                                            <th class="text-center" style="background-color: #0066ff; color: white;">Item Code</th>
+                                            <th class="text-center" style="background-color: #0066ff; color: white;">Description</th>
+                                            <th class="text-center" style="background-color: #0066ff; color: white;">TS Code</th>
+                                            <th class="text-center" style="background-color: #0066ff; color: white;">Offered Description</th>
+                                            <t t-if="show_img"><th class="text-center" style="background-color: #0066ff; color: white;">Photo</th></t>
+                                            <th class="text-center" style="background-color: #0066ff; color: white;">UOM</th>
+                                            <th class="text-center" style="background-color: #0066ff; color: white;">Qty</th>
+                                            <th class="text-center" style="background-color: #0066ff; color: white;">Unit Price</th>
+                                            <t t-if="show_discount"><th class="text-center" style="background-color: #0066ff; color: white;">Discount %</th></t>
+                                            <th class="text-center" style="background-color: #0066ff; color: white;">Amount</th>
+                                            <th class="text-center" style="background-color: #0066ff; color: white;">Delivery Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr style="background-color: #ffffff;">
+                                            <td class="text-center align-middle"><t t-esc="line.sr_no_so"/></td>
+                                            <t t-if="show_pr"><td class="text-center align-middle"><span t-esc="line.pr_number or ''"/></td></t>
+                                            <td class="text-center align-middle"><t t-esc="line.return_item_code()"/></td>
+                                            <td class="text-start align-middle">
+                                                <t t-if="line.offered_description_id"><span t-esc="line.product_template_id.name or ''"/></t>
+                                                <t t-elif="line.show_customer_product_name()"><span t-esc="line.sh_line_customer_product_name"/></t>
+                                            </td>
+                                            <td class="text-center align-middle"><t t-esc="line.return_ts_code()"/></td>
+                                            <td class="text-start align-middle">
+                                                <t t-if="line.offered_description_id"><span t-esc="line.offered_description_id.name"/></t>
+                                                <t t-elif="line.is_not_available"><span style="color:darkorange; font-weight:bold;">TO BE QUOTED</span></t>
+                                                <t t-else=""><span style="color:green; font-weight:bold;">AS SPECIFIED</span></t>
+                                            </td>
+                                            <t t-if="show_img">
+                                                <td class="text-center align-middle">
+                                                    <t t-if="line.offered_image">
+                                                        <img t-att-src="image_data_uri(line.offered_image)" style="max-width:60px; max-height:60px;"/>
+                                                    </t>
+                                                </td>
+                                            </t>
+                                            <td class="text-center align-middle"><span t-field="line.product_uom"/></td>
+                                            <td class="text-center align-middle"><span t-field="line.product_uom_qty"/></td>
+                                            <td class="text-center align-middle"><span t-esc="0.0" t-options='{"widget":"monetary","display_currency":doc.currency_id}'/></td>
+                                            <t t-if="show_discount"><td class="text-center align-middle"><span t-field="line.discount"/></td></t>
+                                            <td class="text-center align-middle"><span t-esc="0.0" t-options='{"widget":"monetary","display_currency":doc.currency_id}'/></td>
+                                            <td class="text-center align-middle">
+                                                <t t-if="line.delivery_time_display"><span t-esc="line.delivery_time_display"/></t>
+                                                <t t-else=""><span/></t>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Integrated Content Section (Images only) -->
+                            <div t-if="line.upload_datasheet_attachment and line.is_attachment_image()"
+                                 style="page-break-before: always; clear: both; text-align: center; padding-top: 30px;">
+                                 <img t-att-src="image_data_uri(line.upload_datasheet_attachment)"
+                                      style="max-width: 100%; max-height: 980px; border: 1px solid #ddd; padding: 5px; border-radius: 4px;"/>
+                                 <div style="margin-top: 15px; color: #666; font-size: 14px; font-weight: bold;">
+                                     Technical Specification for Item #<t t-esc="line.sr_no_so"/>
+                                 </div>
+                            </div>
+                        </t>
+                    </t>
+                </t>
             </div>
         </t>
 
