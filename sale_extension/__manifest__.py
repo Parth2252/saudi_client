@@ -29,8 +29,9 @@ Sale Extended
     ],
     "data": [
         "data/server_actions.xml",
-        # 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         "security/security.xml",
+        "wizard/create_new_quotation_wizard_view.xml",
         "report/commercial_report.xml",
         "report/technical_offer.xml",
         "report/sales_invoice_report.xml",

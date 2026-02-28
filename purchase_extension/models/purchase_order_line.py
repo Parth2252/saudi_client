@@ -20,6 +20,7 @@ class PurchaseOrderLine(models.Model):
     product_url = fields.Char(string="Product URL")
 
     customer_pdd = fields.Datetime(string="Customer PDD", copy=False)
+    select_for_new_rfq = fields.Boolean(string="Select for New RFQ")
 
     def purchase_order_line_sequence(self):
         """ Generate auto sequence for purchase order. """
@@ -62,8 +63,9 @@ class PurchaseOrderLine(models.Model):
             vals['product_id'] = new_product_id.id
             vals['name'] = new_product_id.name
 
-        po = self.env['purchase.order'].browse(vals.get('order_id'))
-        partner = po.partner_id
+        po_id = vals.get('order_id')
+        po = self.env['purchase.order'].browse(po_id) if po_id else self.env['purchase.order']
+        partner = po.partner_id if po else False
 
         product = new_product_id or self.env['product.product'].browse(vals.get('product_id'))
 

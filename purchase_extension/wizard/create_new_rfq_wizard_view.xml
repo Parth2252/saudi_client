@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_create_new_rfq_wizard_form" model="ir.ui.view">
+            <field name="name">create.new.rfq.wizard.form</field>
+            <field name="model">create.new.rfq.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Create New RFQ">
+                    <group>
+                        <field name="purchase_id" invisible="1"/>
+                        <field name="partner_id" domain="[('is_company', '=', True)]"/>
+                    </group>
+                    <div class="alert alert-warning" role="alert">
+                        <field name="warning_message" nolabel="1"/>
+                    </div>
+                    <footer>
+                        <button name="action_create_rfq" string="Create RFQ" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_create_new_rfq_wizard" model="ir.actions.act_window">
+            <field name="name">Create New RFQ</field>
+            <field name="res_model">create.new.rfq.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

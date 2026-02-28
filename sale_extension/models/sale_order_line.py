@@ -21,6 +21,7 @@ class SaleOrderLine(models.Model):
 
     pr_number = fields.Char(string="PR Number")
     sr_no_so = fields.Integer(string="Order No")
+    select_for_new_quotation = fields.Boolean(string="Select for New Quotation")
     sh_line_customer_code = fields.Char(
         string="Customer Product Code",
         compute="_compute_sh_line_customer_code",

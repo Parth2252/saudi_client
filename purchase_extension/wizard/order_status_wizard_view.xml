@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_status_wizard_form" model="ir.ui.view">
+        <field name="name">order.status.wizard.form</field>
+        <field name="model">order.status.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Update Order Status">
+                <group>
+                    <field name="order_id" invisible="1"/>
+                    <field name="order_status"/>
+                    <field name="tracking_number" invisible="order_status != 'shipped'" required="order_status == 'shipped'"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" string="Update" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_order_status_wizard" model="ir.actions.act_window">
+        <field name="name">Update Order Status</field>
+        <field name="res_model">order.status.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

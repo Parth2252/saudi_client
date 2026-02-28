@@ -5,7 +5,7 @@ from odoo import models, fields, api
 class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
 
-    opportunity_id = fields.Many2one("crm.lead", string="Opportunity", copy=False)
+    opportunity_id = fields.Many2one("crm.lead", string="Opportunity", copy=True)
 
     def _prepare_invoice(self):
         res = super()._prepare_invoice()

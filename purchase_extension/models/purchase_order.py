@@ -102,18 +102,30 @@ class PurchaseOrder(models.Model):
 
     tracking_number = fields.Char(string="Tracking Number")
 
+    is_confirmation_filled = fields.Boolean(
+        compute="_compute_is_confirmation_filled", string="Is Confirmation Filled"
+    )
+
+    @api.depends("order_confirmation_number")
+    def _compute_is_confirmation_filled(self):
+        for rec in self:
+            rec.is_confirmation_filled = bool(rec.order_confirmation_number)
+
     receipt_delay = fields.Integer(
         string="Receipt Delay (Days)", compute="_compute_receipt_delay", store=True
     )
 
     po_status = fields.Selection(
         [
-            ("to_issue", "To Issue PO"),
+            ("to_issue", "To Issue (PO/Order)"),
             ("ordered", "Ordered(Purchase Order)"),
+            ("acknowledged", "Order Acknowledged"),
+            ("shipped", "Order Shipped"),
+            ("material_delay", "Delayed/Receipt Delay"),
+            ("received", "Received (Totally)"),
             ("pending_bill", "Pending Vendor Bill"),
-            ("bill_paid", "Bill Paid"),
+            ("bill_not_paid", "Bill Not Paid"),
             ("paid_not_received", "Bill Paid/Material not Received"),
-            ("material_delay", "Material Delay"),
         ],
         string="PO Status",
         compute="_compute_po_status",
@@ -123,37 +135,55 @@ class PurchaseOrder(models.Model):
     @api.depends(
         "state",
         "po_reference",
-        "invoice_ids.state",
+        "invoice_ids",
         "invoice_ids.payment_state",
+        "invoice_ids.state",
+        "picking_ids",
         "picking_ids.state",
         "receipt_delay",
+        "purchase_source",
+        "order_confirmation_number",
+        "order_status",
     )
     def _compute_po_status(self):
         for order in self:
             status = False
-            if order.po_reference:
-                if order.state in ("draft", "sent"):
-                    status = "to_issue"
-                elif order.state in ("purchase", "done"):
-                    # Logic for specific statuses
-                    invoices = order.invoice_ids
-                    pickings = order.picking_ids
+            if order.state in ("draft", "sent"):
+                status = "to_issue"
+            elif order.state in ("purchase", "done"):
+                invoices = order.invoice_ids
+                pickings = order.picking_ids
+
+                if order.purchase_source == 'online':
+                    # Online Flow Logic
+                    all_received = pickings and all(p.state in ("done", "delivered") for p in pickings)
+
+                    if all_received:
+                        status = "received"
+                    elif order.receipt_delay > 0:
+                        status = "material_delay"
+                    elif order.order_status == 'shipped':
+                        status = "shipped"
+                    elif order.order_status == 'acknowledged':
+                        status = "acknowledged"
+                    elif order.order_confirmation_number:
+                        status = "ordered"
+                    else:
+                        status = "ordered" # Default for confirmed online
+                else:
+                    # Standard/Local Flow Logic
                     is_paid = any(inv.payment_state == "paid" for inv in invoices)
+                    bill_not_paid = invoices and any(inv.state != 'draft' and inv.payment_state != 'paid' for inv in invoices)
                     pending_bill = not invoices or any(inv.state == "draft" for inv in invoices)
 
-                    # Material Delay
                     if is_paid and any(p.state in ("done", "delivered") for p in pickings) and order.receipt_delay > 0:
                         status = "material_delay"
-                    # Bill Paid/Material not Received
                     elif is_paid and (not pickings or any(p.state in ("waiting", "assigned", "confirmed") for p in pickings)):
                         status = "paid_not_received"
-                    # Bill Paid
-                    elif is_paid:
-                        status = "bill_paid"
-                    # Pending Vendor Bill
+                    elif bill_not_paid:
+                        status = "bill_not_paid"
                     elif pending_bill:
                         status = "pending_bill"
-                    # Ordered (Base state for confirmed POs)
                     else:
                         status = "ordered"
             order.po_status = status
@@ -450,6 +480,8 @@ class PurchaseOrder(models.Model):
         Validates that all purchase order lines have a product URL when the
         purchase source is set to 'online'. Displays all missing products in one message.
         """
+        if self.env.context.get("skip_product_url_check"):
+            return
         for order in self:
             if order.purchase_source == "online":
                 missing_url_products = []
@@ -543,174 +575,30 @@ class PurchaseOrder(models.Model):
         )
 
         # Standard Purchase order Customization start.
-        result["standard_purchase_to_issues"] = po.search_count(
-            [
-                ("state", "in", ("draft", "sent")),
-                ("po_reference", "!=", False),
-                ("purchase_source", "=", "standard"),
-            ]
-        )
-        result["standard_purchase_ordered"] = po.search_count(
-            [
-                ("state", "in", ("purchase", "done")),
-                ("po_reference", "!=", False),
-                ("purchase_source", "=", "standard"),
-            ]
-        )
-        result["standard_purchase_pending_bill"] = po.search_count(
-            [
-                ("state", "in", ("purchase", "done")),
-                ("po_reference", "!=", False),
-                ("purchase_source", "=", "standard"),
-                "|",
-                ("invoice_ids", "=", False),
-                ("invoice_ids.state", "=", "draft"),
-            ]
-        )
-        result["standard_purchase_bill_not_paid"] = po.search_count(
-            [
-                ("state", "in", ("purchase", "done")),
-                ("po_reference", "!=", False),
-                ("purchase_source", "=", "standard"),
-                ("invoice_ids", "!=", False),
-                ("invoice_ids.payment_state", "!=", "paid"),
-            ]
-        )
-        result["standard_purchase_bill_paid_not_received"] = po.search_count(
-            [
-                ("state", "in", ("purchase", "done")),
-                ("po_reference", "!=", False),
-                ("purchase_source", "=", "standard"),
-                ("invoice_ids.payment_state", "=", "paid"),
-                "|",
-                ("picking_ids", "=", False),
-                ("picking_ids.state", "in", ("waiting", "assigned", "confirmed")),
-            ]
-        )
-        result["standard_purchase_receipt_delay"] = po.search_count(
-            [
-                ("state", "in", ("purchase", "done")),
-                ("po_reference", "!=", False),
-                ("purchase_source", "=", "standard"),
-                ("invoice_ids.payment_state", "=", "paid"),
-                ("picking_ids.state", "in", ("done", "delivered")),
-                ("receipt_delay", ">", 0),
-            ]
-        )
+        result["standard_purchase_to_issues"] = po.search_count([("po_status", "=", "to_issue"), ("purchase_source", "=", "standard")])
+        result["standard_purchase_ordered"] = po.search_count([("po_status", "=", "ordered"), ("purchase_source", "=", "standard")])
+        result["standard_purchase_pending_bill"] = po.search_count([("po_status", "=", "pending_bill"), ("purchase_source", "=", "standard")])
+        result["standard_purchase_bill_not_paid"] = po.search_count([("po_status", "=", "bill_not_paid"), ("purchase_source", "=", "standard")])
+        result["standard_purchase_bill_paid_not_received"] = po.search_count([("po_status", "=", "paid_not_received"), ("purchase_source", "=", "standard")])
+        result["standard_purchase_receipt_delay"] = po.search_count([("po_status", "=", "material_delay"), ("purchase_source", "=", "standard")])
         # Standard Purchase order customization end
 
         # Local Purchase order Customization start.
-        result["local_purchase_to_issues"] = po.search_count(
-            [
-                ("state", "in", ("draft", "sent")),
-                ("po_reference", "!=", False),
-                ("purchase_source", "=", "local"),
-            ]
-        )
-        result["local_purchase_ordered"] = po.search_count(
-            [
-                ("state", "in", ("purchase", "done")),
-                ("po_reference", "!=", False),
-                ("purchase_source", "=", "local"),
-            ]
-        )
-        result["local_purchase_pending_bill"] = po.search_count(
-            [
-                ("state", "in", ("purchase", "done")),
-                ("po_reference", "!=", False),
-                ("purchase_source", "=", "local"),
-                "|",
-                ("invoice_ids", "=", False),
-                ("invoice_ids.state", "=", "draft"),
-            ]
-        )
-        result["local_purchase_bill_not_paid"] = po.search_count(
-            [
-                ("state", "in", ("purchase", "done")),
-                ("po_reference", "!=", False),
-                ("purchase_source", "=", "local"),
-                ("invoice_ids", "!=", False),
-                ("invoice_ids.payment_state", "!=", "paid"),
-            ]
-        )
-        result["local_purchase_bill_paid_not_received"] = po.search_count(
-            [
-                ("state", "in", ("purchase", "done")),
-                ("po_reference", "!=", False),
-                ("purchase_source", "=", "local"),
-                ("invoice_ids.payment_state", "=", "paid"),
-                "|",
-                ("picking_ids", "=", False),
-                ("picking_ids.state", "in", ("waiting", "assigned", "confirmed")),
-            ]
-        )
-        result["local_purchase_receipt_delay"] = po.search_count(
-            [
-                ("state", "in", ("purchase", "done")),
-                ("po_reference", "!=", False),
-                ("purchase_source", "=", "local"),
-                ("invoice_ids.payment_state", "=", "paid"),
-                ("picking_ids.state", "in", ("done", "delivered")),
-                ("receipt_delay", ">", 0),
-            ]
-        )
+        result["local_purchase_to_issues"] = po.search_count([("po_status", "=", "to_issue"), ("purchase_source", "=", "local")])
+        result["local_purchase_ordered"] = po.search_count([("po_status", "=", "ordered"), ("purchase_source", "=", "local")])
+        result["local_purchase_pending_bill"] = po.search_count([("po_status", "=", "pending_bill"), ("purchase_source", "=", "local")])
+        result["local_purchase_bill_not_paid"] = po.search_count([("po_status", "=", "bill_not_paid"), ("purchase_source", "=", "local")])
+        result["local_purchase_bill_paid_not_received"] = po.search_count([("po_status", "=", "paid_not_received"), ("purchase_source", "=", "local")])
+        result["local_purchase_receipt_delay"] = po.search_count([("po_status", "=", "material_delay"), ("purchase_source", "=", "local")])
         # Local Purchase order customization end
 
-        # Online Purchase order Customization start.
-        result["online_purchase_to_issues"] = po.search_count(
-            [
-                ("state", "in", ("draft", "sent")),
-                ("po_reference", "!=", False),
-                ("purchase_source", "=", "online"),
-            ]
-        )
-        result["online_purchase_ordered"] = po.search_count(
-            [
-                ("state", "in", ("purchase", "done")),
-                ("po_reference", "!=", False),
-                ("purchase_source", "=", "online"),
-            ]
-        )
-        result["online_purchase_pending_bill"] = po.search_count(
-            [
-                ("state", "in", ("purchase", "done")),
-                ("po_reference", "!=", False),
-                ("purchase_source", "=", "online"),
-                "|",
-                ("invoice_ids", "=", False),
-                ("invoice_ids.state", "=", "draft"),
-            ]
-        )
-        result["online_purchase_bill_not_paid"] = po.search_count(
-            [
-                ("state", "in", ("purchase", "done")),
-                ("po_reference", "!=", False),
-                ("purchase_source", "=", "online"),
-                ("invoice_ids", "!=", False),
-                ("invoice_ids.payment_state", "!=", "paid"),
-            ]
-        )
-        result["online_purchase_bill_paid_not_received"] = po.search_count(
-            [
-                ("state", "in", ("purchase", "done")),
-                ("po_reference", "!=", False),
-                ("purchase_source", "=", "online"),
-                ("invoice_ids.payment_state", "=", "paid"),
-                "|",
-                ("picking_ids", "=", False),
-                ("picking_ids.state", "in", ("waiting", "assigned", "confirmed")),
-            ]
-        )
-        result["online_purchase_receipt_delay"] = po.search_count(
-            [
-                ("state", "in", ("purchase", "done")),
-                ("po_reference", "!=", False),
-                ("purchase_source", "=", "online"),
-                ("invoice_ids.payment_state", "=", "paid"),
-                ("picking_ids.state", "in", ("done", "delivered")),
-                ("receipt_delay", ">", 0),
-            ]
-        )
+        # Online Purchase order        # Online Purchase
+        result["online_purchase_to_order"] = po.search_count([("po_status", "=", "to_issue"), ("purchase_source", "=", "online")])
+        result["online_purchase_ordered"] = po.search_count([("po_status", "=", "ordered"), ("purchase_source", "=", "online")])
+        result["online_purchase_acknowledged"] = po.search_count([("po_status", "=", "acknowledged"), ("purchase_source", "=", "online")])
+        result["online_purchase_shipped"] = po.search_count([("po_status", "=", "shipped"), ("purchase_source", "=", "online")])
+        result["online_purchase_delayed"] = po.search_count([("po_status", "=", "material_delay"), ("purchase_source", "=", "online")])
+        result["online_purchase_received"] = po.search_count([("po_status", "=", "received"), ("purchase_source", "=", "online")])
         # Online Purchase order customization end
 
         # Calculated values ('avg order value', 'avg days to purchase', and 'total last 7 days') note that 'avg order value' and
@@ -750,6 +638,43 @@ class PurchaseOrder(models.Model):
             if not order.date_planned:
                     raise ValidationError("Please Select Expected Arrival Date!")
         return res
+
+    def action_add_confirmation_number(self):
+        self.ensure_one()
+        return {
+            "name": "Add Order Confirmation Number",
+            "type": "ir.actions.act_window",
+            "res_model": "order.confirmation.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {"default_order_id": self.id},
+        }
+
+    def action_add_order_status(self):
+        self.ensure_one()
+        return {
+            "name": "Update Order Status",
+            "type": "ir.actions.act_window",
+            "res_model": "order.status.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "default_order_id": self.id,
+                "default_order_status": self.order_status,
+                "default_tracking_number": self.tracking_number,
+            },
+        }
+
+    def action_open_new_rfq_wizard(self):
+        self.ensure_one()
+        return {
+            "name": "Create New RFQ",
+            "type": "ir.actions.act_window",
+            "res_model": "create.new.rfq.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {"default_purchase_id": self.id},
+        }
 
 
 

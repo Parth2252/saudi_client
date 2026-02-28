@@ -570,12 +570,12 @@
                         <t t-if="line.id == target_line_id">
 
                             <!-- Page for Item Header/Table -->
-                            <div style="margin-top: 20px;">
-                                <h4 style="color: #0066ff; font-weight: bold; border-bottom: 2px solid #0066ff; padding-bottom: 5px; margin-bottom: 15px;">
+                            <div style="margin-top: 350px; text-align: center;">
+                                <h4 style="color: #0066ff; font-weight: bold; border-bottom: 2px solid #0066ff; padding-bottom: 5px; margin-bottom: 25px; text-align: center;">
                                     Detailed Technical Datasheet - Item #<t t-esc="line.sr_no_so"/>
                                 </h4>
 
-                                <table class="table table-bordered mb-4" style="font-size: 10px; width: 100%; border-collapse: collapse;">
+                                <table class="table table-bordered mb-4" style="font-size: 10px; width: 100%; border-collapse: collapse; text-align: left;">
                                     <thead>
                                         <tr>
                                             <th class="text-center" style="background-color: #0066ff; color: white;">#<br/>SN</th>

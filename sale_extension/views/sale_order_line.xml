@@ -7,6 +7,13 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <!-- Added field. -->
+            <xpath expr="//header" position="inside">
+                 <button name="%(sale_extension.action_create_new_quotation_wizard)d"
+                        string="Create Quotation"
+                        type="action"
+                        class="btn-primary"
+                        invisible="state not in ('draft', 'sent')"/>
+            </xpath>
             <xpath expr="/form/sheet/notebook/page/field[@name='order_line']/list/field[@name='name']" position="after">
                 <field name="pr_number" optional='hide'/>
                 <!-- <field name="product_category_id" optional="show"/> -->
@@ -30,6 +37,7 @@
             </xpath>
             <xpath expr="/form/sheet/notebook/page/field[@name='order_line']/list/field[@name='product_template_id']"
                    position="before">
+                <field name="select_for_new_quotation" nolabel="1" invisible="display_type"/>
                 <field name="sr_no_so"/>
 
             </xpath>
