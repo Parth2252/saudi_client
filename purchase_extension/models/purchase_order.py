@@ -5,6 +5,14 @@ from dateutil.relativedelta import relativedelta
 from odoo.tools import format_amount, format_date, format_list, formatLang, groupby
 
 
+class PurchaseAttachmentType(models.Model):
+    _name = "purchase.attachment.type"
+    _description = "Purchase Attachment Type"
+
+    name = fields.Char(string="Name", required=True)
+    color = fields.Integer(string="Color Index")
+
+
 class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
 
@@ -99,8 +107,15 @@ class PurchaseOrder(models.Model):
         ],
         string="Order status",
     )
+    attachment_type_ids = fields.Many2many(
+        "purchase.attachment.type",
+        string="Attachment Type",
+        required=True,
+    )
 
     tracking_number = fields.Char(string="Tracking Number")
+    logistic_name = fields.Char(string="Logistic Name")
+    logistic_url = fields.Char(string="Logistic URL")
 
     is_confirmation_filled = fields.Boolean(
         compute="_compute_is_confirmation_filled", string="Is Confirmation Filled"
@@ -617,6 +632,7 @@ class PurchaseOrder(models.Model):
         currency = self.env.company.currency_id
         result["all_avg_order_value"] = format_amount(self.env, res[0] or 0, currency)
         result["all_total_last_7_days"] = format_amount(self.env, res[2] or 0, currency)
+        result["is_po_view"] = self.env.context.get('is_po_view', False)
 
         return result
 
@@ -631,13 +647,41 @@ class PurchaseOrder(models.Model):
         return res
 
     def button_confirm(self):
-        res = super(PurchaseOrder, self).button_confirm()
         for order in self:
+            errors = []
             if not order.purchase_source:
-                raise ValidationError("Please Select Purchase Source!")
+                errors.append(_("Purchase Source"))
+            if not order.po_reference:
+                errors.append(_("PO Reference"))
+            if not order.sale_partner_id:
+                errors.append(_("Sale Customer"))
+            if not order.user_id:
+                errors.append(_("Buyer"))
+            if not order.attachment_type_ids:
+                errors.append(_("Attachment Type"))
             if not order.date_planned:
-                    raise ValidationError("Please Select Expected Arrival Date!")
-        return res
+                errors.append(_("Expected Arrival Date"))
+
+            missing_pdd_products = []
+            for line in order.order_line:
+                if not line.display_type and not line.customer_pdd and not line.product_id.is_delivery_charge:
+                    missing_pdd_products.append(line.product_id.display_name)
+
+            if errors or missing_pdd_products:
+                msg = _("Please provide values for the following missing fields before confirming:")
+                if errors:
+                    msg += "\n\n" + _("Header Fields:")
+                    for error in errors:
+                        msg += f"\n- {error}"
+                
+                if missing_pdd_products:
+                    msg += "\n\n" + _("Customer PDD for Products:")
+                    for product_name in missing_pdd_products:
+                        msg += f"\n- {product_name}"
+                
+                raise ValidationError(msg)
+
+        return super(PurchaseOrder, self).button_confirm()
 
     def action_add_confirmation_number(self):
         self.ensure_one()
@@ -675,6 +719,3 @@ class PurchaseOrder(models.Model):
             "target": "new",
             "context": {"default_purchase_id": self.id},
         }
-
-
-

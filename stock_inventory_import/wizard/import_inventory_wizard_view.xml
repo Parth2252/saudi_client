@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_import_inventory_wizard_form" model="ir.ui.view">
+        <field name="name">import.inventory.wizard.form</field>
+        <field name="model">import.inventory.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import Inventory Location Wise">
+                <group>
+                    <group>
+                        <field name="import_option" widget="radio"/>
+                        <field name="file" filename="file_name"/>
+                        <field name="file_name" invisible="1"/>
+                    </group>
+                    <group>
+                        <div class="alert alert-info" role="alert">
+                            <i class="fa fa-download me-1"/>
+                            <a href="/stock_inventory_import/static/description/sample_inventory.xlsx" download="sample_inventory.xlsx">
+                                <strong>Download Sample Excel File</strong>
+                            </a>
+                            <br/>
+                            <small class="text-muted">Use this format for error-free import (Columns: TS CODE, QTY, LOCATION)</small>
+                        </div>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_import_inventory" string="Import Stock" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_import_inventory_wizard" model="ir.actions.act_window">
+        <field name="name">Import Inventory Location Wise</field>
+        <field name="res_model">import.inventory.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_import_inventory_location_wise"
+              name="Import Stock (Location Wise)"
+              parent="stock.menu_stock_warehouse_mgmt"
+              action="action_import_inventory_wizard"
+              sequence="100"/>
+</odoo>

@@ -13,6 +13,14 @@
                         type="action"
                         class="btn-primary"
                         invisible="state not in ('draft', 'sent')"/>
+                <button name="%(sale_extension.action_report_commercial_offer)d"
+                        string="Commercial Offer"
+                        type="action"
+                        class="btn_teal"/>
+                <button name="%(sale_extension.action_report_technical_offer)d"
+                        string="Technical Offer"
+                        type="action"
+                        class="btn_plum"/>
             </xpath>
             <xpath expr="/form/sheet/notebook/page/field[@name='order_line']/list/field[@name='name']" position="after">
                 <field name="pr_number" optional='hide'/>

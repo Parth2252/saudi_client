@@ -9,6 +9,7 @@
             <xpath expr="//list" position="attributes">
                 <attribute name="default_order">date_order</attribute>
                 <attribute name="decoration-danger">is_overdue</attribute>
+                <attribute name="js_class">purchase_dashboard_list</attribute>
             </xpath>
             <xpath expr="//field[@name='name']" position="after">
                 <field name="sale_partner_id"/>
@@ -28,7 +29,9 @@
                 <field name="order_status"
                        optional="hide"
                        decoration-success="order_status in ('acknowledged', 'shipped')"/>
-                <field name="tracking_number" invisible="order_status != 'shipped'"/>
+                <field name="tracking_number" class="text_teal" invisible="order_status != 'shipped'"/>
+                <field name="logistic_name" class="text_teal" invisible="order_status != 'shipped'"/>
+                <field name="logistic_url" widget="url" class="text_teal" invisible="order_status != 'shipped'"/>
             </xpath>
             <xpath expr="//field[@name='date_order']" position="after">
                 <field name="date_order_display"/>
@@ -37,6 +40,47 @@
                 <attribute name="string">Delivery Date</attribute>
             </xpath>
 
+        </field>
+    </record>
+
+    <record id="purchase_order_view_tree" model="ir.ui.view">
+        <field name="name">purchase.order.tree.dashboard</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">purchase_dashboard_list</attribute>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="sale_partner_id"/>
+                <field name="receipt_delay" optional='hide'/>
+                <field name="purchase_source"
+                       optional="show"
+                       decoration-success="purchase_source == 'local'"
+                       decoration-info="purchase_source == 'standard'"
+                       decoration-warning="purchase_source == 'online'"
+                       widget="badge"
+                       />
+                <field name="order_confirmation_number"
+                       optional="hide"
+                       decoration-success="order_confirmation_number != False"
+                       widget="badge"/>
+                <field name="po_status" optional="show" widget="badge"/>
+                <field name="order_status"
+                       optional="hide"
+                       decoration-success="order_status in ('acknowledged', 'shipped')"/>
+                <field name="tracking_number" class="text_teal" invisible="order_status != 'shipped'"/>
+                <field name="logistic_name" class="text_teal" invisible="order_status != 'shipped'"/>
+                <field name="logistic_url" widget="url" class="text_teal" invisible="order_status != 'shipped'"/>
+            </xpath>
+            <xpath expr="//field[@name='date_order']" position="after">
+                <field name="date_order_display"/>
+            </xpath>
+            <xpath expr="//field[@name='date_order']" position="attributes">
+                <attribute name="string">Delivery Date</attribute>
+                <attribute name="column_invisible">False</attribute>
+                <attribute name="optional">show</attribute>
+            </xpath>
         </field>
     </record>
     <record id="view_purchase_order_filter" model="ir.ui.view">
@@ -53,6 +97,75 @@
                 <filter string="Purchase Source" name="purchase_source" domain="[]" context="{'group_by':'purchase_source'}"/>
             </xpath>
 
+            <xpath expr="//filter[@name='starred']" position="after">
+                <!-- Standard Filter -->
+                <separator/>
+                <filter name="standard_purchase_to_issues" string="Standard Purchase To Issue" domain="[('po_status', '=', 'to_issue'), ('purchase_source', '=', 'standard')]"/>
+                <filter name="standard_purchase_ordered" string="Standard Purchase (Ordered)" domain="[('po_status', '=', 'ordered'), ('purchase_source', '=', 'standard')]"/>
+                <filter name="standard_purchase_pending_bill"
+                string="Standard Purchase – Pending Vendor Bill"
+                domain="[('po_status', '=', 'pending_bill'), ('purchase_source', '=', 'standard')]"/>
+                <filter name="standard_purchase_bill_not_paid"
+                string="Standard Purchase – Bill Not Paid"
+                domain="[('po_status', '=', 'bill_not_paid'), ('purchase_source', '=', 'standard')]"/>
+                <filter name="standard_purchase_bill_paid_not_received"
+                string="Standard Purchase – Bill Paid but Not Received"
+                domain="[('po_status', '=', 'paid_not_received'), ('purchase_source', '=', 'standard')]"/>
+                <filter name="standard_purchase_receipt_delay"
+                string="Standard Purchase – Receipt Delayed"
+                domain="[('po_status', '=', 'material_delay'), ('purchase_source', '=', 'standard')]"/>
+
+
+                <!-- Local Purchase -->
+                <separator/>
+                <filter name="local_purchase_to_issues" string="Local Purchase To Issue" domain="[('po_status', '=', 'to_issue'), ('purchase_source', '=', 'local')]"/>
+                <filter name="local_purchase_ordered" string="Local Purchase (Ordered)" domain="[('po_status', '=', 'ordered'), ('purchase_source', '=', 'local')]"/>
+                <filter name="local_purchase_pending_bill"
+                string="Local Purchase – Pending Vendor Bill"
+                domain="[('po_status', '=', 'pending_bill'), ('purchase_source', '=', 'local')]"/>
+                <filter name="local_purchase_bill_not_paid"
+                string="Local Purchase – Bill Not Paid"
+                domain="[('po_status', '=', 'bill_not_paid'), ('purchase_source', '=', 'local')]"/>
+                <filter name="local_purchase_bill_paid_not_received"
+                string="Local Purchase – Bill Paid but Not Received"
+                domain="[('po_status', '=', 'paid_not_received'), ('purchase_source', '=', 'local')]"/>
+                <filter name="local_purchase_receipt_delay"
+                string="Local Purchase – Receipt Delayed"
+                domain="[('po_status', '=', 'material_delay'), ('purchase_source', '=', 'local')]"/>
+
+
+                <!-- Online Purchase -->
+                <separator/>
+                <filter name="online_purchase_to_order" string="Online Purchase (To Order)" domain="[('po_status', '=', 'to_issue'), ('purchase_source', '=', 'online')]"/>
+                <filter name="online_purchase_ordered" string="Online Purchase (Ordered)" domain="[('po_status', '=', 'ordered'), ('purchase_source', '=', 'online')]"/>
+                <filter name="online_purchase_acknowledged"
+                string="Online Purchase – Acknowledged"
+                domain="[('po_status', '=', 'acknowledged'), ('purchase_source', '=', 'online')]"/>
+                <filter name="online_purchase_shipped"
+                string="Online Purchase – Shipped"
+                domain="[('po_status', '=', 'shipped'), ('purchase_source', '=', 'online')]"/>
+                <filter name="online_purchase_delayed"
+                string="Online Purchase – Delayed"
+                domain="[('po_status', '=', 'material_delay'), ('purchase_source', '=', 'online')]"/>
+                <filter name="online_purchase_received"
+                string="Online Purchase – Received"
+                domain="[('po_status', '=', 'received'), ('purchase_source', '=', 'online')]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="purchase_order_view_search" model="ir.ui.view">
+        <field name="name">purchase.order.select.dashboard</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_view_search"/>
+        <field name="arch" type="xml">
+             <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="partner_ref"/>
+                <field name="purchase_source" />
+            </xpath>
+            <xpath expr="//group" position="inside">
+                <filter string="Purchase Source" name="purchase_source" domain="[]" context="{'group_by':'purchase_source'}"/>
+            </xpath>
             <xpath expr="//filter[@name='starred']" position="after">
                 <!-- Standard Filter -->
                 <separator/>
@@ -131,6 +244,14 @@
                         type="object"
                         class="btn-primary"
                         invisible="state not in ('draft', 'sent')"/>
+                <button name="%(purchase.action_report_purchase_order)d"
+                        string="Print Purchase Order"
+                        type="action"
+                        class="btn_teal"/>
+                <button name="%(purchase.report_purchase_quotation)d"
+                        string="Print RFQ"
+                        type="action"
+                        class="btn_plum"/>
             </xpath>
             <xpath expr="//sheet" position="before">
                 <div class="alert alert-danger mb-0 text-center" role="alert" invisible="purchase_source != 'online' or order_confirmation_number or state not in ('purchase', 'done')">
@@ -197,7 +318,10 @@
                 <field name="po_status" />
                 <field name="order_status"
                        decoration-success="order_status in ('acknowledged', 'shipped')"/>
-                <field name="tracking_number" invisible="order_status != 'shipped'"/>
+                <field name="tracking_number" class="text_teal" invisible="order_status != 'shipped'"/>
+                <field name="logistic_name" class="text_teal" invisible="order_status != 'shipped'"/>
+                <field name="logistic_url" widget="url" class="text_teal" invisible="order_status != 'shipped'"/>
+                <field name="attachment_type_ids" widget="many2many_tags" options="{'color_field': 'color'}" required="1"/>
             </xpath>
 
             <xpath expr="//page/field[@name='order_line']/list/field[@name='date_planned']" position="attributes">
@@ -243,6 +367,33 @@
         <field name="code">
             env['purchase.order'].search([('po_reference', '!=', False)]).with_context(skip_product_url_check=True)._compute_po_status()
         </field>
+    </record>
+
+    <record id="purchase_attachment_type_view_tree" model="ir.ui.view">
+        <field name="name">purchase.attachment.type.list</field>
+        <field name="model">purchase.attachment.type</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="color" widget="color_picker"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="purchase_attachment_type_action" model="ir.actions.act_window">
+        <field name="name">Attachment Types</field>
+        <field name="res_model">purchase.attachment.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_purchase_attachment_type"
+              name="Attachment Types"
+              parent="purchase.menu_purchase_config"
+              action="purchase_attachment_type_action"
+              sequence="100"/>
+
+    <record id="purchase.purchase_form_action" model="ir.actions.act_window">
+        <field name="context">{'is_po_view': True}</field>
     </record>
 
 </odoo>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="attachment_type_quotation" model="purchase.attachment.type">
+            <field name="name">Quotation</field>
+            <field name="color">1</field>
+        </record>
+        <record id="attachment_type_proforma" model="purchase.attachment.type">
+            <field name="name">Proforma Invoice</field>
+            <field name="color">4</field>
+        </record>
+        <record id="attachment_type_commercial" model="purchase.attachment.type">
+            <field name="name">Commercial (Tax) Invoice</field>
+            <field name="color">10</field>
+        </record>
+    </data>
+</odoo>

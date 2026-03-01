@@ -10,6 +10,7 @@ Purchase Extended
     'category': 'Custom',
     'depends': ['product','purchase', 'sale_purchase_stock','purchase_stock','account', 'crm'],
     'data': [
+        "data/purchase_data.xml",
         "security/ir.model.access.csv",
         "security/security.xml",
         "wizard/purchase_source_wizard_view.xml",
@@ -27,6 +28,7 @@ Purchase Extended
     ],
     'assets': {
         'web.assets_backend': [
+            'purchase_extension/static/src/css/button_styles.css',
             'purchase_extension/static/src/views/purchase_dashboard.xml',
         ],
     },

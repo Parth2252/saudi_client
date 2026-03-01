@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_stock_inventory_log_form" model="ir.ui.view">
+        <field name="name">stock.inventory.log.form</field>
+        <field name="model">stock.inventory.log</field>
+        <field name="arch" type="xml">
+            <form string="Import Inventory Log" create="0" edit="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="file_name"/>
+                            <field name="import_date"/>
+                        </group>
+                        <group>
+                            <field name="total_records"/>
+                            <field name="imported_records" class="text-success fw-bold"/>
+                            <field name="skipped_records" class="text-danger fw-bold"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Import Details">
+                            <field name="line_ids">
+                                <list decoration-danger="status == 'skipped'" decoration-success="status == 'success'">
+                                    <field name="row_number"/>
+                                    <field name="ts_code"/>
+                                    <field name="qty"/>
+                                    <field name="location"/>
+                                    <field name="status" widget="badge" decoration-danger="status == 'skipped'" decoration-success="status == 'success'"/>
+                                    <field name="reason"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_stock_inventory_log_tree" model="ir.ui.view">
+        <field name="name">stock.inventory.log.list</field>
+        <field name="model">stock.inventory.log</field>
+        <field name="arch" type="xml">
+            <list string="Import Inventory Logs" create="0">
+                <field name="import_date"/>
+                <field name="file_name"/>
+                <field name="total_records"/>
+                <field name="imported_records" sum="Total Imported"/>
+                <field name="skipped_records" sum="Total Skipped"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_stock_inventory_log" model="ir.actions.act_window">
+        <field name="name">Import Stock History</field>
+        <field name="res_model">stock.inventory.log</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_stock_inventory_log"
+              name="Import Stock History"
+              parent="stock.menu_stock_warehouse_mgmt"
+              action="action_stock_inventory_log"
+              sequence="110"/>
+</odoo>

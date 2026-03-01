@@ -12,97 +12,104 @@
                 .dash-container {
                     display: flex;
                     justify-content: center;
-                    gap: 2px;
+                    gap: 12px;
                 }
                 .dash-box {
                     display: flex;
                     flex-direction: column;
                     width: 140px;
                     cursor: pointer;
-                    transition: opacity 0.2s;
+                    transition: transform 0.2s, opacity 0.2s;
+                    border-radius: 16px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    border: none;
                 }
                 .dash-box:hover {
-                    opacity: 0.9;
+                    transform: translateY(-2px);
+                    opacity: 0.95;
                 }
                 .dash-item {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    padding: 10px 5px;
+                    padding: 8px 5px;
                     color: white;
                     text-align: center;
-                    border: 0.5px solid rgba(255,255,255,0.2);
+                    border-bottom: 0.5px solid rgba(255,255,255,0.15);
+                }
+                .dash-item:last-child {
+                    border-bottom: none;
                 }
                 .dash-title {
-                    height: 60px;
-                    font-size: 0.9rem;
-                    font-weight: 500;
+                    height: 55px;
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    padding-top: 12px;
                 }
                 .dash-count {
-                    height: 50px;
-                    font-size: 1.4rem;
-                    font-weight: bold;
+                    height: 45px;
+                    font-size: 1.5rem;
+                    font-weight: 800;
                 }
                 .dash-total {
-                    height: 50px;
+                    height: 45px;
                     font-size: 1rem;
                     font-weight: 500;
-                }
-                .bg-maroon {
-                    background-color: #701d45 !important;
-                }
-                .bg-orange {
-                    background-color: #f04d33 !important;
+                    background-color: rgba(0,0,0,0.1);
+                    padding-bottom: 10px;
                 }
             </style>
             <div class="dash-container">
                 <!-- To Validate -->
-                <div class="dash-box" t-on-click="setSearchContext" filter_name="to_validate">
-                    <div class="dash-item dash-title bg-maroon">To Validate</div>
-                    <div class="dash-item dash-count bg-maroon" t-out="purchaseData['to_validate']['count'] or 0"/>
-                    <div class="dash-item dash-total bg-maroon" t-out="purchaseData['to_validate']['total'] or 0"/>
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="to_validate" style="background-color: #247DC4 !important;">
+                    <div class="dash-item dash-title">To Validate</div>
+                    <div class="dash-item dash-count" t-out="purchaseData['to_validate']['count'] or 0"/>
+                    <div class="dash-item dash-total" t-out="purchaseData['to_validate']['total'] or 0"/>
                 </div>
 
                 <!-- Today Payable -->
-                <div class="dash-box" t-on-click="setSearchContext" filter_name="today_payable">
-                    <div class="dash-item dash-title bg-maroon">Today Payable</div>
-                    <div class="dash-item dash-count bg-maroon" t-out="purchaseData['today_payable']['count'] or 0"/>
-                    <div class="dash-item dash-total bg-maroon" t-out="purchaseData['today_payable']['total'] or 0"/>
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="today_payable" style="background-color: #1FAC5E !important;">
+                    <div class="dash-item dash-title">Today Payable</div>
+                    <div class="dash-item dash-count" t-out="purchaseData['today_payable']['count'] or 0"/>
+                    <div class="dash-item dash-total" t-out="purchaseData['today_payable']['total'] or 0"/>
                 </div>
 
                 <!-- Late Payments -->
-                <div class="dash-box" t-on-click="setSearchContext" filter_name="late_payments">
-                    <div class="dash-item dash-title bg-maroon">Late Payments</div>
-                    <div class="dash-item dash-count bg-maroon" t-out="purchaseData['late_payments']['count'] or 0"/>
-                    <div class="dash-item dash-total bg-maroon" t-out="purchaseData['late_payments']['total'] or 0"/>
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="late_payments" style="background-color: #BF033C !important;">
+                    <div class="dash-item dash-title">Late Payments</div>
+                    <div class="dash-item dash-count" t-out="purchaseData['late_payments']['count'] or 0"/>
+                    <div class="dash-item dash-total" t-out="purchaseData['late_payments']['total'] or 0"/>
                 </div>
 
                 <!-- Partially Paid Bills -->
-                <div class="dash-box" t-on-click="setSearchContext" filter_name="partially_paid">
-                    <div class="dash-item dash-title bg-maroon">Partially Paid Bills</div>
-                    <div class="dash-item dash-count bg-maroon" t-out="purchaseData['partially_paid']['count'] or 0"/>
-                    <div class="dash-item dash-total bg-maroon" t-out="purchaseData['partially_paid']['total'] or 0"/>
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="partially_paid" style="background-color: #F48712 !important;">
+                    <div class="dash-item dash-title">Partially Paid Bills</div>
+                    <div class="dash-item dash-count" t-out="purchaseData['partially_paid']['count'] or 0"/>
+                    <div class="dash-item dash-total" t-out="purchaseData['partially_paid']['total'] or 0"/>
                 </div>
 
                 <!-- Fully Paid Bills -->
-                <div class="dash-box" t-on-click="setSearchContext" filter_name="fully_paid">
-                    <div class="dash-item dash-title bg-maroon">Fully Paid Bills</div>
-                    <div class="dash-item dash-count bg-maroon" t-out="purchaseData['fully_paid']['count'] or 0"/>
-                    <div class="dash-item dash-total bg-maroon" t-out="purchaseData['fully_paid']['total'] or 0"/>
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="fully_paid" style="background-color: #117888 !important;">
+                    <div class="dash-item dash-title">Fully Paid Bills</div>
+                    <div class="dash-item dash-count" t-out="purchaseData['fully_paid']['count'] or 0"/>
+                    <div class="dash-item dash-total" t-out="purchaseData['fully_paid']['total'] or 0"/>
                 </div>
 
                 <!-- Credit Note -->
-                <div class="dash-box" t-on-click="setSearchContext" filter_name="credit_note">
-                    <div class="dash-item dash-title bg-maroon">Credit Note</div>
-                    <div class="dash-item dash-count bg-maroon" t-out="purchaseData['credit_note']['count'] or 0"/>
-                    <div class="dash-item dash-total bg-maroon" t-out="purchaseData['credit_note']['total'] or 0"/>
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="credit_note" style="background-color: #40094D !important;">
+                    <div class="dash-item dash-title">Credit Note</div>
+                    <div class="dash-item dash-count" t-out="purchaseData['credit_note']['count'] or 0"/>
+                    <div class="dash-item dash-total" t-out="purchaseData['credit_note']['total'] or 0"/>
                 </div>
 
                 <!-- Utility Bills -->
-                <div class="dash-box" t-on-click="setSearchContext" filter_name="utility_bills">
-                    <div class="dash-item dash-title bg-orange">Utility Bills</div>
-                    <div class="dash-item dash-count bg-orange" t-out="purchaseData['utility_bills']['count'] or 0"/>
-                    <div class="dash-item dash-total bg-orange" t-out="purchaseData['utility_bills']['total'] or 0"/>
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="utility_bills" style="background-color: #8F000B !important;">
+                    <div class="dash-item dash-title">Utility Bills</div>
+                    <div class="dash-item dash-count" t-out="purchaseData['utility_bills']['count'] or 0"/>
+                    <div class="dash-item dash-total" t-out="purchaseData['utility_bills']['total'] or 0"/>
                 </div>
             </div>
         </div>

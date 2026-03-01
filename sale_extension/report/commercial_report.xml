@@ -505,24 +505,6 @@
             </t>
         </t>
     </template>
-    <record id="paperformat_commercial_paper_format" model="report.paperformat">
-        <field name="name">Commercial Paper Format</field>
-        <field name="default" eval="False"/>
-        <field name="format">A4</field>
-        <field name="page_height">0</field>
-        <field name="page_width">0</field>
-        <field name="orientation">Portrait</field>
-        <field name="margin_top">35</field>
-        <field name="margin_bottom">25</field>
-        <field name="margin_left">0</field>
-        <field name="margin_right">0</field>
-        <field name="header_line" eval="False"/>
-        <field name="header_spacing">35</field>
-        <field name="dpi">90</field>
-        <field name="css_margins" eval="True"/>
-    </record>
-
-
     <record id="action_report_commercial_offer" model="ir.actions.report">
         <field name="name">Commercial Offer</field>
         <field name="model">sale.order</field>
@@ -530,12 +512,11 @@
         <field name="report_name">sale_extension.report_commercial_offer</field>
         <field name="report_file">sale_extension.report_commercial_offer</field>
         <field name="binding_model_id" ref="sale.model_sale_order"/>
-        <field name="paperformat_id" ref="sale_extension.paperformat_commercial_paper_format"/>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
         <field name="binding_type">report</field>
         <!--        <field name="print_report_name">'Commercial Offer - %s' % (object.name)</field>-->
         <field name="print_report_name">'TAMSTAR_%s_PRICED COMMERCIAL OFFER_%s_%s' % (object.name, object.quote_desc or
             '', object.partner_id.parent_id.name or object.partner_id.name or '')
         </field>
-
     </record>
 </odoo>

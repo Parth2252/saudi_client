@@ -1,7 +1,3 @@
-.offered-placeholder-red input::placeholder {
-    color: red !important;
-}
-
 .btn_teal {
     background-color: #117888 !important;
     color: white !important;
@@ -12,4 +8,9 @@
     background-color: #8F000B !important;
     color: white !important;
     border: 1px solid #8F000B !important;
+}
+
+.text_teal {
+    color: #117888 !important;
+    font-weight: bold;
 }
