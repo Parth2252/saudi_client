@@ -11,6 +11,7 @@ class StockPicking(models.Model):
         string="Is Supplier Invoice Attached?", default=False, copy=False
     )
 
+
     state = fields.Selection(
         [
             ("draft", "Draft"),
