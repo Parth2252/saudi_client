@@ -14,7 +14,15 @@
         'views/purchase_order_view.xml',
         'views/account_move.xml',
         'views/stock_picking_view.xml',
+        'views/crm_lead_views.xml',
+        'data/cron.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'crm_customization/static/src/views/crm_dashboard.js',
+            'crm_customization/static/src/views/crm_dashboard.xml',
+        ],
+    },
 }
 
 

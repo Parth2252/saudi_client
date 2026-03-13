@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="crm_customization.CrmDashboardListView" t-inherit="web.ListRenderer" t-inherit-mode="primary">
+        <xpath expr="//div[hasclass('o_list_renderer')]" position="before">
+            <CrmDashBoard domain="props.list.domain"/>
+        </xpath>
+    </t>
+
+    <t t-name="crm_customization.CrmDashboardKanbanView" t-inherit="web.KanbanRenderer" t-inherit-mode="primary">
+        <xpath expr="//div[hasclass('o_kanban_renderer')]" position="before">
+            <CrmDashBoard domain="props.list.domain"/>
+        </xpath>
+    </t>
+
+    <t t-name="crm_customization.CrmDashboard">
+        <div class="o_account_dashboard ps-3 pe-3 pt-4 pb-4 bg-view border-bottom">
+            <style>
+                .dash-container {
+                    display: flex;
+                    justify-content: center;
+                    gap: 12px;
+                }
+                .dash-box {
+                    display: flex;
+                    flex-direction: column;
+                    width: 140px;
+                    cursor: pointer;
+                    transition: transform 0.2s, opacity 0.2s;
+                    border-radius: 16px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    border: none;
+                }
+                .dash-box:hover {
+                    transform: translateY(-2px);
+                    opacity: 0.95;
+                }
+                .dash-item {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 8px 5px;
+                    color: white;
+                    text-align: center;
+                    border-bottom: 0.5px solid rgba(255,255,255,0.15);
+                }
+                .dash-item:last-child {
+                    border-bottom: none;
+                }
+                .dash-title {
+                    height: 55px;
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    padding-top: 12px;
+                }
+                .dash-count {
+                    height: 45px;
+                    font-size: 1.5rem;
+                    font-weight: 800;
+                }
+                .dash-total {
+                    height: 45px;
+                    font-size: 1rem;
+                    font-weight: 500;
+                    background-color: rgba(0,0,0,0.1);
+                    padding-bottom: 10px;
+                }
+            </style>
+            <div class="dash-container">
+                <!-- Open RFQ -->
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="open_rfq" style="background-color: #247DC4 !important;">
+                    <div class="dash-item dash-title">Open RFQ</div>
+                    <div class="dash-item dash-count" t-out="crmData['open_rfq']['count'] or 0"/>
+                    <div class="dash-item dash-total" t-out="crmData['open_rfq']['total'] or 0"/>
+                </div>
+
+                <!-- Submitted Offer -->
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="submitted_offer" style="background-color: #1FAC5E !important;">
+                    <div class="dash-item dash-title">Submitted Offer</div>
+                    <div class="dash-item dash-count" t-out="crmData['submitted_offer']['count'] or 0"/>
+                    <div class="dash-item dash-total" t-out="crmData['submitted_offer']['total'] or 0"/>
+                </div>
+
+                <!-- Delayed RFQ -->
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="delayed_rfq" style="background-color: #BF033C !important;">
+                    <div class="dash-item dash-title">Delayed RFQ</div>
+                    <div class="dash-item dash-count" t-out="crmData['delayed_rfq']['count'] or 0"/>
+                    <div class="dash-item dash-total" t-out="crmData['delayed_rfq']['total'] or 0"/>
+                </div>
+
+                <!-- Order Confirmed -->
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="order_confirmed" style="background-color: #117888 !important;">
+                    <div class="dash-item dash-title">Order Confirmed</div>
+                    <div class="dash-item dash-count" t-out="crmData['order_confirmed']['count'] or 0"/>
+                    <div class="dash-item dash-total" t-out="crmData['order_confirmed']['total'] or 0"/>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

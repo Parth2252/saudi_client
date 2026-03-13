@@ -14,4 +14,5 @@ class CrmStage(models.Model):
     is_grn_entered_state = fields.Boolean(copy=False)
     is_customer_invoiced_state = fields.Boolean(copy=False)
     is_customer_invoice_paid_state = fields.Boolean(copy=False)
+    show_expected_closing = fields.Boolean(string="Show Expected Closing", copy=False)
 

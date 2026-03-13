@@ -8,3 +8,4 @@ from . import stock_picking
 from . import stock_move
 from . import stock_rule
 from . import account_payment
+from . import crm_lead

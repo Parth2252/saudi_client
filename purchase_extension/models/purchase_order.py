@@ -34,8 +34,13 @@ class PurchaseOrder(models.Model):
         return False
 
     date_planned = fields.Datetime(
-        string='Expected Arrival', index=True, copy=False, store=True, readonly=False,
-        help="Delivery date promised by vendor. This date is used to determine expected arrival of products.")
+        string="Expected Arrival",
+        index=True,
+        copy=False,
+        store=True,
+        readonly=False,
+        help="Delivery date promised by vendor. This date is used to determine expected arrival of products.",
+    )
 
     is_overdue = fields.Boolean(
         string="Overdue", compute="_compute_is_overdue", store=True
@@ -169,31 +174,48 @@ class PurchaseOrder(models.Model):
                 invoices = order.invoice_ids
                 pickings = order.picking_ids
 
-                if order.purchase_source == 'online':
+                if order.purchase_source == "online":
                     # Online Flow Logic
-                    all_received = pickings and all(p.state in ("done", "delivered") for p in pickings)
+                    all_received = pickings and all(
+                        p.state in ("done", "delivered") for p in pickings
+                    )
 
                     if all_received:
                         status = "received"
                     elif order.receipt_delay > 0:
                         status = "material_delay"
-                    elif order.order_status == 'shipped':
+                    elif order.order_status == "shipped":
                         status = "shipped"
-                    elif order.order_status == 'acknowledged':
+                    elif order.order_status == "acknowledged":
                         status = "acknowledged"
                     elif order.order_confirmation_number:
                         status = "ordered"
                     else:
-                        status = "ordered" # Default for confirmed online
+                        status = "ordered"  # Default for confirmed online
                 else:
                     # Standard/Local Flow Logic
                     is_paid = any(inv.payment_state == "paid" for inv in invoices)
-                    bill_not_paid = invoices and any(inv.state != 'draft' and inv.payment_state != 'paid' for inv in invoices)
-                    pending_bill = not invoices or any(inv.state == "draft" for inv in invoices)
+                    bill_not_paid = invoices and any(
+                        inv.state != "draft" and inv.payment_state != "paid"
+                        for inv in invoices
+                    )
+                    pending_bill = not invoices or any(
+                        inv.state == "draft" for inv in invoices
+                    )
 
-                    if is_paid and any(p.state in ("done", "delivered") for p in pickings) and order.receipt_delay > 0:
+                    if (
+                        is_paid
+                        and any(p.state in ("done", "delivered") for p in pickings)
+                        and order.receipt_delay > 0
+                    ):
                         status = "material_delay"
-                    elif is_paid and (not pickings or any(p.state in ("waiting", "assigned", "confirmed") for p in pickings)):
+                    elif is_paid and (
+                        not pickings
+                        or any(
+                            p.state in ("waiting", "assigned", "confirmed")
+                            for p in pickings
+                        )
+                    ):
                         status = "paid_not_received"
                     elif bill_not_paid:
                         status = "bill_not_paid"
@@ -258,10 +280,18 @@ class PurchaseOrder(models.Model):
         for vals in vals_list:
             purchase_source = vals.get("purchase_source")
             currency_id = vals.get("currency_id")
-            currency_name = self.env['res.currency'].browse(currency_id).name if currency_id else False
+            currency_name = (
+                self.env["res.currency"].browse(currency_id).name
+                if currency_id
+                else False
+            )
 
             # Tax removal condition
-            remove_taxes = purchase_source == "online" or (purchase_source == "standard" and currency_name and currency_name != "SAR")
+            remove_taxes = purchase_source == "online" or (
+                purchase_source == "standard"
+                and currency_name
+                and currency_name != "SAR"
+            )
 
             if remove_taxes:
                 order_lines = vals.get("order_line", [])
@@ -297,7 +327,9 @@ class PurchaseOrder(models.Model):
                                 {
                                     "product_id": delivery_product.id,
                                     "product_qty": 1,
-                                    "taxes_id": [Command.set([])] if remove_taxes else False
+                                    "taxes_id": (
+                                        [Command.set([])] if remove_taxes else False
+                                    ),
                                 }
                             )
                         )
@@ -316,8 +348,7 @@ class PurchaseOrder(models.Model):
                 )
                 if delivery_product:
                     if not any(
-                        line.product_id == delivery_product
-                        for line in order.order_line
+                        line.product_id == delivery_product for line in order.order_line
                     ):
                         order.with_context(skip_delivery_charge=True).write(
                             {
@@ -332,7 +363,9 @@ class PurchaseOrder(models.Model):
                             }
                         )
 
-            if order.purchase_source == "online" or (order.purchase_source == "standard" and order.currency_id.name != "SAR"):
+            if order.purchase_source == "online" or (
+                order.purchase_source == "standard" and order.currency_id.name != "SAR"
+            ):
                 # Automatically remove taxes for all lines if it's an online order or standard order with non-SAR currency
                 lines_to_clear_taxes = order.order_line.filtered(lambda l: l.taxes_id)
                 if lines_to_clear_taxes:
@@ -343,7 +376,9 @@ class PurchaseOrder(models.Model):
 
     @api.onchange("purchase_source", "currency_id")
     def _onchange_purchase_source_currency_clear_taxes(self):
-        if self.purchase_source == "online" or (self.purchase_source == "standard" and self.currency_id.name != "SAR"):
+        if self.purchase_source == "online" or (
+            self.purchase_source == "standard" and self.currency_id.name != "SAR"
+        ):
             for line in self.order_line:
                 line.taxes_id = [Command.clear()]
 
@@ -501,7 +536,11 @@ class PurchaseOrder(models.Model):
             if order.purchase_source == "online":
                 missing_url_products = []
                 for line in order.order_line:
-                    if not line.display_type and not line.product_url and not line.product_id.is_delivery_charge:
+                    if (
+                        not line.display_type
+                        and not line.product_url
+                        and not line.product_id.is_delivery_charge
+                    ):
                         missing_url_products.append(line.product_id.display_name)
 
                 if missing_url_products:
@@ -590,30 +629,87 @@ class PurchaseOrder(models.Model):
         )
 
         # Standard Purchase order Customization start.
-        result["standard_purchase_to_issues"] = po.search_count([("po_status", "=", "to_issue"), ("purchase_source", "=", "standard")])
-        result["standard_purchase_ordered"] = po.search_count([("po_status", "=", "ordered"), ("purchase_source", "=", "standard")])
-        result["standard_purchase_pending_bill"] = po.search_count([("po_status", "=", "pending_bill"), ("purchase_source", "=", "standard")])
-        result["standard_purchase_bill_not_paid"] = po.search_count([("po_status", "=", "bill_not_paid"), ("purchase_source", "=", "standard")])
-        result["standard_purchase_bill_paid_not_received"] = po.search_count([("po_status", "=", "paid_not_received"), ("purchase_source", "=", "standard")])
-        result["standard_purchase_receipt_delay"] = po.search_count([("po_status", "=", "material_delay"), ("purchase_source", "=", "standard")])
+        result["standard_purchase_to_issues"] = po.search_count(
+            [("po_status", "=", "to_issue"), ("purchase_source", "=", "standard")]
+        )
+        result["standard_purchase_ordered"] = po.search_count(
+            [("po_status", "=", "ordered"), ("purchase_source", "=", "standard")]
+        )
+        result["standard_purchase_pending_bill"] = po.search_count(
+            [("po_status", "=", "pending_bill"), ("purchase_source", "=", "standard")]
+        )
+        result["standard_purchase_bill_not_paid"] = po.search_count(
+            [("po_status", "=", "bill_not_paid"), ("purchase_source", "=", "standard")]
+        )
+        result["standard_purchase_bill_paid_not_received"] = po.search_count(
+            [
+                ("po_status", "=", "paid_not_received"),
+                ("purchase_source", "=", "standard"),
+            ]
+        )
+        result["standard_purchase_partial_received"] = po.search_count(
+            [
+                ("receipt_status", "=", "partial"),
+                ("purchase_source", "=", "standard"),
+            ]
+        )
+        result["standard_purchase_receipt_delay"] = po.search_count(
+            [("po_status", "=", "material_delay"), ("purchase_source", "=", "standard")]
+        )
         # Standard Purchase order customization end
 
         # Local Purchase order Customization start.
-        result["local_purchase_to_issues"] = po.search_count([("po_status", "=", "to_issue"), ("purchase_source", "=", "local")])
-        result["local_purchase_ordered"] = po.search_count([("po_status", "=", "ordered"), ("purchase_source", "=", "local")])
-        result["local_purchase_pending_bill"] = po.search_count([("po_status", "=", "pending_bill"), ("purchase_source", "=", "local")])
-        result["local_purchase_bill_not_paid"] = po.search_count([("po_status", "=", "bill_not_paid"), ("purchase_source", "=", "local")])
-        result["local_purchase_bill_paid_not_received"] = po.search_count([("po_status", "=", "paid_not_received"), ("purchase_source", "=", "local")])
-        result["local_purchase_receipt_delay"] = po.search_count([("po_status", "=", "material_delay"), ("purchase_source", "=", "local")])
+        result["local_purchase_to_issues"] = po.search_count(
+            [("po_status", "=", "to_issue"), ("purchase_source", "=", "local")]
+        )
+        result["local_purchase_ordered"] = po.search_count(
+            [("po_status", "=", "ordered"), ("purchase_source", "=", "local")]
+        )
+        result["local_purchase_pending_bill"] = po.search_count(
+            [("po_status", "=", "pending_bill"), ("purchase_source", "=", "local")]
+        )
+        result["local_purchase_bill_not_paid"] = po.search_count(
+            [("po_status", "=", "bill_not_paid"), ("purchase_source", "=", "local")]
+        )
+        result["local_purchase_bill_paid_not_received"] = po.search_count(
+            [("po_status", "=", "paid_not_received"), ("purchase_source", "=", "local")]
+        )
+        result["local_purchase_partial_received"] = po.search_count(
+            [
+                ("receipt_status", "=", "partial"),
+                ("purchase_source", "=", "local"),
+            ]
+        )
+        result["local_purchase_receipt_delay"] = po.search_count(
+            [("po_status", "=", "material_delay"), ("purchase_source", "=", "local")]
+        )
         # Local Purchase order customization end
 
         # Online Purchase order        # Online Purchase
-        result["online_purchase_to_order"] = po.search_count([("po_status", "=", "to_issue"), ("purchase_source", "=", "online")])
-        result["online_purchase_ordered"] = po.search_count([("po_status", "=", "ordered"), ("purchase_source", "=", "online")])
-        result["online_purchase_acknowledged"] = po.search_count([("po_status", "=", "acknowledged"), ("purchase_source", "=", "online")])
-        result["online_purchase_shipped"] = po.search_count([("po_status", "=", "shipped"), ("purchase_source", "=", "online")])
-        result["online_purchase_delayed"] = po.search_count([("po_status", "=", "material_delay"), ("purchase_source", "=", "online")])
-        result["online_purchase_received"] = po.search_count([("po_status", "=", "received"), ("purchase_source", "=", "online")])
+        result["online_purchase_to_order"] = po.search_count(
+            [("po_status", "=", "to_issue"), ("purchase_source", "=", "online")]
+        )
+        result["online_purchase_ordered"] = po.search_count(
+            [("po_status", "=", "ordered"), ("purchase_source", "=", "online")]
+        )
+        result["online_purchase_acknowledged"] = po.search_count(
+            [("po_status", "=", "acknowledged"), ("purchase_source", "=", "online")]
+        )
+        result["online_purchase_shipped"] = po.search_count(
+            [("po_status", "=", "shipped"), ("purchase_source", "=", "online")]
+        )
+        result["online_purchase_delayed"] = po.search_count(
+            [("po_status", "=", "material_delay"), ("purchase_source", "=", "online")]
+        )
+        result["online_purchase_partial_received"] = po.search_count(
+            [
+                ("receipt_status", "=", "partial"),
+                ("purchase_source", "=", "online"),
+            ]
+        )
+        result["online_purchase_received"] = po.search_count(
+            [("po_status", "=", "received"), ("purchase_source", "=", "online")]
+        )
         # Online Purchase order customization end
 
         # Calculated values ('avg order value', 'avg days to purchase', and 'total last 7 days') note that 'avg order value' and
@@ -632,18 +728,18 @@ class PurchaseOrder(models.Model):
         currency = self.env.company.currency_id
         result["all_avg_order_value"] = format_amount(self.env, res[0] or 0, currency)
         result["all_total_last_7_days"] = format_amount(self.env, res[2] or 0, currency)
-        result["is_po_view"] = self.env.context.get('is_po_view', False)
+        result["is_po_view"] = self.env.context.get("is_po_view", False)
 
         return result
 
     def _prepare_picking(self):
         res = super()._prepare_picking()
-        res.update({'purchase_source':self.purchase_source})
+        res.update({"purchase_source": self.purchase_source})
         return res
 
     def _prepare_invoice(self):
         res = super()._prepare_invoice()
-        res.update({'purchase_source':self.purchase_source})
+        res.update({"purchase_source": self.purchase_source})
         return res
 
     def button_confirm(self):
@@ -664,21 +760,27 @@ class PurchaseOrder(models.Model):
 
             missing_pdd_products = []
             for line in order.order_line:
-                if not line.display_type and not line.customer_pdd and not line.product_id.is_delivery_charge:
+                if (
+                    not line.display_type
+                    and not line.customer_pdd
+                    and not line.product_id.is_delivery_charge
+                ):
                     missing_pdd_products.append(line.product_id.display_name)
 
             if errors or missing_pdd_products:
-                msg = _("Please provide values for the following missing fields before confirming:")
+                msg = _(
+                    "Please provide values for the following missing fields before confirming:"
+                )
                 if errors:
                     msg += "\n\n" + _("Header Fields:")
                     for error in errors:
                         msg += f"\n- {error}"
-                
+
                 if missing_pdd_products:
                     msg += "\n\n" + _("Customer PDD for Products:")
                     for product_name in missing_pdd_products:
                         msg += f"\n- {product_name}"
-                
+
                 raise ValidationError(msg)
 
         return super(PurchaseOrder, self).button_confirm()
@@ -719,3 +821,18 @@ class PurchaseOrder(models.Model):
             "target": "new",
             "context": {"default_purchase_id": self.id},
         }
+
+    @api.depends("picking_ids", "picking_ids.state")
+    def _compute_receipt_status(self):
+        "overide the method to change the logic of receipt status based on our added custom state 'delivered' in stock picking."
+        for order in self:
+            if not order.picking_ids or all(
+                p.state == "cancel" for p in order.picking_ids
+            ):
+                order.receipt_status = False
+            elif all(p.state in ["delivered", "cancel", "done"] for p in order.picking_ids):
+                order.receipt_status = "full"
+            elif any(p.state in ["delivered", "done"] for p in order.picking_ids):
+                order.receipt_status = "partial"
+            else:
+                order.receipt_status = "pending"

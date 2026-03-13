@@ -16,6 +16,7 @@
                     <field name="is_grn_entered_state" />
                     <field name="is_customer_invoiced_state" />
                     <field name="is_customer_invoice_paid_state" />
+                    <field name="show_expected_closing" />
                 </group>
             </xpath>           
         </field>

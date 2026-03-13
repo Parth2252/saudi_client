@@ -39,6 +39,16 @@
             <xpath expr="//field[@name='date_order']" position="attributes">
                 <attribute name="string">Delivery Date</attribute>
             </xpath>
+            <xpath expr="//field[@name='invoice_status']" position="before">
+                <field name="effective_date" column_invisible="True"/>
+                <field name="receipt_status" 
+                       optional="show" 
+                       widget="badge"
+                       decoration-success="receipt_status == 'full'"
+                       decoration-warning="receipt_status == 'partial'"
+                       decoration-danger="receipt_status == 'pending'"/>
+            </xpath>
+
 
         </field>
     </record>
@@ -81,6 +91,18 @@
                 <attribute name="column_invisible">False</attribute>
                 <attribute name="optional">show</attribute>
             </xpath>
+            <xpath expr="//field[@name='invoice_status']" position="before">
+                <field name="effective_date" column_invisible="True"/>
+                <field name="receipt_status" 
+                       optional="show" 
+                       widget="badge"
+                       decoration-success="receipt_status == 'full'"
+                       decoration-warning="receipt_status == 'partial'"
+                       decoration-danger="receipt_status == 'pending'"/>
+            </xpath>
+
+
+
         </field>
     </record>
     <record id="view_purchase_order_filter" model="ir.ui.view">
@@ -114,6 +136,9 @@
                 <filter name="standard_purchase_receipt_delay"
                 string="Standard Purchase – Receipt Delayed"
                 domain="[('po_status', '=', 'material_delay'), ('purchase_source', '=', 'standard')]"/>
+                <filter name="standard_purchase_partial_received"
+                string="Standard Purchase – Partially Received"
+                domain="[('receipt_status', '=', 'partial'), ('purchase_source', '=', 'standard')]"/>
 
 
                 <!-- Local Purchase -->
@@ -132,6 +157,9 @@
                 <filter name="local_purchase_receipt_delay"
                 string="Local Purchase – Receipt Delayed"
                 domain="[('po_status', '=', 'material_delay'), ('purchase_source', '=', 'local')]"/>
+                <filter name="local_purchase_partial_received"
+                string="Local Purchase – Partially Received"
+                domain="[('receipt_status', '=', 'partial'), ('purchase_source', '=', 'local')]"/>
 
 
                 <!-- Online Purchase -->
@@ -150,6 +178,9 @@
                 <filter name="online_purchase_received"
                 string="Online Purchase – Received"
                 domain="[('po_status', '=', 'received'), ('purchase_source', '=', 'online')]"/>
+                <filter name="online_purchase_partial_received"
+                string="Online Purchase – Partially Received"
+                domain="[('receipt_status', '=', 'partial'), ('purchase_source', '=', 'online')]"/>
             </xpath>
         </field>
     </record>
@@ -183,6 +214,9 @@
                 <filter name="standard_purchase_receipt_delay"
                 string="Standard Purchase – Receipt Delayed"
                 domain="[('po_status', '=', 'material_delay'), ('purchase_source', '=', 'standard')]"/>
+                <filter name="standard_purchase_partial_received"
+                string="Standard Purchase – Partially Received"
+                domain="[('receipt_status', '=', 'partial'), ('purchase_source', '=', 'standard')]"/>
 
 
                 <!-- Local Purchase -->
@@ -201,6 +235,9 @@
                 <filter name="local_purchase_receipt_delay"
                 string="Local Purchase – Receipt Delayed"
                 domain="[('po_status', '=', 'material_delay'), ('purchase_source', '=', 'local')]"/>
+                <filter name="local_purchase_partial_received"
+                string="Local Purchase – Partially Received"
+                domain="[('receipt_status', '=', 'partial'), ('purchase_source', '=', 'local')]"/>
 
 
                 <!-- Online Purchase -->
@@ -219,6 +256,9 @@
                 <filter name="online_purchase_received"
                 string="Online Purchase – Received"
                 domain="[('po_status', '=', 'received'), ('purchase_source', '=', 'online')]"/>
+                <filter name="online_purchase_partial_received"
+                string="Online Purchase – Partially Received"
+                domain="[('receipt_status', '=', 'partial'), ('purchase_source', '=', 'online')]"/>
             </xpath>
         </field>
     </record>
@@ -316,6 +356,11 @@
                      </span>
                 </div>
                 <field name="po_status" />
+                <field name="receipt_status"
+                       widget="badge"
+                       decoration-success="receipt_status == 'full'"
+                       decoration-warning="receipt_status == 'partial'"
+                       decoration-danger="receipt_status == 'pending'"/>
                 <field name="order_status"
                        decoration-success="order_status in ('acknowledged', 'shipped')"/>
                 <field name="tracking_number" class="text_teal" invisible="order_status != 'shipped'"/>
@@ -327,6 +372,7 @@
             <xpath expr="//page/field[@name='order_line']/list/field[@name='date_planned']" position="attributes">
                 <attribute name="required">1</attribute>
             </xpath>
+
 
         </field>
     </record>
