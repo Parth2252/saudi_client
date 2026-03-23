@@ -41,10 +41,19 @@ class SaleOrder(models.Model):
                 # After confirmation don't recalculate
                 order.validity_duration_days = order.validity_duration_days or 0
 
+    # Added new field to track who confirmed the SO
+    confirmed_user_id = fields.Many2one('res.users', string="Confirmed By", copy=False, help="The user who confirmed the sale order.")
+
     def action_confirm(self):
         for order in self:
             if not order.client_order_ref:
                 raise UserError(_("Customer PO Reference is required before confirming the order."))
+            if not order.payment_term_id:
+                raise UserError(_("Payment Term is required before confirming the order."))
+            if not order.incoterm:
+                raise UserError(_("Incoterm is required before confirming the order."))
+            if not order.incoterm_location:
+                raise UserError(_("Incoterm Location is required before confirming the order."))
             # Raise the validation if delivery date is missing in sol.
             # in sale.order (or purchase.order) wherever you validate, e.g. before confirm/save
             product_lines = self.order_line.filtered(lambda l: not l.display_type and l.product_id)
@@ -65,7 +74,15 @@ class SaleOrder(models.Model):
                 raise UserError(
                     _("Please set the Vendor Price for product(s): %s") % names
                 )
-        return super(SaleOrder, self).action_confirm()
+        res = super(SaleOrder, self).action_confirm()
+        for order in self:
+            order.confirmed_user_id = self.env.user
+            # Pushing the confirmed user to linked Purchase Orders
+            if order.client_order_ref:
+                linked_pos = self.env['purchase.order'].search([('po_reference', '=', order.client_order_ref)])
+                if linked_pos:
+                    linked_pos.write({'user_id': self.env.user.id})
+        return res
 
     # @api.constrains("client_order_ref")
     # def _check_client_order_ref(self):

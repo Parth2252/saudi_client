@@ -75,6 +75,9 @@
             <!--            NEW-->
 
 
+            <xpath expr="//field[@name='payment_term_id']" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
             <xpath expr="//field[@name='payment_term_id']" position="after">
 
                 <field name="client_order_ref"
@@ -106,8 +109,11 @@
         <field name="arch" type="xml">
             <!-- Move existing incoterm field -->
             <xpath expr="//field[@name='payment_term_id']" position="before">
-            <xpath expr="//field[@name='incoterm']" position="move"/>
-            <xpath expr="//field[@name='incoterm_location']" position="move"/>
+                <xpath expr="//field[@name='incoterm']" position="move"/>
+                <xpath expr="//field[@name='incoterm_location']" position="move"/>
+            </xpath>
+            <xpath expr="//field[@name='incoterm']" position="attributes">
+                <attribute name="required">1</attribute>
             </xpath>
         </field>
     </record>

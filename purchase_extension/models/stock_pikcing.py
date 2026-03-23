@@ -11,3 +11,4 @@ class StockPicking(models.Model):
         ],
         string="Purchase Source",
     )
+    sale_partner_id = fields.Many2one('res.partner', string='Sale Customer')

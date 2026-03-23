@@ -43,8 +43,8 @@ class ResConfigSettings(models.TransientModel):
 
         </data>
         """
-        view_id = self.env.ref('partner_address_language_secondary.view_form_res_partner_inherit')
-        view_id.arch_base = new_arch.replace('$LANG', second_lang or "Unknown Lang")
+        # view_id = self.env.ref('partner_address_language_secondary.view_form_res_partner_inherit')
+        # view_id.arch_base = new_arch.replace('$LANG', second_lang or "Unknown Lang")
 
         new_arch = """
         <data>

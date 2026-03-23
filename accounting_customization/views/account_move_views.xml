@@ -40,7 +40,13 @@
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-warning text-center" role="alert" invisible="bill_type or move_type not in ('in_invoice', 'in_refund')">
+                    <strong>Warning!</strong> Please set the <b>Bill Type</b> for this vendor bill.
+                </div>
+            </xpath>
             <xpath expr="//field[@name='ref']" position="after">
+                <field name="bill_type" invisible="move_type not in ('in_invoice', 'in_refund')"/>
                 <field name="payment_journal_id" />
                 <field name="buyer_id" invisible="move_type != 'in_invoice'" />
                 <field name="sale_partner_id" invisible="move_type != 'in_invoice'"/>
@@ -61,6 +67,7 @@
             <xpath expr="//search/group/filter[@name='groupy_by_journal']" position="after">
                 <filter string="Payment Journal" name="groupy_by_payment_journal" domain="[]" context="{'group_by': 'payment_journal_id'}"/>
                 <filter string="Buyer" name="groupy_by_buyer" domain="[]" context="{'group_by': 'buyer_id'}"/>
+                <filter string="Bill Type" name="groupy_by_bill_type" domain="[]" context="{'group_by': 'bill_type'}"/>
             </xpath>
             <xpath expr="//search/field[@name='ref']" position="before">
                 <field name="buyer_id" />
@@ -83,7 +90,7 @@
                 <filter name="partially_paid" string="Partially Paid Bills" domain="[('status_in_payment', '=', 'partial'), ('move_type', '=', 'in_invoice')]"/>
                 <filter name="fully_paid" string="Fully Paid Bills" domain="[('status_in_payment', '=', 'paid'), ('move_type', '=', 'in_invoice')]"/>
                 <filter name="credit_note" string="Credit Note" domain="[('move_type', '=', 'in_refund')]"/>
-                <filter name="utility_bills" string="Utility Bills" domain="[('move_type', '=', 'in_invoice'), ('journal_id.name', 'ilike', 'Utility')]"/>
+                <filter name="utility_bills" string="Utility Bills" domain="[('move_type', 'in', ('in_invoice', 'in_refund')), ('bill_type', '=', 'utility')]"/>
                 <separator/>
             </xpath>
         </field>

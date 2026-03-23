@@ -47,6 +47,12 @@ class AccountMove(models.Model):
 
     sale_partner_id = fields.Many2one('res.partner', string="Sale Customer")
     payment_time_date = fields.Datetime(string="Payment Date")
+    bill_type = fields.Selection([
+        ('utility', 'Utility Bills'),
+        ('material', 'Material Purchase'),
+        ('service', 'Service Bills'),
+        ('assets', 'Assets Purchase'),
+    ], string="Bill Type")
 
     @api.depends("matched_payment_ids")
     def _compute_payment_journal(self):
@@ -168,11 +174,11 @@ class AccountMove(models.Model):
             ('company_id', '=', company_id)
         ])
 
-        # Utility Bills (Placeholder - logic to be confirmed)
+        # Utility Bills
         utility_bills = self.search([
-            ('move_type', '=', move_type),
+            ('move_type', 'in', ('in_invoice', 'in_refund')),
             ('company_id', '=', company_id),
-            ('journal_id.name', 'ilike', 'Utility') # Example check
+            ('bill_type', '=', 'utility')
         ])
 
         def get_data(records, total_field='amount_total'):

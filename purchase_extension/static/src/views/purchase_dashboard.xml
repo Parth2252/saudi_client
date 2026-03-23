@@ -3,156 +3,179 @@
     <t t-inherit="purchase.PurchaseDashboard" t-inherit-mode="extension" >
         <xpath expr="//div[1]" position='replace'>
             <div class="o_purchase_dashboard container-fluid py-4 border-bottom bg-view">
-                <div class="d-flex justify-content-center gap-5 flex-nowrap px-0">
+                <style>
+                    .dash-container {
+                        display: flex;
+                        justify-content: center;
+                        gap: 40px;
+                        flex-wrap: wrap;
+                    }
+                    .dash-block {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                    }
+                    .dash-block-title {
+                        font-weight: 700;
+                        margin-bottom: 12px;
+                        font-size: 0.95rem;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    }
+                    .dash-box-container {
+                        display: flex;
+                        gap: 8px;
+                        justify-content: center;
+                    }
+                    .dash-box {
+                        display: flex;
+                        flex-direction: column;
+                        width: 100px;
+                        cursor: pointer;
+                        transition: transform 0.2s, opacity 0.2s;
+                        border-radius: 12px;
+                        overflow: hidden;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        border: none;
+                    }
+                    .dash-box:hover {
+                        transform: translateY(-2px);
+                        opacity: 0.95;
+                    }
+                    .dash-item {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 8px 4px;
+                        color: white;
+                        text-align: center;
+                        border-bottom: 0.5px solid rgba(255,255,255,0.15);
+                    }
+                    .dash-item:last-child {
+                        border-bottom: none;
+                    }
+                    .dash-title {
+                        height: 48px;
+                        font-size: 0.65rem;
+                        font-weight: 600;
+                        text-transform: uppercase;
+                        letter-spacing: 0.3px;
+                        line-height: 1.1;
+                    }
+                    .dash-count {
+                        height: 40px;
+                        font-size: 1.35rem;
+                        font-weight: 800;
+                    }
+                </style>
+                <div class="dash-container">
                     <!-- Standard Purchase Block -->
-                    <div class="flex-shrink-0">
-                        <div class="text-center fw-bold mb-2" style="color: #272AF5; font-size: 0.95rem;">
+                    <div class="dash-block">
+                        <div class="dash-block-title" style="color: #272AF5;">
                             Standard Purchase
                         </div>
-                        <div class="d-flex gap-1 justify-content-center">
-                            <div t-if="!purchaseData.is_po_view" class="p-0 border-0" t-on-click="setSearchContext" title="All Draft RFQs" filter_name="standard_purchase_to_issues" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #247DC4 !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['standard_purchase_to_issues']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">To Issue PO</div>
-                                </a>
+                        <div class="dash-box-container">
+                            <div t-if="!purchaseData.is_po_view" class="dash-box" t-on-click="setSearchContext" title="All Draft RFQs" filter_name="standard_purchase_to_issues" style="background-color: #247DC4 !important;">
+                                <div class="dash-item dash-title">To Issue PO</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['standard_purchase_to_issues']"/>
                             </div>
-                            <div class="p-0 border-0" t-on-click="setSearchContext" title="Ordered Purchase Orders" filter_name="standard_purchase_ordered" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #1FAC5E !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['standard_purchase_ordered']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">Ordered (PO)</div>
-                                </a>
+                            <div class="dash-box" t-on-click="setSearchContext" title="Ordered Purchase Orders" filter_name="standard_purchase_ordered" style="background-color: #1FAC5E !important;">
+                                <div class="dash-item dash-title">Ordered (PO)</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['standard_purchase_ordered']"/>
                             </div>
-                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Waiting RFQs" filter_name="standard_purchase_pending_bill" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #BF033C !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['standard_purchase_pending_bill']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">Pending Vendor Bill</div>
-                                </a>
+                            <div class="dash-box" t-on-click="setSearchContext" title="All Waiting RFQs" filter_name="standard_purchase_pending_bill" style="background-color: #BF033C !important;">
+                                <div class="dash-item dash-title">Pending Vendor Bill</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['standard_purchase_pending_bill']"/>
                             </div>
-                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Not Paid Bills" filter_name="standard_purchase_bill_not_paid" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #117888 !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['standard_purchase_bill_not_paid']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">Bill Not Paid</div>
-                                </a>
+                            <div class="dash-box" t-on-click="setSearchContext" title="All Not Paid Bills" filter_name="standard_purchase_bill_not_paid" style="background-color: #117888 !important;">
+                                <div class="dash-item dash-title">Bill Not Paid</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['standard_purchase_bill_not_paid']"/>
                             </div>
-                            <div class="p-0 border-0" t-on-click="setSearchContext" title="Bill Paid / Material Not Received" filter_name="standard_purchase_bill_paid_not_received" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #F48712 !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['standard_purchase_bill_paid_not_received']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">Bill Paid / Not Rcvd</div>
-                                </a>
+                            <div class="dash-box" t-on-click="setSearchContext" title="Bill Paid / Material Not Received" filter_name="standard_purchase_bill_paid_not_received" style="background-color: #F48712 !important;">
+                                <div class="dash-item dash-title">Bill Paid / Not Rcvd</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['standard_purchase_bill_paid_not_received']"/>
                             </div>
-                            <div class="p-0 border-0" t-on-click="setSearchContext" title="Partially Received" filter_name="standard_purchase_partial_received" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #4B0082 !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['standard_purchase_partial_received']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">Partially Received</div>
-                                </a>
+                            <div class="dash-box" t-on-click="setSearchContext" title="Partially Received" filter_name="standard_purchase_partial_received" style="background-color: #4B0082 !important;">
+                                <div class="dash-item dash-title">Partially Received</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['standard_purchase_partial_received']"/>
                             </div>
-                            <div class="p-0 border-0" t-on-click="setSearchContext" title="Material Delay" filter_name="standard_purchase_receipt_delay" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #8F000B !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['standard_purchase_receipt_delay']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">Material Delay</div>
-                                </a>
+                            <div class="dash-box" t-on-click="setSearchContext" title="Material Delay" filter_name="standard_purchase_receipt_delay" style="background-color: #8F000B !important;">
+                                <div class="dash-item dash-title">Material Delay</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['standard_purchase_receipt_delay']"/>
                             </div>
                         </div>
                     </div>
 
                     <!-- Local purchase block -->
-                    <div class="flex-shrink-0">
-                        <div class="text-center fw-bold mb-2" style="color: #06BA3D; font-size: 0.95rem;">
+                    <div class="dash-block">
+                        <div class="dash-block-title" style="color: #06BA3D;">
                             Local Purchase
                         </div>
-                        <div class="d-flex gap-1 justify-content-center">
-                            <div t-if="!purchaseData.is_po_view" class="p-0 border-0" t-on-click="setSearchContext" title="All Draft RFQs" filter_name="local_purchase_to_issues" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #247DC4 !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['local_purchase_to_issues']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">To Issue PO</div>
-                                </a>
+                        <div class="dash-box-container">
+                            <div t-if="!purchaseData.is_po_view" class="dash-box" t-on-click="setSearchContext" title="All Draft RFQs" filter_name="local_purchase_to_issues" style="background-color: #247DC4 !important;">
+                                <div class="dash-item dash-title">To Issue PO</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['local_purchase_to_issues']"/>
                             </div>
-                            <div class="p-0 border-0" t-on-click="setSearchContext" title="Ordered Purchase Orders" filter_name="local_purchase_ordered" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #1FAC5E !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['local_purchase_ordered']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">Ordered (PO)</div>
-                                </a>
+                            <div class="dash-box" t-on-click="setSearchContext" title="Ordered Purchase Orders" filter_name="local_purchase_ordered" style="background-color: #1FAC5E !important;">
+                                <div class="dash-item dash-title">Ordered (PO)</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['local_purchase_ordered']"/>
                             </div>
-                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Waiting RFQs" filter_name="local_purchase_pending_bill" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #BF033C !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['local_purchase_pending_bill']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">Pending Vendor Bill</div>
-                                </a>
+                            <div class="dash-box" t-on-click="setSearchContext" title="All Waiting RFQs" filter_name="local_purchase_pending_bill" style="background-color: #BF033C !important;">
+                                <div class="dash-item dash-title">Pending Vendor Bill</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['local_purchase_pending_bill']"/>
                             </div>
-                            <div class="p-0 border-0" t-on-click="setSearchContext" title="All Not Paid Bills" filter_name="local_purchase_bill_not_paid" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #117888 !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['local_purchase_bill_not_paid']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">Bill Not Paid</div>
-                                </a>
+                            <div class="dash-box" t-on-click="setSearchContext" title="All Not Paid Bills" filter_name="local_purchase_bill_not_paid" style="background-color: #117888 !important;">
+                                <div class="dash-item dash-title">Bill Not Paid</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['local_purchase_bill_not_paid']"/>
                             </div>
-                            <div class="p-0 border-0" t-on-click="setSearchContext" title="Bill Paid / Material Not Received" filter_name="local_purchase_bill_paid_not_received" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #F48712 !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['local_purchase_bill_paid_not_received']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">Bill Paid / Not Rcvd</div>
-                                </a>
+                            <div class="dash-box" t-on-click="setSearchContext" title="Bill Paid / Material Not Received" filter_name="local_purchase_bill_paid_not_received" style="background-color: #F48712 !important;">
+                                <div class="dash-item dash-title">Bill Paid / Not Rcvd</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['local_purchase_bill_paid_not_received']"/>
                             </div>
-                            <div class="p-0 border-0" t-on-click="setSearchContext" title="Partially Received" filter_name="local_purchase_partial_received" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #4B0082 !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['local_purchase_partial_received']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">Partially Received</div>
-                                </a>
+                            <div class="dash-box" t-on-click="setSearchContext" title="Partially Received" filter_name="local_purchase_partial_received" style="background-color: #4B0082 !important;">
+                                <div class="dash-item dash-title">Partially Received</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['local_purchase_partial_received']"/>
                             </div>
-                            <div class="p-0 border-0" t-on-click="setSearchContext" title="Material Delay" filter_name="local_purchase_receipt_delay" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #8F000B !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['local_purchase_receipt_delay']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">Material Delay</div>
-                                </a>
+                            <div class="dash-box" t-on-click="setSearchContext" title="Material Delay" filter_name="local_purchase_receipt_delay" style="background-color: #8F000B !important;">
+                                <div class="dash-item dash-title">Material Delay</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['local_purchase_receipt_delay']"/>
                             </div>
                         </div>
                     </div>
 
                     <!-- Online Purchase Block -->
-                    <div class="flex-shrink-0">
-                        <div class="text-center fw-bold mb-2" style="color: #EB6D05; font-size: 0.95rem;">
+                    <div class="dash-block">
+                        <div class="dash-block-title" style="color: #EB6D05;">
                             Online Purchase
                         </div>
-                        <div class="d-flex gap-1 justify-content-center">
-                            <div t-if="!purchaseData.is_po_view" class="p-0 border-0" t-on-click="setSearchContext" title="To Order" filter_name="online_purchase_to_order" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #247DC4 !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['online_purchase_to_order']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">To Order</div>
-                                </a>
+                        <div class="dash-box-container">
+                            <div t-if="!purchaseData.is_po_view" class="dash-box" t-on-click="setSearchContext" title="To Order" filter_name="online_purchase_to_order" style="background-color: #247DC4 !important;">
+                                <div class="dash-item dash-title">To Order</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['online_purchase_to_order']"/>
                             </div>
-                            <div class="p-0 border-0" t-on-click="setSearchContext" title="Ordered (Purchase Order)" filter_name="online_purchase_ordered" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #1FAC5E !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['online_purchase_ordered']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">Ordered (PO)</div>
-                                </a>
+                            <div class="dash-box" t-on-click="setSearchContext" title="Ordered (Purchase Order)" filter_name="online_purchase_ordered" style="background-color: #1FAC5E !important;">
+                                <div class="dash-item dash-title">Ordered (PO)</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['online_purchase_ordered']"/>
                             </div>
-                            <div class="p-0 border-0" t-on-click="setSearchContext" title="Ordered Acknowledged" filter_name="online_purchase_acknowledged" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #F48712 !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['online_purchase_acknowledged']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">Ordered Ack.</div>
-                                </a>
+                            <div class="dash-box" t-on-click="setSearchContext" title="Ordered Acknowledged" filter_name="online_purchase_acknowledged" style="background-color: #F48712 !important;">
+                                <div class="dash-item dash-title">Ordered Ack.</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['online_purchase_acknowledged']"/>
                             </div>
-                            <div class="p-0 border-0" t-on-click="setSearchContext" title="Order Shipped" filter_name="online_purchase_shipped" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #117888 !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['online_purchase_shipped']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">Order Shipped</div>
-                                </a>
+                            <div class="dash-box" t-on-click="setSearchContext" title="Order Shipped" filter_name="online_purchase_shipped" style="background-color: #117888 !important;">
+                                <div class="dash-item dash-title">Order Shipped</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['online_purchase_shipped']"/>
                             </div>
-                            <div class="p-0 border-0" t-on-click="setSearchContext" title="Delayed" filter_name="online_purchase_delayed" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #8F000B !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['online_purchase_delayed']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">Delayed</div>
-                                </a>
+                            <div class="dash-box" t-on-click="setSearchContext" title="Delayed" filter_name="online_purchase_delayed" style="background-color: #8F000B !important;">
+                                <div class="dash-item dash-title">Delayed</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['online_purchase_delayed']"/>
                             </div>
-                            <div class="p-0 border-0" t-on-click="setSearchContext" title="Partially Received" filter_name="online_purchase_partial_received" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #4B0082 !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['online_purchase_partial_received']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">Partially Received</div>
-                                </a>
+                            <div class="dash-box" t-on-click="setSearchContext" title="Partially Received" filter_name="online_purchase_partial_received" style="background-color: #4B0082 !important;">
+                                <div class="dash-item dash-title">Partially Received</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['online_purchase_partial_received']"/>
                             </div>
-                            <div class="p-0 border-0" t-on-click="setSearchContext" title="Received" filter_name="online_purchase_received" style="width: 82px;">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-4 d-flex flex-column align-items-center justify-content-center p-1 shadow-sm" style="background-color: #40094D !important; min-height: 80px; transition: transform 0.2s;">
-                                    <div class="fs-4 fw-bold" t-out="purchaseData['online_purchase_received']"/>
-                                    <div class="text-center" style="font-size: 0.65rem; line-height: 1.1;">Received</div>
-                                </a>
+                            <div class="dash-box" t-on-click="setSearchContext" title="Received" filter_name="online_purchase_received" style="background-color: #40094D !important;">
+                                <div class="dash-item dash-title">Received</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['online_purchase_received']"/>
                             </div>
                         </div>
                     </div>

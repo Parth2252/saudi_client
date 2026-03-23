@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="inventory_dashbaord_customization.InventoryDashboardListView" t-inherit="web.ListRenderer" t-inherit-mode="primary">
+        <xpath expr="//div[hasclass('o_list_renderer')]" position="before">
+            <InventoryDashBoard context="props.list.context" />
+        </xpath>
+    </t>
+
+    <t t-name="inventory_dashbaord_customization.InventoryDashboard">
+        <div class="o_inventory_dashboard ps-3 pe-3 pt-3 pb-3 bg-view border-bottom">
+            <style>
+                .dash-title-section {
+                    font-size: 1.1rem;
+                    font-weight: 700;
+                    color: #4c4c4c;
+                    margin-bottom: 15px;
+                    text-align: center;
+                    border-bottom: 2px solid #714B67;
+                    display: inline-block;
+                    width: auto;
+                    padding: 0 20px 5px 20px;
+                    margin-top: 20px;
+                }
+                .dash-title-wrapper {
+                    text-align: center;
+                    width: 100%;
+                }
+                .dash-container {
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: center;
+                    gap: 15px;
+                    margin-bottom: 30px;
+                    width: 100%;
+                }
+                .dash-box {
+                    display: flex;
+                    flex-direction: column;
+                    width: 160px;
+                    cursor: pointer;
+                    transition: transform 0.2s, opacity 0.2s;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+                    border: 1px solid rgba(0,0,0,0.05);
+                }
+                .dash-box:hover {
+                    transform: translateY(-2px);
+                    opacity: 0.9;
+                }
+                .dash-item {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 6px 5px;
+                    color: white;
+                    text-align: center;
+                }
+                .dash-title {
+                    height: 50px;
+                    font-size: 0.8rem;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    background-color: rgba(0,0,0,0.1);
+                    padding-top: 10px;
+                }
+                .dash-count {
+                    height: 50px;
+                    font-size: 1.6rem;
+                    font-weight: 800;
+                    padding-bottom: 5px;
+                }
+            </style>
+
+            <!-- Receipt and Return Orders -->
+            <t t-if="showReceipts">
+                <div class="dash-title-wrapper">
+                    <div class="dash-title-section">Receipt and Return Orders</div>
+                </div>
+                <div class="dash-container">
+                    <div class="dash-box" t-on-click="setSearchContext" filter_name="today_receivables" style="background-color: #247DC4;">
+                        <div class="dash-item dash-title">Today Receivables</div>
+                        <div class="dash-item dash-count" t-out="dashboardData['today_receivables']['count'] or 0"/>
+                    </div>
+                    <div class="dash-box" t-on-click="setSearchContext" filter_name="delayed_receivables" style="background-color: #BF033C;">
+                        <div class="dash-item dash-title">Delayed</div>
+                        <div class="dash-item dash-count" t-out="dashboardData['delayed_receivables']['count'] or 0"/>
+                    </div>
+                    <div class="dash-box" t-on-click="setSearchContext" filter_name="received" style="background-color: #1FAC5E;">
+                        <div class="dash-item dash-title">Received</div>
+                        <div class="dash-item dash-count" t-out="dashboardData['received']['count'] or 0"/>
+                    </div>
+                    <div class="dash-box" t-on-click="setSearchContext" filter_name="partially_received" style="background-color: #F48712;">
+                        <div class="dash-item dash-title">Partially Received</div>
+                        <div class="dash-item dash-count" t-out="dashboardData['partially_received']['count'] or 0"/>
+                    </div>
+                    <div class="dash-box" t-on-click="setSearchContext" filter_name="pending_invoice_receipts" style="background-color: #117888;">
+                        <div class="dash-item dash-title">Pending Invoice</div>
+                        <div class="dash-item dash-count" t-out="dashboardData['pending_invoice_receipts']['count'] or 0"/>
+                    </div>
+                    <div class="dash-box" t-on-click="setSearchContext" filter_name="done_receipts" style="background-color: #40094D;">
+                        <div class="dash-item dash-title">Done</div>
+                        <div class="dash-item dash-count" t-out="dashboardData['done_receipts']['count'] or 0"/>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Delivery and Customer Values -->
+            <t t-if="showDeliveries">
+                <div class="dash-title-wrapper">
+                    <div class="dash-title-section">Delivery and Customer Values</div>
+                </div>
+                <div class="dash-container">
+                    <div class="dash-box" t-on-click="setSearchContext" filter_name="today_deliveries" style="background-color: #247DC4;">
+                        <div class="dash-item dash-title">Today Deliverables</div>
+                        <div class="dash-item dash-count" t-out="dashboardData['today_deliveries']['count'] or 0"/>
+                    </div>
+                    <div class="dash-box" t-on-click="setSearchContext" filter_name="delayed_deliveries" style="background-color: #BF033C;">
+                        <div class="dash-item dash-title">Delayed</div>
+                        <div class="dash-item dash-count" t-out="dashboardData['delayed_deliveries']['count'] or 0"/>
+                    </div>
+                    <div class="dash-box" t-on-click="setSearchContext" filter_name="delivered" style="background-color: #1FAC5E;">
+                        <div class="dash-item dash-title">Delivered</div>
+                        <div class="dash-item dash-count" t-out="dashboardData['delivered']['count'] or 0"/>
+                    </div>
+                    <div class="dash-box" t-on-click="setSearchContext" filter_name="partially_delivered" style="background-color: #F48712;">
+                        <div class="dash-item dash-title">Partially Delivered</div>
+                        <div class="dash-item dash-count" t-out="dashboardData['partially_delivered']['count'] or 0"/>
+                    </div>
+                    <div class="dash-box" t-on-click="setSearchContext" filter_name="pending_grn" style="background-color: #117888;">
+                        <div class="dash-item dash-title">Pending GRN</div>
+                        <div class="dash-item dash-count" t-out="dashboardData['pending_grn']['count'] or 0"/>
+                    </div>
+                    <div class="dash-box" t-on-click="setSearchContext" filter_name="done_deliveries" style="background-color: #40094D;">
+                        <div class="dash-item dash-title">Done</div>
+                        <div class="dash-item dash-count" t-out="dashboardData['done_deliveries']['count'] or 0"/>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

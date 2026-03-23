@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit Stock Picking Search View to add dashboard filters -->
+    <record id="view_picking_internal_search_inherit_dashboard" model="ir.ui.view">
+        <field name="name">stock.picking.search.inherit.dashboard</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter string="Today Receivables" name="today_receivables"
+                        domain="[('picking_type_id.code', '=', 'incoming'), ('scheduled_date', '=', context_today().strftime('%Y-%m-%d')), ('state', 'not in', ('done', 'delivered', 'cancel'))]"/>
+                <filter string="Delayed (Incoming)" name="delayed_receivables"
+                        domain="[('picking_type_id.code', '=', 'incoming'), ('scheduled_date', '&lt;', context_today().strftime('%Y-%m-%d')), ('state', 'not in', ('done', 'delivered', 'cancel'))]"/>
+                <filter string="Received" name="received"
+                        domain="[('picking_type_id.code', '=', 'incoming'), ('state', 'in', ('done', 'delivered'))]"/>
+                <filter string="Partially Received" name="partially_received"
+                        domain="[('picking_type_id.code', '=', 'incoming'), ('state', 'in', ('done', 'delivered')), ('backorder_ids', '!=', False)]"/>
+                <filter string="Pending Invoice (Receipts)" name="pending_invoice_receipts"
+                        domain="[('picking_type_id.code', '=', 'incoming'), ('state', 'in', ('done', 'delivered')), ('purchase_id.invoice_status', '=', 'to invoice')]"/>
+                <filter string="Done (Receipts)" name="done_receipts"
+                        domain="[('picking_type_id.code', '=', 'incoming'), ('state', 'in', ('done', 'delivered'))]"/>
+
+                <separator/>
+                <filter string="Today Deliverables" name="today_deliveries"
+                        domain="[('picking_type_id.code', '=', 'outgoing'), ('scheduled_date', '=', context_today().strftime('%Y-%m-%d')), ('state', 'not in', ('done', 'delivered', 'cancel'))]"/>
+                <filter string="Delayed (Outgoing)" name="delayed_deliveries"
+                        domain="[('picking_type_id.code', '=', 'outgoing'), ('scheduled_date', '&lt;', context_today().strftime('%Y-%m-%d')), ('state', 'not in', ('done', 'delivered', 'cancel'))]"/>
+                <filter string="Delivered" name="delivered"
+                        domain="[('picking_type_id.code', '=', 'outgoing'), ('state', 'in', ('done', 'delivered'))]"/>
+                <filter string="Partially Delivered" name="partially_delivered"
+                        domain="[('picking_type_id.code', '=', 'outgoing'), ('state', 'in', ('done', 'delivered')), ('backorder_ids', '!=', False)]"/>
+                <filter string="Pending GRN" name="pending_grn"
+                        domain="[('picking_type_id.code', '=', 'outgoing'), ('state', 'in', ('done', 'delivered')), ('sale_id.invoice_status', '=', 'to invoice')]"/>
+                <filter string="Done (Deliveries)" name="done_deliveries"
+                        domain="[('picking_type_id.code', '=', 'outgoing'), ('state', 'in', ('done', 'delivered'))]"/>
+
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherit Stock Picking Tree View to add Dashboard -->
+    <record id="vpicktree_inherit_dashboard" model="ir.ui.view">
+        <field name="name">stock.picking.tree.inherit.dashboard</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">inventory_dashboard_list</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

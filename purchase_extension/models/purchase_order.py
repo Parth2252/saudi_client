@@ -91,6 +91,18 @@ class PurchaseOrder(models.Model):
             self.partner_invoice_id = False
             self.partner_shipping_id = False
 
+    @api.onchange("po_reference")
+    def _onchange_po_reference_set_buyer(self):
+        if self.po_reference:
+            sale_order = self.env["sale.order"].search(
+                [("client_order_ref", "=", self.po_reference)], limit=1
+            )
+            if sale_order and sale_order.confirmed_user_id:
+                self.user_id = sale_order.confirmed_user_id
+            elif sale_order:
+                # Fallback to salesperson if confirmed_user_id is not set
+                self.user_id = sale_order.user_id
+
     # Added new field.
     po_expire_date = fields.Datetime(copy=False)
 
@@ -103,24 +115,36 @@ class PurchaseOrder(models.Model):
         string="Purchase Source",
     )
 
-    order_confirmation_number = fields.Char(string="Order Confirmation Number")
+    order_confirmation_number = fields.Char(string="Order Confirmation Number", copy=False)
 
     order_status = fields.Selection(
         [
-            ("acknowledged", "Order Acknowledged by vendor"),
-            ("shipped", "order shipped"),
+            ("acknowledged", "Order Acknowledged by Vendor"),
+            ("shipped", "Order Shipped"),
         ],
         string="Order status",
+        copy=False,
     )
+
+    @api.constrains('order_status')
+    def _check_order_status_acknowledged(self):
+        for order in self:
+            if order.order_status == 'acknowledged':
+                is_paid = any(inv.payment_state in ('paid', 'in_payment') for inv in order.invoice_ids)
+                if not order.invoice_ids or not is_paid:
+                    raise ValidationError(_("You can only set the order status to 'Acknowledged' when a bill is created and fully paid."))
+
     attachment_type_ids = fields.Many2many(
         "purchase.attachment.type",
         string="Attachment Type",
         required=True,
     )
 
-    tracking_number = fields.Char(string="Tracking Number")
-    logistic_name = fields.Char(string="Logistic Name")
-    logistic_url = fields.Char(string="Logistic URL")
+    tracking_number = fields.Char(string="Tracking Number", copy=False)
+    logistic_name = fields.Char(string="Logistic Name", copy=False)
+    logistic_url = fields.Char(string="Logistic URL", copy=False)
+
+    is_delivery_removed = fields.Boolean(string="Delivery Charge Removed", default=False, copy=False)
 
     is_confirmation_filled = fields.Boolean(
         compute="_compute_is_confirmation_filled", string="Is Confirmation Filled"
@@ -278,6 +302,12 @@ class PurchaseOrder(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
+            if vals.get('po_reference'):
+                sale_order = self.env["sale.order"].search([("client_order_ref", "=", vals.get('po_reference'))], limit=1)
+                if sale_order and sale_order.confirmed_user_id:
+                    vals['user_id'] = sale_order.confirmed_user_id.id
+                elif sale_order:
+                    vals['user_id'] = sale_order.user_id.id
             purchase_source = vals.get("purchase_source")
             currency_id = vals.get("currency_id")
             currency_name = (
@@ -336,11 +366,35 @@ class PurchaseOrder(models.Model):
         return super().create(vals_list)
 
     def write(self, vals):
+        if vals.get('purchase_source') == 'online':
+            vals['is_delivery_removed'] = False
+            
+        if vals.get('po_reference'):
+            sale_order = self.env["sale.order"].search([("client_order_ref", "=", vals.get('po_reference'))], limit=1)
+            if sale_order and sale_order.confirmed_user_id:
+                vals['user_id'] = sale_order.confirmed_user_id.id
+            elif sale_order:
+                vals['user_id'] = sale_order.user_id.id
+            
+        # Check if delivery product is being removed
+        if 'order_line' in vals:
+            delivery_product = self.env['product.product'].sudo().search([('is_delivery_charge', '=', True)], limit=1)
+            if delivery_product:
+                for order in self:
+                    # Look for deletion commands (Command.DELETE or Command.UNLINK)
+                    for command in vals.get('order_line', []):  
+                        if isinstance(command, (list, tuple)):
+                            # Command.unlink (2, id, 0) or Command.delete (3, id, 0)
+                            if command[0] in (2, 3):
+                                line = self.env['purchase.order.line'].browse(command[1])
+                                if line.product_id == delivery_product:
+                                    order.is_delivery_removed = True
+
         res = super().write(vals)
         if self.env.context.get("skip_delivery_charge"):
             return res
         for order in self:
-            if order.purchase_source == "online":
+            if order.purchase_source == "online" and not order.is_delivery_removed:
                 delivery_product = (
                     self.env["product.product"]
                     .sudo()
@@ -376,6 +430,16 @@ class PurchaseOrder(models.Model):
 
     @api.onchange("purchase_source", "currency_id")
     def _onchange_purchase_source_currency_clear_taxes(self):
+        if self.purchase_source == 'online':
+            self.is_delivery_removed = False
+            delivery_product = self.env['product.product'].sudo().search([('is_delivery_charge', '=', True)], limit=1)
+            if delivery_product:
+                if not any(line.product_id == delivery_product for line in self.order_line):
+                    self.order_line = [Command.create({
+                        'product_id': delivery_product.id,
+                        'product_qty': 1,
+                        'taxes_id': [Command.clear()]
+                    })]
         if self.purchase_source == "online" or (
             self.purchase_source == "standard" and self.currency_id.name != "SAR"
         ):
@@ -734,7 +798,10 @@ class PurchaseOrder(models.Model):
 
     def _prepare_picking(self):
         res = super()._prepare_picking()
-        res.update({"purchase_source": self.purchase_source})
+        res.update({
+            "purchase_source": self.purchase_source,
+            "sale_partner_id": self.sale_partner_id.id,
+        })
         return res
 
     def _prepare_invoice(self):

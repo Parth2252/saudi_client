@@ -8,6 +8,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='location_dest_id'][2]" position="after">
                 <field name="purchase_source" />
+                <field name="sale_partner_id" />
             </xpath>
         </field>
     </record>
@@ -25,6 +26,7 @@
                     decoration-warning="purchase_source == 'online'"
                     widget="badge"
                     />
+                <field name="sale_partner_id" optional="show"/>
             </xpath>
         </field>
     </record>
@@ -40,6 +42,19 @@
             <xpath expr="//group" position="inside">
                 <filter string="Purchase Source" name="purchase_source" domain="[]" context="{'group_by':'purchase_source'}"/>
             </xpath>
+        </field>
+    </record>
+
+    <record id="action_update_picking_sale_partner" model="ir.actions.server">
+        <field name="name">Update Sale Customer (from PO)</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">
+for record in records:
+    if record.purchase_id and not record.sale_partner_id:
+        record.write({'sale_partner_id': record.purchase_id.sale_partner_id.id})
         </field>
     </record>
 
