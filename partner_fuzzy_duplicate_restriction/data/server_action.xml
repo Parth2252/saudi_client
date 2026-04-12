@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_rectify_duplicate_codes" model="ir.actions.server">
+        <field name="name">Rectify Duplicate Customer/Vendor IDs</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+            records.action_rectify_duplicate_codes()
+        </field>
+    </record>
+
+    <record id="action_compute_duplicate_contact_count" model="ir.actions.server">
+        <field name="name">Compute Similar Contacts Count</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+            records._compute_duplicate_contact_count()
+        </field>
+    </record>
+</odoo>

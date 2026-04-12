@@ -259,6 +259,23 @@ class SaleOrderLine(models.Model):
                 record.sr_no_so = number
                 number += 1
 
+    def action_add_section_below(self):
+        for line in self:
+            order = line.order_id
+
+            # sequence calculate
+            next_lines = order.order_line.filtered(lambda l: l.sequence > line.sequence)
+            next_seq = min(next_lines.mapped("sequence"), default=line.sequence + 10)
+
+            section_vals = {
+                "order_id": order.id,
+                "display_type": "line_section",
+                "name": "New Section",
+                "sequence": (line.sequence + next_seq) / 2,
+            }
+
+            self.env["sale.order.line"].create(section_vals)
+
     @api.model_create_multi
     def create(self, vals_list):
         """Auto-create sequence for purchase order lines."""

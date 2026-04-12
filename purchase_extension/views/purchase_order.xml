@@ -123,13 +123,16 @@
                 <!-- Standard Filter -->
                 <separator/>
                 <filter name="standard_purchase_to_issues" string="Standard Purchase To Issue" domain="[('po_status', '=', 'to_issue'), ('purchase_source', '=', 'standard')]"/>
-                <filter name="standard_purchase_ordered" string="Standard Purchase (Ordered)" domain="[('po_status', '=', 'ordered'), ('purchase_source', '=', 'standard')]"/>
+                <filter name="standard_purchase_received" string="Standard Purchase (Received)" domain="[('po_status', '=', 'received'), ('purchase_source', '=', 'standard')]"/>
                 <filter name="standard_purchase_pending_bill"
                 string="Standard Purchase – Pending Vendor Bill"
                 domain="[('po_status', '=', 'pending_bill'), ('purchase_source', '=', 'standard')]"/>
                 <filter name="standard_purchase_bill_not_paid"
                 string="Standard Purchase – Bill Not Paid"
                 domain="[('po_status', '=', 'bill_not_paid'), ('purchase_source', '=', 'standard')]"/>
+                <filter name="standard_purchase_partially_paid"
+                string="Standard Purchase – Partially Paid"
+                domain="[('po_status', '=', 'partially_paid'), ('purchase_source', '=', 'standard')]"/>
                 <filter name="standard_purchase_bill_paid_not_received"
                 string="Standard Purchase – Bill Paid but Not Received"
                 domain="[('po_status', '=', 'paid_not_received'), ('purchase_source', '=', 'standard')]"/>
@@ -144,13 +147,16 @@
                 <!-- Local Purchase -->
                 <separator/>
                 <filter name="local_purchase_to_issues" string="Local Purchase To Issue" domain="[('po_status', '=', 'to_issue'), ('purchase_source', '=', 'local')]"/>
-                <filter name="local_purchase_ordered" string="Local Purchase (Ordered)" domain="[('po_status', '=', 'ordered'), ('purchase_source', '=', 'local')]"/>
+                <filter name="local_purchase_received" string="Local Purchase (Received)" domain="[('po_status', '=', 'received'), ('purchase_source', '=', 'local')]"/>
                 <filter name="local_purchase_pending_bill"
                 string="Local Purchase – Pending Vendor Bill"
                 domain="[('po_status', '=', 'pending_bill'), ('purchase_source', '=', 'local')]"/>
                 <filter name="local_purchase_bill_not_paid"
                 string="Local Purchase – Bill Not Paid"
                 domain="[('po_status', '=', 'bill_not_paid'), ('purchase_source', '=', 'local')]"/>
+                <filter name="local_purchase_partially_paid"
+                string="Local Purchase – Partially Paid"
+                domain="[('po_status', '=', 'partially_paid'), ('purchase_source', '=', 'local')]"/>
                 <filter name="local_purchase_bill_paid_not_received"
                 string="Local Purchase – Bill Paid but Not Received"
                 domain="[('po_status', '=', 'paid_not_received'), ('purchase_source', '=', 'local')]"/>
@@ -201,13 +207,16 @@
                 <!-- Standard Filter -->
                 <separator/>
                 <filter name="standard_purchase_to_issues" string="Standard Purchase To Issue" domain="[('po_status', '=', 'to_issue'), ('purchase_source', '=', 'standard')]"/>
-                <filter name="standard_purchase_ordered" string="Standard Purchase (Ordered)" domain="[('po_status', '=', 'ordered'), ('purchase_source', '=', 'standard')]"/>
+                <filter name="standard_purchase_received" string="Standard Purchase (Received)" domain="[('po_status', '=', 'received'), ('purchase_source', '=', 'standard')]"/>
                 <filter name="standard_purchase_pending_bill"
                 string="Standard Purchase – Pending Vendor Bill"
                 domain="[('po_status', '=', 'pending_bill'), ('purchase_source', '=', 'standard')]"/>
                 <filter name="standard_purchase_bill_not_paid"
                 string="Standard Purchase – Bill Not Paid"
                 domain="[('po_status', '=', 'bill_not_paid'), ('purchase_source', '=', 'standard')]"/>
+                <filter name="standard_purchase_partially_paid"
+                string="Standard Purchase – Partially Paid"
+                domain="[('po_status', '=', 'partially_paid'), ('purchase_source', '=', 'standard')]"/>
                 <filter name="standard_purchase_bill_paid_not_received"
                 string="Standard Purchase – Bill Paid but Not Received"
                 domain="[('po_status', '=', 'paid_not_received'), ('purchase_source', '=', 'standard')]"/>
@@ -222,13 +231,16 @@
                 <!-- Local Purchase -->
                 <separator/>
                 <filter name="local_purchase_to_issues" string="Local Purchase To Issue" domain="[('po_status', '=', 'to_issue'), ('purchase_source', '=', 'local')]"/>
-                <filter name="local_purchase_ordered" string="Local Purchase (Ordered)" domain="[('po_status', '=', 'ordered'), ('purchase_source', '=', 'local')]"/>
+                <filter name="local_purchase_received" string="Local Purchase (Received)" domain="[('po_status', '=', 'received'), ('purchase_source', '=', 'local')]"/>
                 <filter name="local_purchase_pending_bill"
                 string="Local Purchase – Pending Vendor Bill"
                 domain="[('po_status', '=', 'pending_bill'), ('purchase_source', '=', 'local')]"/>
                 <filter name="local_purchase_bill_not_paid"
                 string="Local Purchase – Bill Not Paid"
                 domain="[('po_status', '=', 'bill_not_paid'), ('purchase_source', '=', 'local')]"/>
+                <filter name="local_purchase_partially_paid"
+                string="Local Purchase – Partially Paid"
+                domain="[('po_status', '=', 'partially_paid'), ('purchase_source', '=', 'local')]"/>
                 <filter name="local_purchase_bill_paid_not_received"
                 string="Local Purchase – Bill Paid but Not Received"
                 domain="[('po_status', '=', 'paid_not_received'), ('purchase_source', '=', 'local')]"/>
@@ -370,7 +382,7 @@
             </xpath>
 
             <xpath expr="//page/field[@name='order_line']/list/field[@name='date_planned']" position="attributes">
-                <attribute name="required">1</attribute>
+                <attribute name="required">not display_type</attribute>
             </xpath>
 
 
@@ -411,7 +423,7 @@
         <field name="model_id" ref="purchase.model_purchase_order"/>
         <field name="state">code</field>
         <field name="code">
-            env['purchase.order'].search([('po_reference', '!=', False)]).with_context(skip_product_url_check=True)._compute_po_status()
+            env['purchase.order'].search([]).with_context(skip_product_url_check=True)._compute_po_status()
         </field>
     </record>
 

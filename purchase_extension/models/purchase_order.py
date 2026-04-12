@@ -169,6 +169,7 @@ class PurchaseOrder(models.Model):
             ("received", "Received (Totally)"),
             ("pending_bill", "Pending Vendor Bill"),
             ("bill_not_paid", "Bill Not Paid"),
+            ("partially_paid", "Partially paid"),
             ("paid_not_received", "Bill Paid/Material not Received"),
         ],
         string="PO Status",
@@ -219,8 +220,12 @@ class PurchaseOrder(models.Model):
                 else:
                     # Standard/Local Flow Logic
                     is_paid = any(inv.payment_state == "paid" for inv in invoices)
+                    partially_paid = invoices and any(
+                        inv.state != "draft" and inv.payment_state == "partial"
+                        for inv in invoices
+                    )
                     bill_not_paid = invoices and any(
-                        inv.state != "draft" and inv.payment_state != "paid"
+                        inv.state != "draft" and inv.payment_state not in ("paid", "partial")
                         for inv in invoices
                     )
                     pending_bill = not invoices or any(
@@ -241,12 +246,17 @@ class PurchaseOrder(models.Model):
                         )
                     ):
                         status = "paid_not_received"
+                    elif partially_paid:
+                        status = "partially_paid"
                     elif bill_not_paid:
                         status = "bill_not_paid"
                     elif pending_bill:
                         status = "pending_bill"
                     else:
-                        status = "ordered"
+                        all_received = pickings and all(
+                            p.state in ("done", "delivered") for p in pickings
+                        )
+                        status = "received" if all_received else "ordered"
             order.po_status = status
 
     @api.depends("date_planned", "picking_ids.scheduled_date")
@@ -368,21 +378,21 @@ class PurchaseOrder(models.Model):
     def write(self, vals):
         if vals.get('purchase_source') == 'online':
             vals['is_delivery_removed'] = False
-            
+
         if vals.get('po_reference'):
             sale_order = self.env["sale.order"].search([("client_order_ref", "=", vals.get('po_reference'))], limit=1)
             if sale_order and sale_order.confirmed_user_id:
                 vals['user_id'] = sale_order.confirmed_user_id.id
             elif sale_order:
                 vals['user_id'] = sale_order.user_id.id
-            
+
         # Check if delivery product is being removed
         if 'order_line' in vals:
             delivery_product = self.env['product.product'].sudo().search([('is_delivery_charge', '=', True)], limit=1)
             if delivery_product:
                 for order in self:
                     # Look for deletion commands (Command.DELETE or Command.UNLINK)
-                    for command in vals.get('order_line', []):  
+                    for command in vals.get('order_line', []):
                         if isinstance(command, (list, tuple)):
                             # Command.unlink (2, id, 0) or Command.delete (3, id, 0)
                             if command[0] in (2, 3):
@@ -539,6 +549,8 @@ class PurchaseOrder(models.Model):
 
             # Validate current PO lines
             for line in po.order_line:
+                if line.display_type:
+                    continue
                 sale_line = sale_order.order_line.filtered(
                     lambda l: l.product_id == line.product_id
                 )
@@ -696,14 +708,17 @@ class PurchaseOrder(models.Model):
         result["standard_purchase_to_issues"] = po.search_count(
             [("po_status", "=", "to_issue"), ("purchase_source", "=", "standard")]
         )
-        result["standard_purchase_ordered"] = po.search_count(
-            [("po_status", "=", "ordered"), ("purchase_source", "=", "standard")]
+        result["standard_purchase_received"] = po.search_count(
+            [("po_status", "=", "received"), ("purchase_source", "=", "standard")]
         )
         result["standard_purchase_pending_bill"] = po.search_count(
             [("po_status", "=", "pending_bill"), ("purchase_source", "=", "standard")]
         )
         result["standard_purchase_bill_not_paid"] = po.search_count(
             [("po_status", "=", "bill_not_paid"), ("purchase_source", "=", "standard")]
+        )
+        result["standard_purchase_partially_paid"] = po.search_count(
+            [("po_status", "=", "partially_paid"), ("purchase_source", "=", "standard")]
         )
         result["standard_purchase_bill_paid_not_received"] = po.search_count(
             [
@@ -726,14 +741,17 @@ class PurchaseOrder(models.Model):
         result["local_purchase_to_issues"] = po.search_count(
             [("po_status", "=", "to_issue"), ("purchase_source", "=", "local")]
         )
-        result["local_purchase_ordered"] = po.search_count(
-            [("po_status", "=", "ordered"), ("purchase_source", "=", "local")]
+        result["local_purchase_received"] = po.search_count(
+            [("po_status", "=", "received"), ("purchase_source", "=", "local")]
         )
         result["local_purchase_pending_bill"] = po.search_count(
             [("po_status", "=", "pending_bill"), ("purchase_source", "=", "local")]
         )
         result["local_purchase_bill_not_paid"] = po.search_count(
             [("po_status", "=", "bill_not_paid"), ("purchase_source", "=", "local")]
+        )
+        result["local_purchase_partially_paid"] = po.search_count(
+            [("po_status", "=", "partially_paid"), ("purchase_source", "=", "local")]
         )
         result["local_purchase_bill_paid_not_received"] = po.search_count(
             [("po_status", "=", "paid_not_received"), ("purchase_source", "=", "local")]

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_fuzzy_duplicate" model="ir.ui.view">
+        <field name="name">res.partner.form.fuzzy.duplicate</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_duplicate_contacts"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-users"
+                        invisible="duplicate_contact_count == 0">
+                    <field name="duplicate_contact_count" widget="statinfo" string="Duplicates"/>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="force_new_contact" widget="boolean_toggle"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

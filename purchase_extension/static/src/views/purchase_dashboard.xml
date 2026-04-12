@@ -79,10 +79,7 @@
                                 <div class="dash-item dash-title">To Issue PO</div>
                                 <div class="dash-item dash-count" t-out="purchaseData['standard_purchase_to_issues']"/>
                             </div>
-                            <div class="dash-box" t-on-click="setSearchContext" title="Ordered Purchase Orders" filter_name="standard_purchase_ordered" style="background-color: #1FAC5E !important;">
-                                <div class="dash-item dash-title">Ordered (PO)</div>
-                                <div class="dash-item dash-count" t-out="purchaseData['standard_purchase_ordered']"/>
-                            </div>
+
                             <div class="dash-box" t-on-click="setSearchContext" title="All Waiting RFQs" filter_name="standard_purchase_pending_bill" style="background-color: #BF033C !important;">
                                 <div class="dash-item dash-title">Pending Vendor Bill</div>
                                 <div class="dash-item dash-count" t-out="purchaseData['standard_purchase_pending_bill']"/>
@@ -91,6 +88,10 @@
                                 <div class="dash-item dash-title">Bill Not Paid</div>
                                 <div class="dash-item dash-count" t-out="purchaseData['standard_purchase_bill_not_paid']"/>
                             </div>
+                            <div class="dash-box" t-on-click="setSearchContext" title="Partially Paid" filter_name="standard_purchase_partially_paid" style="background-color: #CA6F1E !important;">
+                                <div class="dash-item dash-title">Partially Paid</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['standard_purchase_partially_paid']"/>
+                            </div>
                             <div class="dash-box" t-on-click="setSearchContext" title="Bill Paid / Material Not Received" filter_name="standard_purchase_bill_paid_not_received" style="background-color: #F48712 !important;">
                                 <div class="dash-item dash-title">Bill Paid / Not Rcvd</div>
                                 <div class="dash-item dash-count" t-out="purchaseData['standard_purchase_bill_paid_not_received']"/>
@@ -98,6 +99,10 @@
                             <div class="dash-box" t-on-click="setSearchContext" title="Partially Received" filter_name="standard_purchase_partial_received" style="background-color: #4B0082 !important;">
                                 <div class="dash-item dash-title">Partially Received</div>
                                 <div class="dash-item dash-count" t-out="purchaseData['standard_purchase_partial_received']"/>
+                            </div>
+                            <div class="dash-box" t-on-click="setSearchContext" title="Received" filter_name="standard_purchase_received" style="background-color: #40094D !important;">
+                                <div class="dash-item dash-title">Received</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['standard_purchase_received']"/>
                             </div>
                             <div class="dash-box" t-on-click="setSearchContext" title="Material Delay" filter_name="standard_purchase_receipt_delay" style="background-color: #8F000B !important;">
                                 <div class="dash-item dash-title">Material Delay</div>
@@ -116,10 +121,7 @@
                                 <div class="dash-item dash-title">To Issue PO</div>
                                 <div class="dash-item dash-count" t-out="purchaseData['local_purchase_to_issues']"/>
                             </div>
-                            <div class="dash-box" t-on-click="setSearchContext" title="Ordered Purchase Orders" filter_name="local_purchase_ordered" style="background-color: #1FAC5E !important;">
-                                <div class="dash-item dash-title">Ordered (PO)</div>
-                                <div class="dash-item dash-count" t-out="purchaseData['local_purchase_ordered']"/>
-                            </div>
+
                             <div class="dash-box" t-on-click="setSearchContext" title="All Waiting RFQs" filter_name="local_purchase_pending_bill" style="background-color: #BF033C !important;">
                                 <div class="dash-item dash-title">Pending Vendor Bill</div>
                                 <div class="dash-item dash-count" t-out="purchaseData['local_purchase_pending_bill']"/>
@@ -128,6 +130,10 @@
                                 <div class="dash-item dash-title">Bill Not Paid</div>
                                 <div class="dash-item dash-count" t-out="purchaseData['local_purchase_bill_not_paid']"/>
                             </div>
+                            <div class="dash-box" t-on-click="setSearchContext" title="Partially Paid" filter_name="local_purchase_partially_paid" style="background-color: #CA6F1E !important;">
+                                <div class="dash-item dash-title">Partially Paid</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['local_purchase_partially_paid']"/>
+                            </div>
                             <div class="dash-box" t-on-click="setSearchContext" title="Bill Paid / Material Not Received" filter_name="local_purchase_bill_paid_not_received" style="background-color: #F48712 !important;">
                                 <div class="dash-item dash-title">Bill Paid / Not Rcvd</div>
                                 <div class="dash-item dash-count" t-out="purchaseData['local_purchase_bill_paid_not_received']"/>
@@ -135,6 +141,10 @@
                             <div class="dash-box" t-on-click="setSearchContext" title="Partially Received" filter_name="local_purchase_partial_received" style="background-color: #4B0082 !important;">
                                 <div class="dash-item dash-title">Partially Received</div>
                                 <div class="dash-item dash-count" t-out="purchaseData['local_purchase_partial_received']"/>
+                            </div>
+                            <div class="dash-box" t-on-click="setSearchContext" title="Received" filter_name="local_purchase_received" style="background-color: #40094D !important;">
+                                <div class="dash-item dash-title">Received</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['local_purchase_received']"/>
                             </div>
                             <div class="dash-box" t-on-click="setSearchContext" title="Material Delay" filter_name="local_purchase_receipt_delay" style="background-color: #8F000B !important;">
                                 <div class="dash-item dash-title">Material Delay</div>

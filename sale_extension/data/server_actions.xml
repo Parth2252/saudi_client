@@ -55,5 +55,25 @@
                 records.update_old_vendor_product_name_to_uppercase()
             </field>
         </record>
+        <record id="action_set_mto_buy_route" model="ir.actions.server">
+            <field name="name">Set MTO &amp; Buy Routes</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="sale_extension.model_product_template"/>
+            <field name="binding_model_id" ref="sale_extension.model_product_template"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="code">
+                records.action_set_mto_route()
+            </field>
+        </record>
+        <record id="action_set_mto_buy_route_variant" model="ir.actions.server">
+            <field name="name">Set MTO &amp; Buy Routes (Variant)</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="sale_extension.model_product_product"/>
+            <field name="binding_model_id" ref="sale_extension.model_product_product"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="code">
+                records.action_set_mto_route()
+            </field>
+        </record>
     </data>
 </odoo>

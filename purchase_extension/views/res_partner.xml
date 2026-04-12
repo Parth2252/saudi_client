@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_inherit_online_order" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.online.order</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//span[field[@name='is_vendor']]" position="after">
+                <span class="d-inline-block">
+                    <field name="is_online_order"/>
+                    <label for="is_online_order"/>
+                </span>
+            </xpath>
+        </field>
+    </record>
+</odoo>

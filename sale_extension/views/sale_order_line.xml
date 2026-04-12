@@ -45,6 +45,7 @@
             </xpath>
             <xpath expr="/form/sheet/notebook/page/field[@name='order_line']/list/field[@name='product_template_id']"
                    position="before">
+                <button name="action_add_section_below" type="object" icon="fa-plus" title="Add Section Below"/>
                 <field name="select_for_new_quotation" nolabel="1" invisible="display_type"/>
                 <field name="sr_no_so"/>
 

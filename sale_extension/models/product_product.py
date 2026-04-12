@@ -51,3 +51,14 @@ class ProductProduct(models.Model):
         for record in self:
             if record.name:
                 record.name = record.name.upper()
+
+    def action_set_mto_route(self):
+        mto_route = self.env.ref('stock.route_warehouse0_mto', raise_if_not_found=False)
+        buy_route = self.env.ref('purchase_stock.route_warehouse0_buy', raise_if_not_found=False)
+        for record in self:
+            routes = record.route_ids.ids
+            if mto_route and mto_route.id not in routes:
+                routes.append(mto_route.id)
+            if buy_route and buy_route.id not in routes:
+                routes.append(buy_route.id)
+            record.write({'route_ids': [(6, 0, routes)]})

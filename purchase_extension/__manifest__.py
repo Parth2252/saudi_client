@@ -8,7 +8,7 @@
 Purchase Extended
     """,
     'category': 'Custom',
-    'depends': ['product','purchase', 'sale_purchase_stock','purchase_stock','account', 'crm'],
+    'depends': ['product','purchase', 'sale_purchase_stock','purchase_stock','account', 'crm', 'star_cust_vendor_bifurcation'],
     'data': [
         "data/purchase_data.xml",
         "security/ir.model.access.csv",
@@ -23,6 +23,7 @@ Purchase Extended
         'views/product.xml',
         'views/stock_picking.xml',
         'views/account.move.xml',
+        'views/res_partner.xml',
     ],
     'demo': [
     ],
