@@ -224,16 +224,20 @@ class SaleOrderLine(models.Model):
     #         line.offered_description_display = line.offered_description_id.display_name if line.offered_description_id else "AS SPECIFIED"
 
     @api.depends(
-        "offered_description_id", "product_id", "product_uom", "product_uom_qty"
+        "offered_description_id", "product_id", "product_uom", "product_uom_qty",
+        "vendor_price", "order_id.custom_margin_percent"
     )
     def _compute_price_unit(self):
         for line in self:
             # Don't compute the price for deleted lines.
             if not line.order_id:
                 continue
+            
+            if line.vendor_price or line.order_id.custom_margin_percent:
+                line.price_unit = line.vendor_price + (line.vendor_price * (line.order_id.custom_margin_percent / 100.0))
             # check if the price has been manually set or there is already invoiced amount.
             # if so, the price shouldn't change as it might have been manually edited.
-            if line.offered_description_id:
+            elif line.offered_description_id:
                 line = line.with_company(line.company_id)
                 line.price_unit = line.offered_description_id.list_price
             else:

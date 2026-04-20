@@ -61,7 +61,7 @@ class PurchaseOrder(models.Model):
     date_order_display = fields.Char(
         string="Delivery Time", compute="_compute_date_order_display"
     )
-    contact_id = fields.Many2one("res.partner", "Customer Contact", readonly=True)
+    contact_id = fields.Many2one("res.partner", "Vendor Contact Person", readonly=True)
     customer_contact_id = fields.Many2one(
         "res.partner",
         string="Customer Contact",
@@ -90,6 +90,10 @@ class PurchaseOrder(models.Model):
         else:
             self.partner_invoice_id = False
             self.partner_shipping_id = False
+
+    @api.onchange("partner_id")
+    def _onchange_partner_id_clear_contact(self):
+        self.contact_id = False
 
     @api.onchange("po_reference")
     def _onchange_po_reference_set_buyer(self):
@@ -219,17 +223,18 @@ class PurchaseOrder(models.Model):
                         status = "ordered"  # Default for confirmed online
                 else:
                     # Standard/Local Flow Logic
-                    is_paid = any(inv.payment_state == "paid" for inv in invoices)
-                    partially_paid = invoices and any(
+                    not_cancelled_invoices = invoices.filtered(lambda inv: inv.state != 'cancel')
+                    is_paid = any(inv.payment_state in ("paid", "in_payment", "reversed") for inv in not_cancelled_invoices)
+                    partially_paid = not_cancelled_invoices and any(
                         inv.state != "draft" and inv.payment_state == "partial"
-                        for inv in invoices
+                        for inv in not_cancelled_invoices
                     )
-                    bill_not_paid = invoices and any(
-                        inv.state != "draft" and inv.payment_state not in ("paid", "partial")
-                        for inv in invoices
+                    bill_not_paid = not_cancelled_invoices and any(
+                        inv.state != "draft" and inv.payment_state not in ("paid", "partial", "reversed", "in_payment")
+                        for inv in not_cancelled_invoices
                     )
-                    pending_bill = not invoices or any(
-                        inv.state == "draft" for inv in invoices
+                    pending_bill = not not_cancelled_invoices or any(
+                        inv.state == "draft" for inv in not_cancelled_invoices
                     )
 
                     if (
@@ -256,8 +261,9 @@ class PurchaseOrder(models.Model):
                         all_received = pickings and all(
                             p.state in ("done", "delivered") for p in pickings
                         )
-                        status = "received" if all_received else "ordered"
-            order.po_status = status
+                        status = "received"
+            if order.po_status != status:
+                order.with_context(skip_delivery_charge=True).write({'po_status': status})
 
     @api.depends("date_planned", "picking_ids.scheduled_date")
     def _compute_receipt_delay(self):
@@ -705,6 +711,9 @@ class PurchaseOrder(models.Model):
         )
 
         # Standard Purchase order Customization start.
+        result["standard_purchase_to_approve"] = po.search_count(
+            [("state", "=", "to approve"), ("purchase_source", "=", "standard")]
+        )
         result["standard_purchase_to_issues"] = po.search_count(
             [("po_status", "=", "to_issue"), ("purchase_source", "=", "standard")]
         )
@@ -736,8 +745,11 @@ class PurchaseOrder(models.Model):
             [("po_status", "=", "material_delay"), ("purchase_source", "=", "standard")]
         )
         # Standard Purchase order customization end
-
+ 
         # Local Purchase order Customization start.
+        result["local_purchase_to_approve"] = po.search_count(
+            [("state", "=", "to approve"), ("purchase_source", "=", "local")]
+        )
         result["local_purchase_to_issues"] = po.search_count(
             [("po_status", "=", "to_issue"), ("purchase_source", "=", "local")]
         )
@@ -768,6 +780,9 @@ class PurchaseOrder(models.Model):
         # Local Purchase order customization end
 
         # Online Purchase order        # Online Purchase
+        result["online_purchase_to_approve"] = po.search_count(
+            [("state", "=", "to approve"), ("purchase_source", "=", "online")]
+        )
         result["online_purchase_to_order"] = po.search_count(
             [("po_status", "=", "to_issue"), ("purchase_source", "=", "online")]
         )
@@ -911,13 +926,14 @@ class PurchaseOrder(models.Model):
     def _compute_receipt_status(self):
         "overide the method to change the logic of receipt status based on our added custom state 'delivered' in stock picking."
         for order in self:
-            if not order.picking_ids or all(
-                p.state == "cancel" for p in order.picking_ids
+            pickings = order.picking_ids.filtered(lambda p: p.picking_type_code == 'incoming')
+            if not pickings or all(
+                p.state == "cancel" for p in pickings
             ):
                 order.receipt_status = False
-            elif all(p.state in ["delivered", "cancel", "done"] for p in order.picking_ids):
+            elif all(p.state in ["delivered", "cancel", "done"] for p in pickings):
                 order.receipt_status = "full"
-            elif any(p.state in ["delivered", "done"] for p in order.picking_ids):
+            elif any(p.state in ["delivered", "done"] for p in pickings):
                 order.receipt_status = "partial"
             else:
                 order.receipt_status = "pending"

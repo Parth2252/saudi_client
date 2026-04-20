@@ -43,7 +43,7 @@ export class CrmDashBoard extends Component {
             return;
         }
 
-        const dashFilterNames = ['open_rfq', 'submitted_offer', 'order_confirmed', 'delayed_rfq'];
+        const dashFilterNames = ['open_rfq', 'submitted_offer', 'order_confirmed', 'delayed_rfq', 'today_closing_rfq'];
 
         // Find all search items for the dashboard
         const allDashItems = this.env.searchModel.getSearchItems((item) =>

@@ -122,6 +122,7 @@
             <xpath expr="//filter[@name='starred']" position="after">
                 <!-- Standard Filter -->
                 <separator/>
+                <filter name="standard_purchase_to_approve" string="Standard Purchase (To Approve)" domain="[('state', '=', 'to approve'), ('purchase_source', '=', 'standard')]"/>
                 <filter name="standard_purchase_to_issues" string="Standard Purchase To Issue" domain="[('po_status', '=', 'to_issue'), ('purchase_source', '=', 'standard')]"/>
                 <filter name="standard_purchase_received" string="Standard Purchase (Received)" domain="[('po_status', '=', 'received'), ('purchase_source', '=', 'standard')]"/>
                 <filter name="standard_purchase_pending_bill"
@@ -146,6 +147,7 @@
 
                 <!-- Local Purchase -->
                 <separator/>
+                <filter name="local_purchase_to_approve" string="Local Purchase (To Approve)" domain="[('state', '=', 'to approve'), ('purchase_source', '=', 'local')]"/>
                 <filter name="local_purchase_to_issues" string="Local Purchase To Issue" domain="[('po_status', '=', 'to_issue'), ('purchase_source', '=', 'local')]"/>
                 <filter name="local_purchase_received" string="Local Purchase (Received)" domain="[('po_status', '=', 'received'), ('purchase_source', '=', 'local')]"/>
                 <filter name="local_purchase_pending_bill"
@@ -170,6 +172,7 @@
 
                 <!-- Online Purchase -->
                 <separator/>
+                <filter name="online_purchase_to_approve" string="Online Purchase (To Approve)" domain="[('state', '=', 'to approve'), ('purchase_source', '=', 'online')]"/>
                 <filter name="online_purchase_to_order" string="Online Purchase (To Order)" domain="[('po_status', '=', 'to_issue'), ('purchase_source', '=', 'online')]"/>
                 <filter name="online_purchase_ordered" string="Online Purchase (Ordered)" domain="[('po_status', '=', 'ordered'), ('purchase_source', '=', 'online')]"/>
                 <filter name="online_purchase_acknowledged"
@@ -206,6 +209,7 @@
             <xpath expr="//filter[@name='starred']" position="after">
                 <!-- Standard Filter -->
                 <separator/>
+                <filter name="standard_purchase_to_approve" string="Standard Purchase (To Approve)" domain="[('state', '=', 'to approve'), ('purchase_source', '=', 'standard')]"/>
                 <filter name="standard_purchase_to_issues" string="Standard Purchase To Issue" domain="[('po_status', '=', 'to_issue'), ('purchase_source', '=', 'standard')]"/>
                 <filter name="standard_purchase_received" string="Standard Purchase (Received)" domain="[('po_status', '=', 'received'), ('purchase_source', '=', 'standard')]"/>
                 <filter name="standard_purchase_pending_bill"
@@ -230,6 +234,7 @@
 
                 <!-- Local Purchase -->
                 <separator/>
+                <filter name="local_purchase_to_approve" string="Local Purchase (To Approve)" domain="[('state', '=', 'to approve'), ('purchase_source', '=', 'local')]"/>
                 <filter name="local_purchase_to_issues" string="Local Purchase To Issue" domain="[('po_status', '=', 'to_issue'), ('purchase_source', '=', 'local')]"/>
                 <filter name="local_purchase_received" string="Local Purchase (Received)" domain="[('po_status', '=', 'received'), ('purchase_source', '=', 'local')]"/>
                 <filter name="local_purchase_pending_bill"
@@ -254,6 +259,7 @@
 
                 <!-- Online Purchase -->
                 <separator/>
+                <filter name="online_purchase_to_approve" string="Online Purchase (To Approve)" domain="[('state', '=', 'to approve'), ('purchase_source', '=', 'online')]"/>
                 <filter name="online_purchase_to_order" string="Online Purchase (To Order)" domain="[('po_status', '=', 'to_issue'), ('purchase_source', '=', 'online')]"/>
                 <filter name="online_purchase_ordered" string="Online Purchase (Ordered)" domain="[('po_status', '=', 'ordered'), ('purchase_source', '=', 'online')]"/>
                 <filter name="online_purchase_acknowledged"
@@ -337,7 +343,7 @@
                        domain="['&amp;', ('parent_id', '=', partner_id), ('is_company', '!=', True), '|', ('company_id', '=', False), ('company_id', '=', company_id)]"
                        widget="res_partner_many2one"
                        context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}"
-                       placeholder="Type to find a customer contact..." readonly="state in ['cancel', 'sale']"/>
+                       placeholder="Type to find a vendor contact..." readonly="state in ['cancel', 'sale']"/>
                 <field name="customer_contact_id"
                        widget="res_partner_many2one"
                        context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}"

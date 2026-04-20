@@ -4,3 +4,4 @@ access_order_confirmation_wizard,order.confirmation.wizard,model_order_confirmat
 access_order_status_wizard,order.status.wizard,model_order_status_wizard,,1,1,1,1
 access_create_new_rfq_wizard,create.new.rfq.wizard,model_create_new_rfq_wizard,,1,1,1,1
 access_purchase_attachment_type,purchase.attachment.type,model_purchase_attachment_type,,1,1,1,1
+access_receipt_extra_qty_wizard,receipt.extra.qty.wizard,model_receipt_extra_qty_wizard,,1,1,1,1

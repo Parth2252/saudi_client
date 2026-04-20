@@ -67,7 +67,9 @@
                 <attribute name="context">{'default_type': 'invoice'}</attribute>
             </field>
 
-            <!-- Delivery address filter -->
+            <field name="partner_shipping_id" position="after">
+                <field name="custom_margin_percent" placeholder="Enter Margin %"/>
+            </field>
             <field name="partner_shipping_id" position="attributes">
                 <attribute name="domain">[('type', '=', 'delivery'), ('parent_id', '=', partner_id)]</attribute>
                 <attribute name="context">{'default_type': 'delivery'}</attribute>

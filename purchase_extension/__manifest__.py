@@ -17,6 +17,7 @@ Purchase Extended
         "wizard/order_confirmation_wizard_view.xml",
         "wizard/order_status_wizard_view.xml",
         "wizard/create_new_rfq_wizard_view.xml",
+        "wizard/receipt_extra_qty_wizard_view.xml",
         'report/purchase_quotation_report.xml',
         'report/purchase_report.xml',
         'views/purchase_order.xml',

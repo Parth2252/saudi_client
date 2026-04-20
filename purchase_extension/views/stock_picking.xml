@@ -6,9 +6,18 @@
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//header" position="after">
+                <field name="show_qty_warning" invisible="1"/>
+                <div class="alert alert-warning text-center" role="alert" invisible="not show_qty_warning" style="margin-bottom:0px;">
+                    <strong>Attention!</strong> The quantities are currently 0. Please enter the received quantity manually.
+                </div>
+            </xpath>
             <xpath expr="//field[@name='location_dest_id'][2]" position="after">
                 <field name="purchase_source" />
                 <field name="sale_partner_id" />
+                <field name="po_status" />
+                <field name="billing_status" />
+                <field name="extra_qty_reason" invisible="not extra_qty_reason" />
             </xpath>
         </field>
     </record>
@@ -27,6 +36,8 @@
                     widget="badge"
                     />
                 <field name="sale_partner_id" optional="show"/>
+                <field name="po_status" optional="show"/>
+                <field name="billing_status" optional="show"/>
             </xpath>
         </field>
     </record>
@@ -55,6 +66,32 @@
 for record in records:
     if record.purchase_id and not record.sale_partner_id:
         record.write({'sale_partner_id': record.purchase_id.sale_partner_id.id})
+        </field>
+    </record>
+
+    <record id="action_update_picking_po_status" model="ir.actions.server">
+        <field name="name">Update PO Status (from PO)</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">
+for record in records:
+    if record.purchase_id:
+        record.write({'po_status': record.purchase_id.po_status})
+        </field>
+    </record>
+
+    <record id="action_update_picking_billing_status" model="ir.actions.server">
+        <field name="name">Update Billing Status (from PO)</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">
+for record in records:
+    if record.purchase_id:
+        record.write({'billing_status': record.purchase_id.invoice_status})
         </field>
     </record>
 

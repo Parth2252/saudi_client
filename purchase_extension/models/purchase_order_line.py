@@ -188,6 +188,8 @@ class PurchaseOrderLine(models.Model):
         for vals in vals_list:
             if isinstance(vals, dict):   # Prevent boolean crash
                 vals['date'] = self.date_planned or fields.Datetime.now()
+                # 🔹 Break the flow: Ensure quantity is 0 by default in the receipt
+                vals['quantity'] = 0.0
 
         return vals_list
 

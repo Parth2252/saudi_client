@@ -9,7 +9,8 @@ class SaleOrder(models.Model):
     quote_desc = fields.Char(string="RFQ / Description", required=True)
 
 # NEW
-    contact_id = fields.Many2one('res.partner', 'Customer Contact', domain=[('type', '=', 'contact')], readonly=True)
+    contact_id = fields.Many2one('res.partner', 'Customer Contact Person', domain=[('type', '=', 'contact')], readonly=True)
+    custom_margin_percent = fields.Float(string="Margin (%)")
 # NEW
 
     # Overrite field to make compute.

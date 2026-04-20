@@ -30,7 +30,7 @@
                     .dash-box {
                         display: flex;
                         flex-direction: column;
-                        width: 100px;
+                        width: 85px;
                         cursor: pointer;
                         transition: transform 0.2s, opacity 0.2s;
                         border-radius: 12px;
@@ -56,7 +56,7 @@
                     }
                     .dash-title {
                         height: 48px;
-                        font-size: 0.65rem;
+                        font-size: 0.6rem;
                         font-weight: 600;
                         text-transform: uppercase;
                         letter-spacing: 0.3px;
@@ -78,6 +78,10 @@
                             <div t-if="!purchaseData.is_po_view" class="dash-box" t-on-click="setSearchContext" title="All Draft RFQs" filter_name="standard_purchase_to_issues" style="background-color: #247DC4 !important;">
                                 <div class="dash-item dash-title">To Issue PO</div>
                                 <div class="dash-item dash-count" t-out="purchaseData['standard_purchase_to_issues']"/>
+                            </div>
+                            <div class="dash-box" t-on-click="setSearchContext" title="To Approve" filter_name="standard_purchase_to_approve" style="background-color: #D4AC0D !important;">
+                                <div class="dash-item dash-title">To Approve</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['standard_purchase_to_approve']"/>
                             </div>
 
                             <div class="dash-box" t-on-click="setSearchContext" title="All Waiting RFQs" filter_name="standard_purchase_pending_bill" style="background-color: #BF033C !important;">
@@ -121,6 +125,10 @@
                                 <div class="dash-item dash-title">To Issue PO</div>
                                 <div class="dash-item dash-count" t-out="purchaseData['local_purchase_to_issues']"/>
                             </div>
+                            <div class="dash-box" t-on-click="setSearchContext" title="To Approve" filter_name="local_purchase_to_approve" style="background-color: #D4AC0D !important;">
+                                <div class="dash-item dash-title">To Approve</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['local_purchase_to_approve']"/>
+                            </div>
 
                             <div class="dash-box" t-on-click="setSearchContext" title="All Waiting RFQs" filter_name="local_purchase_pending_bill" style="background-color: #BF033C !important;">
                                 <div class="dash-item dash-title">Pending Vendor Bill</div>
@@ -162,6 +170,10 @@
                             <div t-if="!purchaseData.is_po_view" class="dash-box" t-on-click="setSearchContext" title="To Order" filter_name="online_purchase_to_order" style="background-color: #247DC4 !important;">
                                 <div class="dash-item dash-title">To Order</div>
                                 <div class="dash-item dash-count" t-out="purchaseData['online_purchase_to_order']"/>
+                            </div>
+                            <div class="dash-box" t-on-click="setSearchContext" title="To Approve" filter_name="online_purchase_to_approve" style="background-color: #D4AC0D !important;">
+                                <div class="dash-item dash-title">To Approve</div>
+                                <div class="dash-item dash-count" t-out="purchaseData['online_purchase_to_approve']"/>
                             </div>
                             <div class="dash-box" t-on-click="setSearchContext" title="Ordered (Purchase Order)" filter_name="online_purchase_ordered" style="background-color: #1FAC5E !important;">
                                 <div class="dash-item dash-title">Ordered (PO)</div>

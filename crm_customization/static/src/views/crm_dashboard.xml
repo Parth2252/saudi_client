@@ -83,6 +83,13 @@
                     <div class="dash-item dash-total" t-out="crmData['submitted_offer']['total'] or 0"/>
                 </div>
 
+                <!-- Today Closing RFQ -->
+                <div class="dash-box" t-on-click="setSearchContext" filter_name="today_closing_rfq" style="background-color: #E67E22 !important;">
+                    <div class="dash-item dash-title">Today Closing RFQ</div>
+                    <div class="dash-item dash-count" t-out="crmData['today_closing_rfq']['count'] or 0"/>
+                    <div class="dash-item dash-total" t-out="crmData['today_closing_rfq']['total'] or 0"/>
+                </div>
+
                 <!-- Delayed RFQ -->
                 <div class="dash-box" t-on-click="setSearchContext" filter_name="delayed_rfq" style="background-color: #BF033C !important;">
                     <div class="dash-item dash-title">Delayed RFQ</div>

@@ -8,6 +8,25 @@ class CrmLead(models.Model):
     date_deadline = fields.Datetime("Expected Closing", help="Estimate of the date on which the opportunity will be won.")
     expected_closing_status = fields.Char(compute='_compute_expected_closing_status', store=True, string="Closing Status")
     show_expected_closing = fields.Boolean(related='stage_id.show_expected_closing')
+    is_today_closing = fields.Boolean(compute='_compute_is_today_closing', search='_search_is_today_closing')
+
+    @api.depends('date_deadline')
+    def _compute_is_today_closing(self):
+        now = fields.Datetime.now()
+        for record in self:
+            if record.date_deadline and record.date_deadline >= now and (record.date_deadline - now).total_seconds() <= 86400:
+                record.is_today_closing = True
+            else:
+                record.is_today_closing = False
+
+    def _search_is_today_closing(self, operator, value):
+        now = fields.Datetime.now()
+        from datetime import timedelta
+        tomorrow = now + timedelta(hours=24)
+        if (operator == '=' and value) or (operator == '!=' and not value):
+            return [('date_deadline', '>=', now), ('date_deadline', '<=', tomorrow)]
+        else:
+            return ['|', ('date_deadline', '<', now), ('date_deadline', '>', tomorrow)]
 
     @api.depends('date_deadline')
     def _compute_expected_closing_status(self):
@@ -90,7 +109,12 @@ class CrmLead(models.Model):
             ('probability', '<', 100),
         ]]))
 
-
+        # Today Closing RFQ: Expected Closing between now and 24 hours from now
+        today_closing_rfq = self.search(expression.AND([base_domain, [
+            ('is_today_closing', '=', True),
+            ('stage_id.name', 'ilike', 'New RFQ'),
+            ('probability', '<', 100),
+        ]]))
 
         from odoo.tools import format_amount
         currency = self.env.company.currency_id
@@ -106,4 +130,5 @@ class CrmLead(models.Model):
             'submitted_offer': get_data(submitted_offer),
             'order_confirmed': get_data(order_confirmed),
             'delayed_rfq': get_data(delayed_rfq),
+            'today_closing_rfq': get_data(today_closing_rfq),
         }

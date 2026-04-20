@@ -62,6 +62,7 @@
                 <filter name="submitted_offer" string="Submitted Offer" domain="[('stage_id.name', 'ilike', 'Offer Submitted')]"/>
                 <filter name="order_confirmed" string="Order Confirmed" domain="['|', ('stage_id.name', 'ilike', '%Won%'), ('stage_id.name', 'ilike', '%Sale Order Created%')]"/>
                 <filter name="delayed_rfq" string="Delayed RFQ" domain="[('date_deadline', '&lt;', context_today().strftime('%Y-%m-%d')), ('stage_id.name', 'ilike', 'New RFQ'), ('probability', '&lt;', 100)]"/>
+                <filter name="today_closing_rfq" string="Today Closing RFQ" domain="[('is_today_closing', '=', True), ('stage_id.name', 'ilike', 'New RFQ'), ('probability', '&lt;', 100)]"/>
             </xpath>
         </field>
     </record>
@@ -77,6 +78,7 @@
                 <filter name="submitted_offer" string="Submitted Offer" domain="[('stage_id.name', 'ilike', 'Offer Submitted')]"/>
                 <filter name="order_confirmed" string="Order Confirmed" domain="['|', ('stage_id.name', 'ilike', '%Won%'), ('stage_id.name', 'ilike', '%Sale Order Created%')]"/>
                 <filter name="delayed_rfq" string="Delayed RFQ" domain="[('date_deadline', '&lt;', context_today().strftime('%Y-%m-%d')), ('stage_id.name', 'ilike', 'New RFQ'), ('probability', '&lt;', 100)]"/>
+                <filter name="today_closing_rfq" string="Today Closing RFQ" domain="[('is_today_closing', '=', True), ('stage_id.name', 'ilike', 'New RFQ'), ('probability', '&lt;', 100)]"/>
             </xpath>
         </field>
     </record>
