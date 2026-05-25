@@ -8,16 +8,16 @@
             <xpath expr="//page[@name='destination']" position='before'>
                 <page string="Configuration" name="fedex_configuration" invisible = "delivery_type != 'fedex_shipping_provider'">
                     <group>
-                        <group required = "delivery_type == 'fedex_shipping_provider'">
-                            <field name="company_id"/>
-                            <field name="fedex_service_type"/>
+                        <group>
+                            <field name="company_id" required="delivery_type == 'fedex_shipping_provider'"/>
+                            <field name="fedex_service_type" required="delivery_type == 'fedex_shipping_provider'"/>
 			     <field name="fedex_hub_id"/>
                             <field name="fedex_indicia"/>
-                            <field name="fedex_pickup_type"/>
-                            <field name="fedex_default_product_packaging_id"/>
-                            <field name="fedex_request_type"/>
-                            <field name="fedex_payment_type"/>
-                            <field name="fedex_weight_uom"/>
+                            <field name="fedex_pickup_type" required="delivery_type == 'fedex_shipping_provider'"/>
+                            <field name="fedex_default_product_packaging_id" required="delivery_type == 'fedex_shipping_provider'"/>
+                            <field name="fedex_request_type" required="delivery_type == 'fedex_shipping_provider'"/>
+                            <field name="fedex_payment_type" required="delivery_type == 'fedex_shipping_provider'"/>
+                            <field name="fedex_weight_uom" required="delivery_type == 'fedex_shipping_provider'"/>
                         </group>
                         <group>
                             <field name="fedex_shipping_label_stock_type" required = "delivery_type == 'fedex_shipping_provider'"/>

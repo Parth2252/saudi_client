@@ -176,14 +176,19 @@ class DeliveryCarrier(models.Model):
                                       ('PRESORTED_STANDARD', 'PRESORTED_STANDARD')],string="Fedex Indicia")
 
     def get_fedex_address_dict(self, address_id):
+        address = {
+            "city": address_id.city or "",
+            "postalCode": "{0}".format(address_id.zip or ""),
+            "countryCode": address_id.country_id and address_id.country_id.code or "",
+            "residential": "true" if self.fedex_service_type in ['GROUND_HOME_DELIVERY','SMART_POST'] else "false"
+        }
+        if address_id.state_id and address_id.state_id.code:
+            state_code = address_id.state_id.code
+            if len(state_code) <= 2:
+                address["stateOrProvinceCode"] = state_code
+                
         return {
-            "address": {
-                "city": address_id.city or "",
-                "stateOrProvinceCode": address_id.state_id and address_id.state_id.code or "",
-                "postalCode": "{0}".format(address_id.zip or ""),
-                "countryCode": address_id.country_id and address_id.country_id.code or "",
-                "residential": "true" if self.fedex_service_type in ['GROUND_HOME_DELIVERY','SMART_POST'] else "false"
-            }
+            "address": address
         }
 
     def fedex_shipping_provider_rate_shipment(self, order):
@@ -312,7 +317,7 @@ class DeliveryCarrier(models.Model):
         package_list = []
         package_count = 0
         total_bulk_weight = pickings.weight_bulk
-        for package_id in pickings.package_ids:
+        for package_id in pickings.move_line_ids.result_package_id:
             package_count = package_count + 1
             length = package_id.package_type_id.packaging_length if package_id.package_type_id.packaging_length else self.fedex_default_product_packaging_id.packaging_length or ""
             width = package_id.package_type_id.width if package_id.package_type_id.width else self.fedex_default_product_packaging_id.width or ""
@@ -411,7 +416,7 @@ class DeliveryCarrier(models.Model):
             if shipper_address_id.country_id.code != receiver_id.country_id.code:
                 comodities_packages = []
 
-                for package_id in pickings.package_ids:
+                for package_id in pickings.move_line_ids.result_package_id:
                     for stock_quant_package in package_id.quant_ids:
                         product_id = stock_quant_package.product_id
                         # move_line_id = self.env['stock.move.line'].search([('product_id', '=', product_id.id)])
