@@ -1,0 +1,26 @@
+<odoo>
+    <record id="dhl_parcel_credential_configuration" model="ir.ui.view">
+        <field name="name">Dhl-Parcel Configuration</field>
+        <field name="model">res.company</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[last()]" position="after">
+                <page string="DHL Parcel Configuration">
+                    <group>
+                        <field name="use_dhl_parcel_shipping_provider"/>
+                    </group>
+                    <group invisible="use_dhl_parcel_shipping_provider != True">
+                        <field name="dhl_parcel_api_url" required="use_dhl_parcel_shipping_provider != False"/>
+                        <field name="dhl_parcel_api_key" required="use_dhl_parcel_shipping_provider != False"/>
+                        <field name="dhl_parcel_username" required="use_dhl_parcel_shipping_provider != False"/>
+                        <field name="dhl_parcel_password" required="use_dhl_parcel_shipping_provider != False"/>
+                        <field name="authentication_token" />
+                        <button name="generate_authentication_token" type="object"
+                                string="Generate Authentication Token" class="fa fa-arrow-right oe_link"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
