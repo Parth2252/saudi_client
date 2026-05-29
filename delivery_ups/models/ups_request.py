@@ -118,6 +118,7 @@ class UPSRequestCustom:
                 weight = weight * 2.20462
             
             pkg = {
+                'PackagingType': {'Code': p.packaging_type or '02'},
                 'Packaging': {'Code': p.packaging_type or '02'},
                 'Description': desc,
                 'PackageWeight': {
